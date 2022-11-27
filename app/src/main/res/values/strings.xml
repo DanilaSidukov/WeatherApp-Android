@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="text_location">New York · America</string>
+    <string name="text_weather_conditions">Weather conditions</string>
+    <string name="daily_weather">Daily weather</string>
+    <string name="today_s_digest">Today\'s digest</string>
+    <string name="sunset">Sunset</string>
+
+    <item name="monday" type="string">Monday</item>
+    <item name="tuesday" type="string">Tuesday</item>
+    <item name="wednesday" type="string">Wednesday</item>
+    <item name="thursday" type="string">Thursday </item>
+    <item name="friday" type="string">Friday</item>
+    <item name="saturday" type="string">Saturday</item>
+    <item name="sunday" type="string">Sunday</item>
+</resources>
