@@ -9,67 +9,29 @@ import androidx.core.animation.doOnEnd
 class HeaderAnimationImage(view: View) {
 
     private val animationDuration = 5000L
-    val startWidth = view.measuredWidth
     var marginFlow = view.measuredWidth
 
-    lateinit var animationFirst: ValueAnimator
-    lateinit var animationSecond: ValueAnimator
-    lateinit var animationThird: ValueAnimator
-    lateinit var animationForth: ValueAnimator
-
-    fun checkRunning(): Boolean{
-        return animationFirst.isRunning || animationSecond.isRunning || animationThird.isRunning || animationForth.isRunning
+    private val animationFirst = ValueAnimator.ofFloat(0f, marginFlow.toFloat() / 4).also {
+        it.duration = animationDuration
+        it.interpolator = LinearInterpolator()
+    }
+    private val animationSecond =ValueAnimator.ofFloat(marginFlow.toFloat() / 4, 0f).also {
+        it.duration = animationDuration
+        it.interpolator = LinearInterpolator()
+    }
+    private val animationThird =ValueAnimator.ofFloat(0f, -marginFlow.toFloat() / 7).also {
+        it.duration = animationDuration
+        it.interpolator = LinearInterpolator()
+    }
+    private val animationForth =ValueAnimator.ofFloat(-marginFlow.toFloat() / 7, 0f).also {
+        it.duration = animationDuration
+        it.interpolator = LinearInterpolator()
     }
 
-    fun stopRunning(){
-        animationFirst.cancel()
-        animationSecond.cancel()
-        animationThird.cancel()
-        animationForth.cancel()
-    }
-
-    fun bigAnimationWidth(newWidth: Int){
-        animationFirst = ValueAnimator.ofFloat(0f, newWidth.toFloat() / 2).also {
-            it.duration = animationDuration
-            it.interpolator = LinearInterpolator()
-        }
-        animationSecond =ValueAnimator.ofFloat(newWidth.toFloat() / 2, 0f).also {
-            it.duration = animationDuration
-            it.interpolator = LinearInterpolator()
-        }
-        animationThird =ValueAnimator.ofFloat(0f, -newWidth.toFloat() / 2).also {
-            it.duration = animationDuration
-            it.interpolator = LinearInterpolator()
-        }
-        animationForth =ValueAnimator.ofFloat(-newWidth.toFloat() / 2, 0f).also {
-            it.duration = animationDuration
-            it.interpolator = LinearInterpolator()
-        }
-    }
-
-    fun smallAnimationWidth(smallWidth: Int){
-        animationFirst = ValueAnimator.ofFloat(0f, smallWidth.toFloat() / 2).also {
-            it.duration = animationDuration
-            it.interpolator = LinearInterpolator()
-        }
-        animationSecond =ValueAnimator.ofFloat(smallWidth.toFloat() / 2, 0f).also {
-            it.duration = animationDuration
-            it.interpolator = LinearInterpolator()
-        }
-        animationThird =ValueAnimator.ofFloat(0f, -smallWidth.toFloat()/4).also {
-            it.duration = animationDuration
-            it.interpolator = LinearInterpolator()
-        }
-        animationForth =ValueAnimator.ofFloat(-smallWidth.toFloat() /4, 0f).also {
-            it.duration = animationDuration
-            it.interpolator = LinearInterpolator()
-        }
-    }
-
-    init {
-        bigAnimationWidth(startWidth)
+    init{
         executeAnimation()
     }
+
 
     private val animatedImage = view
 
@@ -83,50 +45,29 @@ class HeaderAnimationImage(view: View) {
 
     fun executeAnimation() {
         animationFirst.apply {
-            if (marginFlow == startWidth) {
-                performAnimation(this)
-            } else {
-                performAnimation(this)
-            }
+            start()
+            performAnimation(this)
             doOnEnd {
                 animationSecond.start()
             }
         }
 
         animationSecond.apply {
-            if (marginFlow == startWidth){
-                start()
-                performAnimation(this)
-            } else {
-                start()
-                performAnimation(this)
-            }
+            performAnimation(this)
             doOnEnd {
                 animationThird.start()
             }
         }
 
         animationThird.apply {
-            if (marginFlow == startWidth){
-                start()
-                performAnimation(this)
-            } else {
-                start()
-                performAnimation(this)
-            }
+            performAnimation(this)
             doOnEnd {
                 animationForth.start()
             }
         }
 
         animationForth.apply {
-            if (marginFlow == startWidth){
-                start()
-                performAnimation(this)
-            } else {
-                start()
-                performAnimation(this)
-            }
+            performAnimation(this)
             doOnEnd {
                 animationFirst.start()
             }

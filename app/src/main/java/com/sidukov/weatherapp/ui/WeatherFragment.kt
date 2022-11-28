@@ -73,24 +73,8 @@ class WeatherFragment : Fragment() {
             if (!this::animation.isInitialized) {
                 animation = HeaderAnimationImage(animatedImage)
             }
-<<<<<<< Updated upstream
             animation.marginFlow = animatedImage.width
-            if (animation.marginFlow == animation.startWidth){
-                if (animation.checkRunning()){
-                    animation.stopRunning()
-                }
-                animation.bigAnimationWidth(animation.startWidth)
-                animation.executeAnimation()
-            } else{
-                if (animation.checkRunning()){
-                    animation.stopRunning()
-                }
-                animation.smallAnimationWidth(animation.marginFlow)
-                animation.executeAnimation()
-            }
-            animation.marginFlow = animatedImage.width
-=======
->>>>>>> Stashed changes
+
         }
     }
 }

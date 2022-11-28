@@ -5,6 +5,11 @@
     <string name="daily_weather">Daily weather</string>
     <string name="today_s_digest">Today\'s digest</string>
     <string name="sunset">Sunset</string>
+    <string name="daytime">Daytime</string>
+    <string name="night_time">Night-time</string>
+    <string name="humidity">Humidity</string>
+    <string name="air_quality">air quality</string>
+    <string name="chance_of_precipitation">chance of precipitation</string>
 
     <item name="monday" type="string">Monday</item>
     <item name="tuesday" type="string">Tuesday</item>

@@ -177,84 +177,209 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_margin="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/today_s_digest"
+                    android:layout_margin="16dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="16dp"
                     android:fontFamily="@font/staatliches_regular"
+                    android:text="@string/today_s_digest"
                     android:textColor="@color/grey"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/text_sunrise_time"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="298dp"
-                    android:layout_marginTop="85dp"
                     android:layout_marginLeft="16dp"
-                    android:textColor="@color/black"
+                    android:layout_marginTop="85dp"
+                    android:layout_marginRight="298dp"
                     android:fontFamily="@font/staatliches_regular"
                     android:text="11:33"
-                    android:textSize="14sp"/>
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/text_sunrise"
-                    app:layout_constraintStart_toStartOf="@id/text_sunrise_time"
-                    app:layout_constraintTop_toBottomOf="@id/text_sunrise_time"
-                    app:layout_constraintEnd_toEndOf="@id/text_sunrise_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sunrise"
                     android:layout_marginTop="2dp"
                     android:fontFamily="@font/staatliches_regular"
+                    android:text="Sunrise"
                     android:textColor="@color/grey"
-                    android:textSize="10sp"/>
+                    android:textSize="10sp"
+                    app:layout_constraintEnd_toEndOf="@id/text_sunrise_time"
+                    app:layout_constraintStart_toStartOf="@id/text_sunrise_time"
+                    app:layout_constraintTop_toBottomOf="@id/text_sunrise_time" />
 
                 <TextView
                     android:id="@+id/text_sunset_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="85dp"
                     android:layout_marginRight="16dp"
+                    android:fontFamily="@font/staatliches_regular"
                     android:text="19:15"
                     android:textColor="@color/black"
-                    android:fontFamily="@font/staatliches_regular"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/text_sunset"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="@id/text_sunset_time"
-                    app:layout_constraintTop_toBottomOf="@id/text_sunset_time"
-                    app:layout_constraintEnd_toEndOf="@id/text_sunset_time"
-                    android:text="@string/sunset"
                     android:layout_marginTop="2dp"
                     android:fontFamily="@font/staatliches_regular"
+                    android:text="@string/sunset"
                     android:textColor="@color/grey"
-                    android:textSize="10sp"/>
+                    android:textSize="10sp"
+                    app:layout_constraintEnd_toEndOf="@id/text_sunset_time"
+                    app:layout_constraintStart_toStartOf="@id/text_sunset_time"
+                    app:layout_constraintTop_toBottomOf="@id/text_sunset_time" />
 
                 <com.sidukov.weatherapp.ui.CustomProgressBar
                     android:id="@+id/custom_progress_bar"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/text_sunrise_time"
-                    android:layout_marginTop="20dp"
                     android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"/>
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="15dp"
+                    app:layout_constraintBottom_toTopOf="@id/text_sunrise_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
+                <TextView
+                    android:id="@+id/text_daytime_condition_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="140dp"
+                    android:fontFamily="@font/staatliches_regular"
+                    android:text="@string/daytime"
+                    android:textColor="@color/grey"
+                    android:textSize="13sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/text_daytime_condition_condition_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/staatliches_regular"
+                    android:text="sunny and cloudy"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    app:layout_constraintStart_toStartOf="@id/text_daytime_condition_view"
+                    app:layout_constraintTop_toBottomOf="@id/text_daytime_condition_view" />
+
+                <TextView
+                    android:id="@+id/text_nighttime_condition_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="150dp"
+                    android:layout_marginTop="140dp"
+                    android:fontFamily="@font/staatliches_regular"
+                    android:text="@string/night_time"
+                    android:textColor="@color/grey"
+                    android:textSize="13sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/text_nightitme_condition_condition_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/staatliches_regular"
+                    android:text="sunny and cloudy"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    app:layout_constraintStart_toStartOf="@id/text_nighttime_condition_view"
+                    app:layout_constraintTop_toBottomOf="@id/text_nighttime_condition_view" />
+
+                <TextView
+                    android:id="@+id/text_humidity_condition_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="199dp"
+                    android:fontFamily="@font/staatliches_regular"
+                    android:text="@string/humidity"
+                    android:textColor="@color/grey"
+                    android:textSize="13sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/text_humidity_percent_condition_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/staatliches_regular"
+                    android:text="43%"
+                    android:paddingBottom="16dp"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    app:layout_constraintStart_toStartOf="@id/text_humidity_condition_view"
+                    app:layout_constraintTop_toBottomOf="@id/text_humidity_condition_view" />
+
+                <TextView
+                    android:id="@+id/text_air_quality_condition_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="75dp"
+                    android:layout_marginTop="199dp"
+                    android:fontFamily="@font/staatliches_regular"
+                    android:text="@string/air_quality"
+                    android:textColor="@color/grey"
+                    android:textSize="13sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/staatliches_regular"
+                    android:text="good"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:paddingBottom="16dp"
+                    app:layout_constraintStart_toStartOf="@id/text_air_quality_condition_view"
+                    app:layout_constraintTop_toBottomOf="@id/text_air_quality_condition_view" />
+
+                <TextView
+                    android:id="@+id/text_chance_of_precipitation_condition_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="199dp"
+                    android:layout_marginStart="150dp"
+                    android:text="@string/chance_of_precipitation"
+                    android:fontFamily="@font/staatliches_regular"
+                    android:textColor="@color/grey"
+                    android:textSize="13sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="@id/text_chance_of_precipitation_condition_view"
+                    app:layout_constraintTop_toBottomOf="@id/text_chance_of_precipitation_condition_view"
+                    android:layout_marginTop="4dp"
+                    android:text="13%"
+                    android:fontFamily="@font/staatliches_regular"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:paddingBottom="16dp"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
