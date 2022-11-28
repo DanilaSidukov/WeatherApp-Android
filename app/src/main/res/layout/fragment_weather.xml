@@ -372,6 +372,77 @@
 
         </androidx.cardview.widget.CardView>
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_view_air_quality"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="195.5dp"
+            app:cardCornerRadius="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/card_view_today_digest">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_air_quality_card_view"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/air_quality"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/staatliches_regular"
+                    android:textColor="@color/grey"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/text_condition_air_quality_card_view"
+                    app:layout_constraintStart_toStartOf="@id/text_air_quality_card_view"
+                    app:layout_constraintTop_toBottomOf="@id/text_air_quality_card_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:paddingBottom="16dp"
+                    android:text="@string/good"
+                    android:fontFamily="@font/staatliches_regular"
+                    android:textColor="@color/black"
+                    android:textSize="30sp"/>
+
+                <ProgressBar
+                    android:id="@+id/custom_progress_bar_air_quality_card_view"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="23dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:progressDrawable="@drawable/custom_progress_bar_air_quality"
+                    android:max="100"
+                    android:progress="30"/>
+
+                <ImageView
+                    android:id="@+id/image_air_quality_card_view"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_vector_air_quality"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="41dp"
+                    android:layout_marginEnd="32.5dp"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
