@@ -19,11 +19,11 @@ class HeaderAnimationImage(view: View) {
         it.duration = animationDuration
         it.interpolator = LinearInterpolator()
     }
-    private val animationThird =ValueAnimator.ofFloat(0f, -marginFlow.toFloat() / 7).also {
+    private val animationThird =ValueAnimator.ofFloat(0f, -marginFlow.toFloat() / 8).also {
         it.duration = animationDuration
         it.interpolator = LinearInterpolator()
     }
-    private val animationForth =ValueAnimator.ofFloat(-marginFlow.toFloat() / 7, 0f).also {
+    private val animationForth =ValueAnimator.ofFloat(-marginFlow.toFloat() / 8, 0f).also {
         it.duration = animationDuration
         it.interpolator = LinearInterpolator()
     }
