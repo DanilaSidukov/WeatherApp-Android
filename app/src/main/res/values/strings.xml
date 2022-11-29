@@ -11,6 +11,9 @@
     <string name="air_quality">air quality</string>
     <string name="chance_of_precipitation">chance of precipitation</string>
     <string name="good">good</string>
+    <string name="aqi">aqi</string>
+    <string name="precipitation">precipitation</string>
+    <string name="edit">Edit</string>
 
     <item name="monday" type="string">Monday</item>
     <item name="tuesday" type="string">Tuesday</item>
