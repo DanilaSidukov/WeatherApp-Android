@@ -8,6 +8,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.Weather
+
+// потом потом, добавить DiffCallback или DiffUtilCallback, чтобы данные обновлялись тогда, когда нужно, это позволит избавиться от notifyDataSetChanged(),
+// который добавляет определёную сложность
 //<> - generic class, он работает с типом объекта, который к нему приходит, в нашем случае с DailyWeatherViewHolder
 class DailyWeatherAdapter(private var list: List<Weather>) : RecyclerView.Adapter<DailyWeatherAdapter.DailyWeatherViewHolder>() {
 
@@ -21,8 +24,6 @@ class DailyWeatherAdapter(private var list: List<Weather>) : RecyclerView.Adapte
         holder.textDailyWeather.text = list[position].day
         holder.imageDailyWeather.setImageResource(list[position].image)
         holder.textDayTemperatureDailyWeather.text = list[position].temperature.toString()
-
-
     }
 
     override fun getItemCount(): Int {

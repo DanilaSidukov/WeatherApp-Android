@@ -14,6 +14,7 @@ class CustomProgressBar @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    // remove
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
@@ -23,7 +24,7 @@ class CustomProgressBar @JvmOverloads constructor(
     }
 
     val generalPaint = Paint().apply {
-        // TODO: extract from attribute
+        // TODO: extract from attribute - это всё потом, когда все стил и цвета будут вынесены в styles.xml и themes.xml
         color = Color.rgb(220,223,230)
         strokeWidth = 7f
         style = Paint.Style.STROKE
