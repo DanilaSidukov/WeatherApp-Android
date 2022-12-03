@@ -13,11 +13,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="22dp"
-        android:background="@color/general_background"
+        android:background="?attr/screenBackground"
         app:layoutDescription="@xml/motion_app_top_bar"
         app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-
 
         <TextView
             android:id="@+id/text_location_weather"
@@ -26,9 +24,7 @@
             android:layout_gravity="center_horizontal"
             android:gravity="center"
             android:text="@string/text_location"
-            android:textColor="@color/black"
-            tools:layout_editor_absoluteX="147dp"
-            tools:layout_editor_absoluteY="16dp" />
+            android:textColor="@color/black" />
 
         <ImageView
             android:id="@+id/imageSun"
@@ -36,45 +32,35 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_sun"
-            tools:layout_editor_absoluteY="84dp" />
+            app:srcCompat="@drawable/ic_sun"/>
 
         <ImageView
             android:id="@+id/imageSky"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            app:srcCompat="@drawable/ic_sky_light"
-            tools:layout_editor_absoluteX="144dp"
-            tools:layout_editor_absoluteY="105dp" />
+            app:srcCompat="@drawable/ic_sky_light"/>
 
         <TextView
             android:id="@+id/text_current_temperature_weather"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:fontFamily="@font/staatliches_regular"
+            android:textAppearance="@style/TextAppearance.General_black"
             android:text="12"
-            android:textColor="@color/black"
             android:textScaleX="2"
             android:textSize="65sp"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteY="313dp" />
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <TextView
             android:id="@+id/text_datetime_weather"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:fontFamily="@font/staatliches_regular"
             android:paddingBottom="13dp"
-            android:text="6-16"
             android:textColor="@color/grey"
-            android:textSize="15sp"
-            tools:layout_editor_absoluteX="195dp"
-            tools:layout_editor_absoluteY="353dp" />
-
-
+            android:text="6-16"
+            android:textAppearance="@style/TextAppearance.Description" />
 
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
@@ -84,7 +70,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.sidukov.weatherapp.ui.ScrollViewFragment
+        <com.sidukov.weatherapp.ui.fragment_weather.CustomScrollView
             android:id="@+id/nested_scroll_view_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -112,23 +98,20 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginTop="16dp"
-                        android:fontFamily="@font/staatliches_regular"
+                        style="@style/TextAppearance.Weather_condition"
                         android:text="@string/text_weather_conditions"
-                        android:textColor="@color/color_weather_condition"
-                        android:textSize="16sp" />
+                        android:textColor="@color/color_weather_condition" />
 
                     <TextView
                         android:layout_width="343dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
                         android:layout_marginTop="46dp"
                         android:fontFamily="@font/staatliches_regular"
                         android:paddingBottom="16dp"
                         android:text="It won't rain for the next two hours, so you don't have to worry about going outside"
                         android:textColor="@color/color_weather_condition"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        style="@style/TextAppearance.Weather_condition"/>
 
                 </androidx.cardview.widget.CardView>
 
@@ -152,12 +135,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="start"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="16dp"
-                            android:fontFamily="@font/staatliches_regular"
                             android:text="@string/daily_weather"
                             android:textColor="@color/grey"
-                            android:textSize="14sp" />
+                            style="@style/TextAppearance.General_grey"/>
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recycler_view_weather"
@@ -192,12 +172,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="16dp"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginTop="16dp"
-                            android:fontFamily="@font/staatliches_regular"
                             android:text="@string/today_s_digest"
-                            android:textColor="@color/grey"
-                            android:textSize="14sp"
+                            style="@style/TextAppearance.General_grey"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -209,10 +185,9 @@
                             android:layout_marginLeft="16dp"
                             android:layout_marginTop="85dp"
                             android:layout_marginRight="298dp"
-                            android:fontFamily="@font/staatliches_regular"
                             android:text="11:33"
+                            style="@style/TextAppearance.General_black"
                             android:textColor="@color/black"
-                            android:textSize="14sp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
@@ -221,8 +196,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:fontFamily="@font/staatliches_regular"
-                            android:text="Sunrise"
+                            android:layout_marginLeft="0dp"
+                            android:text="@string/sunrise"
+                            style="@style/TextAppearance.General_grey"
                             android:textColor="@color/grey"
                             android:textSize="10sp"
                             app:layout_constraintEnd_toEndOf="@id/text_sunrise_time"
@@ -235,10 +211,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="85dp"
                             android:layout_marginRight="16dp"
-                            android:fontFamily="@font/staatliches_regular"
                             android:text="19:15"
                             android:textColor="@color/black"
-                            android:textSize="14sp"
+                            style="@style/TextAppearance.General_black"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
@@ -247,7 +222,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:fontFamily="@font/staatliches_regular"
+                            android:layout_marginLeft="0dp"
+                            style="@style/TextAppearance.General_grey"
                             android:text="@string/sunset"
                             android:textColor="@color/grey"
                             android:textSize="10sp"
@@ -255,7 +231,7 @@
                             app:layout_constraintStart_toStartOf="@id/text_sunset_time"
                             app:layout_constraintTop_toBottomOf="@id/text_sunset_time" />
 
-                        <com.sidukov.weatherapp.ui.CustomProgressBar
+                        <com.sidukov.weatherapp.ui.fragment_weather.CustomProgressBar
                             android:id="@+id/progress_bar"
                             android:layout_width="wrap_content"
                             android:layout_height="0dp"
@@ -273,7 +249,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:layout_marginTop="140dp"
-                            android:fontFamily="@font/staatliches_regular"
+                            style="@style/TextAppearance.General_grey"
                             android:text="@string/daytime"
                             android:textColor="@color/grey"
                             android:textSize="13sp"
@@ -285,7 +261,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:fontFamily="@font/staatliches_regular"
+                            style="@style/TextAppearance.General_black"
                             android:text="sunny and cloudy"
                             android:textColor="@color/black"
                             android:textSize="13sp"
@@ -298,7 +274,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="150dp"
                             android:layout_marginTop="140dp"
-                            android:fontFamily="@font/staatliches_regular"
+                            style="@style/TextAppearance.General_grey"
                             android:text="@string/night_time"
                             android:textColor="@color/grey"
                             android:textSize="13sp"
@@ -310,7 +286,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:fontFamily="@font/staatliches_regular"
+                            style="@style/TextAppearance.General_black"
                             android:text="sunny and cloudy"
                             android:textColor="@color/black"
                             android:textSize="13sp"
@@ -335,8 +311,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:fontFamily="@font/staatliches_regular"
+                            style="@style/TextAppearance.General_grey"
                             android:paddingBottom="16dp"
+                            android:layout_marginLeft="0dp"
                             android:text="43%"
                             android:textColor="@color/black"
                             android:textSize="13sp"
@@ -349,7 +326,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="75dp"
                             android:layout_marginTop="199dp"
-                            android:fontFamily="@font/staatliches_regular"
+                            style="@style/TextAppearance.General_grey"
                             android:text="@string/air_quality"
                             android:textColor="@color/grey"
                             android:textSize="13sp"
@@ -360,7 +337,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:fontFamily="@font/staatliches_regular"
+                            style="@style/TextAppearance.General_black"
                             android:paddingBottom="16dp"
                             android:text="good"
                             android:textColor="@color/black"
@@ -374,7 +351,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="150dp"
                             android:layout_marginTop="199dp"
-                            android:fontFamily="@font/staatliches_regular"
+                            style="@style/TextAppearance.General_grey"
                             android:text="@string/chance_of_precipitation"
                             android:textColor="@color/grey"
                             android:textSize="13sp"
@@ -385,7 +362,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:fontFamily="@font/staatliches_regular"
+                            style="@style/TextAppearance.General_black"
+                            android:layout_marginLeft="0dp"
                             android:paddingBottom="16dp"
                             android:text="13%"
                             android:textColor="@color/black"
@@ -401,26 +379,17 @@
                 android:id="@+id/card_view_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
                 android:overScrollMode="never">
 
             </androidx.recyclerview.widget.RecyclerView>
 
                 <Button
                     android:id="@+id/button_edit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="137dp"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginEnd="137dp"
                     android:background="@drawable/round_buttoun"
-                    android:fontFamily="@font/staatliches_regular"
+                    style="@style/ButtonEdit"
+                    android:textColor="@color/black"
                     android:letterSpacing="0.1"
                     android:text="@string/edit"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/precipitation_card_view" />
 
                 <View
@@ -432,297 +401,9 @@
 
             </LinearLayout>
 
-        </com.sidukov.weatherapp.ui.ScrollViewFragment>
+        </com.sidukov.weatherapp.ui.fragment_weather.CustomScrollView>
 
     </LinearLayout>
 
 
 </LinearLayout>
-
-
-
-<!--<androidx.cardview.widget.CardView-->
-<!--android:id="@+id/card_view_air_quality"-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="wrap_content"-->
-<!--android:layout_marginStart="16dp"-->
-<!--android:layout_marginTop="16dp"-->
-<!--android:layout_marginEnd="207.5dp"-->
-<!--android:layout_marginBottom="16dp"-->
-<!--app:cardCornerRadius="8dp"-->
-<!--app:layout_constraintEnd_toEndOf="parent"-->
-<!--app:layout_constraintStart_toStartOf="parent"-->
-<!--app:layout_constraintTop_toBottomOf="@+id/card_view_today_digest">-->
-
-<!--<androidx.constraintlayout.widget.ConstraintLayout-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    android:orientation="vertical">-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/text_air_quality_card_view"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:layout_marginTop="24dp"-->
-<!--        android:fontFamily="@font/staatliches_regular"-->
-<!--        android:text="@string/air_quality"-->
-<!--        android:textColor="@color/grey"-->
-<!--        android:textSize="14sp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/text_condition_air_quality_card_view"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="8dp"-->
-<!--        android:fontFamily="@font/staatliches_regular"-->
-<!--        android:paddingBottom="16dp"-->
-<!--        android:text="@string/good"-->
-<!--        android:textColor="@color/black"-->
-<!--        android:textSize="30sp"-->
-<!--        app:layout_constraintStart_toStartOf="@id/text_air_quality_card_view"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/text_air_quality_card_view" />-->
-
-<!--    <ProgressBar-->
-<!--        android:id="@+id/custom_progress_bar_air_quality_card_view"-->
-<!--        style="@style/Widget.AppCompat.ProgressBar.Horizontal"-->
-<!--        android:layout_width="60dp"-->
-<!--        android:layout_height="60dp"-->
-<!--        android:layout_marginTop="23dp"-->
-<!--        android:layout_marginEnd="15dp"-->
-<!--        android:max="100"-->
-<!--        android:progress="30"-->
-<!--        android:progressDrawable="@drawable/custom_progress_bar_air_quality"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    <ImageView-->
-<!--        android:id="@+id/image_air_quality_card_view"-->
-<!--        android:layout_width="24dp"-->
-<!--        android:layout_height="24dp"-->
-<!--        android:layout_marginTop="41dp"-->
-<!--        android:layout_marginEnd="32.5dp"-->
-<!--        android:src="@drawable/ic_air_quality"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--</androidx.constraintlayout.widget.ConstraintLayout>-->
-
-<!--</androidx.cardview.widget.CardView>-->
-
-<!--<androidx.cardview.widget.CardView-->
-<!--android:id="@+id/card_view_aqi"-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="wrap_content"-->
-<!--android:layout_marginStart="207.5dp"-->
-<!--android:layout_marginTop="16dp"-->
-<!--android:layout_marginEnd="16dp"-->
-<!--android:layout_marginBottom="16dp"-->
-<!--app:cardCornerRadius="8dp"-->
-<!--app:layout_constraintEnd_toEndOf="parent"-->
-<!--app:layout_constraintStart_toStartOf="parent"-->
-<!--app:layout_constraintTop_toBottomOf="@+id/card_view_today_digest">-->
-
-<!--<androidx.constraintlayout.widget.ConstraintLayout-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    android:orientation="vertical">-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/text_aqi_card_view"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:layout_marginTop="24dp"-->
-<!--        android:fontFamily="@font/staatliches_regular"-->
-<!--        android:letterSpacing="0.1"-->
-<!--        android:text="@string/aqi"-->
-<!--        android:textColor="@color/grey"-->
-<!--        android:textSize="14sp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/text_condition_aqi_card_view"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="8dp"-->
-<!--        android:fontFamily="@font/staatliches_regular"-->
-<!--        android:paddingBottom="16dp"-->
-<!--        android:text="72"-->
-<!--        android:textColor="@color/black"-->
-<!--        android:textSize="30sp"-->
-<!--        app:layout_constraintStart_toStartOf="@id/text_aqi_card_view"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/text_aqi_card_view" />-->
-
-<!--    <ProgressBar-->
-<!--        android:id="@+id/custom_progress_bar_aqi_card_view"-->
-<!--        style="@style/Widget.AppCompat.ProgressBar.Horizontal"-->
-<!--        android:layout_width="60dp"-->
-<!--        android:layout_height="60dp"-->
-<!--        android:layout_marginTop="23dp"-->
-<!--        android:layout_marginEnd="15dp"-->
-<!--        android:max="100"-->
-<!--        android:progress="30"-->
-<!--        android:progressDrawable="@drawable/custom_progress_bar_air_quality"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    <ImageView-->
-<!--        android:id="@+id/image_aqi_card_view"-->
-<!--        android:layout_width="24dp"-->
-<!--        android:layout_height="24dp"-->
-<!--        android:layout_marginTop="41dp"-->
-<!--        android:layout_marginEnd="32.5dp"-->
-<!--        android:src="@drawable/ic_air_quality"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--</androidx.constraintlayout.widget.ConstraintLayout>-->
-
-<!--</androidx.cardview.widget.CardView>-->
-
-<!--<androidx.cardview.widget.CardView-->
-<!--android:id="@+id/card_view_humidity"-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="wrap_content"-->
-<!--android:layout_marginStart="16dp"-->
-<!--android:layout_marginTop="16dp"-->
-<!--android:layout_marginEnd="207.5dp"-->
-<!--android:layout_marginBottom="16dp"-->
-<!--app:cardCornerRadius="8dp"-->
-<!--app:layout_constraintEnd_toEndOf="parent"-->
-<!--app:layout_constraintStart_toStartOf="parent"-->
-<!--app:layout_constraintTop_toBottomOf="@+id/card_view_air_quality">-->
-
-<!--<androidx.constraintlayout.widget.ConstraintLayout-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    android:orientation="vertical">-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/text_humidity_card_view"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:layout_marginTop="24dp"-->
-<!--        android:fontFamily="@font/staatliches_regular"-->
-<!--        android:text="@string/humidity"-->
-<!--        android:textColor="@color/grey"-->
-<!--        android:textSize="14sp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/percent_of_humidity_card_view"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="8dp"-->
-<!--        android:fontFamily="@font/staatliches_regular"-->
-<!--        android:paddingBottom="16dp"-->
-<!--        android:text="43%"-->
-<!--        android:textColor="@color/black"-->
-<!--        android:textSize="30sp"-->
-<!--        app:layout_constraintStart_toStartOf="@id/text_humidity_card_view"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/text_humidity_card_view" />-->
-
-<!--    <ProgressBar-->
-<!--        android:id="@+id/custom_progress_bar_humidity"-->
-<!--        style="@style/Widget.AppCompat.ProgressBar.Horizontal"-->
-<!--        android:layout_width="60dp"-->
-<!--        android:layout_height="60dp"-->
-<!--        android:layout_marginTop="23dp"-->
-<!--        android:layout_marginEnd="15dp"-->
-<!--        android:max="100"-->
-<!--        android:progress="43"-->
-<!--        android:progressDrawable="@drawable/custom_progress_bar_humidity"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    <ImageView-->
-<!--        android:id="@+id/image_humidity_card_view"-->
-<!--        android:layout_width="24dp"-->
-<!--        android:layout_height="24dp"-->
-<!--        android:layout_marginTop="41dp"-->
-<!--        android:layout_marginEnd="32.5dp"-->
-<!--        android:src="@drawable/ic_humidity"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--</androidx.constraintlayout.widget.ConstraintLayout>-->
-
-<!--</androidx.cardview.widget.CardView>-->
-
-<!--<androidx.cardview.widget.CardView-->
-<!--android:id="@+id/precipitation_card_view"-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="wrap_content"-->
-<!--android:layout_marginStart="207.5dp"-->
-<!--android:layout_marginTop="16dp"-->
-<!--android:layout_marginEnd="16dp"-->
-<!--android:layout_marginBottom="16dp"-->
-<!--app:cardCornerRadius="8dp"-->
-<!--app:layout_constraintEnd_toEndOf="parent"-->
-<!--app:layout_constraintStart_toStartOf="parent"-->
-<!--app:layout_constraintTop_toBottomOf="@id/card_view_aqi">-->
-
-<!--<androidx.constraintlayout.widget.ConstraintLayout-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    android:orientation="vertical">-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/text_precipitation_view"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:layout_marginTop="24dp"-->
-<!--        android:fontFamily="@font/staatliches_regular"-->
-<!--        android:text="@string/precipitation"-->
-<!--        android:textColor="@color/grey"-->
-<!--        android:textSize="14sp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/percent_of_precipitation"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginLeft="16dp"-->
-<!--        android:layout_marginTop="8dp"-->
-<!--        android:fontFamily="@font/staatliches_regular"-->
-<!--        android:paddingBottom="16dp"-->
-<!--        android:text="3%"-->
-<!--        android:textColor="@color/black"-->
-<!--        android:textSize="30sp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/text_precipitation_view" />-->
-
-<!--    <ProgressBar-->
-<!--        android:id="@+id/custom_progress_bar_precipitation"-->
-<!--        style="@style/Widget.AppCompat.ProgressBar.Horizontal"-->
-<!--        android:layout_width="60dp"-->
-<!--        android:layout_height="60dp"-->
-<!--        android:layout_marginTop="23dp"-->
-<!--        android:layout_marginEnd="15dp"-->
-<!--        android:max="100"-->
-<!--        android:progress="58"-->
-<!--        android:progressDrawable="@drawable/custom_progress_bar_humidity"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    <ImageView-->
-<!--        android:id="@+id/image_precipitation"-->
-<!--        android:layout_width="24dp"-->
-<!--        android:layout_height="24dp"-->
-<!--        android:layout_marginTop="41dp"-->
-<!--        android:layout_marginEnd="32.5dp"-->
-<!--        android:src="@drawable/ic_sky_rainy"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--</androidx.constraintlayout.widget.ConstraintLayout>-->
-
-<!--</androidx.cardview.widget.CardView>-->

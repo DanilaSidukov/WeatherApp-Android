@@ -1,14 +1,10 @@
 package com.sidukov.weatherapp.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
-import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
-import com.sidukov.weatherapp.*
-import com.sidukov.weatherapp.data.Weather
-import kotlinx.android.synthetic.main.fragment_weather.*
+import com.sidukov.weatherapp.R
+import com.sidukov.weatherapp.ui.fragment_weather.WeatherFragment
 
 class MainActivity : AppCompatActivity() {
 

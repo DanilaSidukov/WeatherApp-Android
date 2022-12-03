@@ -1,4 +1,4 @@
-package com.sidukov.weatherapp.ui
+package com.sidukov.weatherapp.ui.fragment_weather
 
 import android.content.Context
 import android.graphics.Canvas

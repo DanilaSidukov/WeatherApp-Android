@@ -1,20 +1,28 @@
 <resources>
+
     <string name="app_name">WeatherApp</string>
+
+<!-- header strings -->
     <string name="text_location">New York · America</string>
+<!-- view weather conditions -->
     <string name="text_weather_conditions">Weather conditions</string>
+<!-- view daily weather -->
     <string name="daily_weather">Daily weather</string>
+<!-- view today's digest -->
     <string name="today_s_digest">Today\'s digest</string>
     <string name="sunset">Sunset</string>
+    <string name="sunrise">Sunrise</string>
     <string name="daytime">Daytime</string>
     <string name="night_time">Night-time</string>
     <string name="humidity">Humidity</string>
     <string name="air_quality">air quality</string>
     <string name="chance_of_precipitation">chance of precipitation</string>
+<!-- card views -->
     <string name="good">good</string>
     <string name="aqi">aqi</string>
     <string name="precipitation">precipitation</string>
     <string name="edit">Edit</string>
-
+<!-- Days for recycler_view_weather -->
     <item name="monday" type="string">Monday</item>
     <item name="tuesday" type="string">Tuesday</item>
     <item name="wednesday" type="string">Wednesday</item>

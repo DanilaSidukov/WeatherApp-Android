@@ -1,4 +1,4 @@
-package com.sidukov.weatherapp.ui
+package com.sidukov.weatherapp.ui.fragment_weather
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -25,7 +25,7 @@ class WeatherFragment : Fragment() {
     //Объявляю о том, что будет vm
     private lateinit var weatherViewModel: WeatherViewModel
     private lateinit var animation: HeaderAnimationImage
-    private lateinit var nestedScrollView: ScrollViewFragment
+    private lateinit var nestedScrollView: CustomScrollView
 
     private val adapterMiniCardView = WeatherDescriptionCardAdapter(emptyList())
     private lateinit var miniCardViewModel: MiniCardViewModel
@@ -65,10 +65,9 @@ class WeatherFragment : Fragment() {
 
         miniCardViewModel = MiniCardViewModel(MiniCardViewRepository())
         cardViewRecyclerView = view.findViewById(R.id.card_view_recycler_view)
-
         cardViewRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-
         cardViewRecyclerView.adapter = adapterMiniCardView
+        cardViewRecyclerView.addItemDecoration(MiniCardViewItemDecoration(16))
 
         dailyWeatherRecyclerView.addItemDecoration(EmptyDividerItemDecoration())
 
@@ -93,6 +92,8 @@ class WeatherFragment : Fragment() {
             animation.marginFlow = animatedImage.width
 
         }
+
+
     }
 }
 

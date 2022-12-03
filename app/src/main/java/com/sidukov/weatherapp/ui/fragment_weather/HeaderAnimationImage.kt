@@ -1,7 +1,6 @@
-package com.sidukov.weatherapp.ui
+package com.sidukov.weatherapp.ui.fragment_weather
 
 import android.animation.ValueAnimator
-import android.icu.text.ListFormatter.Width
 import android.view.View
 import android.view.animation.LinearInterpolator
 import androidx.core.animation.doOnEnd

@@ -1,4 +1,4 @@
-package com.sidukov.weatherapp.ui
+package com.sidukov.weatherapp.ui.fragment_weather
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -12,7 +12,7 @@ import androidx.core.widget.NestedScrollView
 // этот класс не является фрагментом, поэтому не нужно в названии оставлять слово Fragment
 // можно назвать NestedOverscrollView, потому что она расширяет nestedscrollview и добавляет
 // эффект прокручивания
-open class ScrollViewFragment: NestedScrollView {
+open class CustomScrollView: NestedScrollView {
     var maxOverscrollDistance: Int = 400
         set(value) {
             field = (getScreenDensity() * value).toInt()

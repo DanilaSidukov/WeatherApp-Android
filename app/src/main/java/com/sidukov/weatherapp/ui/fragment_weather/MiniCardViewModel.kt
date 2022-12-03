@@ -1,4 +1,4 @@
-package com.sidukov.weatherapp.ui
+package com.sidukov.weatherapp.ui.fragment_weather
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
