@@ -26,7 +26,6 @@ class WeatherDescriptionCardAdapter(private var list: List<WeatherDescription>) 
         holder.information.text = list[position].information
         holder.progressBar.progress = list[position].progressBar
         holder.image.setImageResource(list[position].image)
-
     }
 
     override fun getItemCount(): Int {
@@ -34,12 +33,10 @@ class WeatherDescriptionCardAdapter(private var list: List<WeatherDescription>) 
     }
 
     class MiniCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
         val name: TextView = itemView.findViewById(R.id.text_name_card_view)
         val information: TextView = itemView.findViewById(R.id.text_condition_card_view)
         var progressBar: ProgressBar = itemView.findViewById(R.id.progress_bar)
         val image: ImageView = itemView.findViewById(R.id.image_card_view)
-
     }
 
     fun updateList(newList: List<WeatherDescription>) {

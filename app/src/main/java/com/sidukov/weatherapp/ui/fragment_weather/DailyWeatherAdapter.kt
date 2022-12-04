@@ -29,13 +29,11 @@ class DailyWeatherAdapter(private var list: List<Weather>) : RecyclerView.Adapte
     override fun getItemCount(): Int {
         return list.size
     }
-    //holder - содержит view элементы, предсиавленые в xml layoutе
+    //holder - содержит view элементы, представленые в xml layoutе
     class DailyWeatherViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
         val textDailyWeather: TextView = itemView.findViewById(R.id.text_day_daily_weather)
         val imageDailyWeather: ImageView = itemView.findViewById(R.id.image_daily_weather)
         val textDayTemperatureDailyWeather: TextView = itemView.findViewById(R.id.text_day_temperature_daily_weather)
-
     }
 
     fun updateList(newList: List<Weather>) {
