@@ -11,5 +11,6 @@
     <color name="grey">#8C8C8C</color>
     <color name="color_weather_condition">#434343</color>
     <color name="green">#00B37A</color>
-    <color name="progress_grey">#DCDFE6</color>
+    <color name="grey_2">#DCDFE6</color>
+    <color name="grey_3">#bfbfbf</color>
 </resources>

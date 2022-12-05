@@ -232,7 +232,7 @@
                             app:layout_constraintStart_toStartOf="@id/text_sunset_time"
                             app:layout_constraintTop_toBottomOf="@id/text_sunset_time" />
 
-                        <com.sidukov.weatherapp.ui.fragment_weather.CustomProgressBar
+                        <com.sidukov.weatherapp.ui.fragment_weather.ArcProgressBar
                             android:id="@+id/progress_bar"
                             android:layout_width="wrap_content"
                             android:layout_height="0dp"
@@ -262,10 +262,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            style="@style/TextAppearance.General_black"
+                            style="@style/Kaka"
                             android:text="sunny and cloudy"
-                            android:textColor="@color/black"
-                            android:textSize="13sp"
                             app:layout_constraintStart_toStartOf="@id/text_daytime_condition_view"
                             app:layout_constraintTop_toBottomOf="@id/text_daytime_condition_view" />
 
@@ -287,10 +285,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            style="@style/TextAppearance.General_black"
+                            style="@style/Kaka"
                             android:text="sunny and cloudy"
-                            android:textColor="@color/black"
-                            android:textSize="13sp"
                             app:layout_constraintStart_toStartOf="@id/text_nighttime_condition_view"
                             app:layout_constraintTop_toBottomOf="@id/text_nighttime_condition_view" />
 

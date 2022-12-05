@@ -1,6 +1,7 @@
-package com.sidukov.weatherapp.data
+package com.sidukov.weatherapp.data.remote
 
 import com.sidukov.weatherapp.R
+import com.sidukov.weatherapp.domain.Location
 
 class LocationRepository {
 

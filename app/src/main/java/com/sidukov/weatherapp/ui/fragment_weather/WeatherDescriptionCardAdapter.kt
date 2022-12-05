@@ -8,7 +8,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
-import com.sidukov.weatherapp.data.WeatherDescription
+import com.sidukov.weatherapp.domain.WeatherDescription
 
 class WeatherDescriptionCardAdapter(private var list: List<WeatherDescription>) :
     RecyclerView.Adapter<WeatherDescriptionCardAdapter.MiniCardViewHolder>() {

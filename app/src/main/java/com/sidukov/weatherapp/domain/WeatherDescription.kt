@@ -1,4 +1,4 @@
-package com.sidukov.weatherapp.data
+package com.sidukov.weatherapp.domain
 
 data class WeatherDescription(
     val name: Int,

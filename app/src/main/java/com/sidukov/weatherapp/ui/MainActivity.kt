@@ -3,6 +3,7 @@ package com.sidukov.weatherapp.ui
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherFragment
 
@@ -21,4 +22,5 @@ class MainActivity : AppCompatActivity() {
             .beginTransaction()
             .replace(idHolder, f).commit()
     }
+
 }

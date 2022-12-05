@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <declare-styleable name="ArcProgressBar">
+        <attr name="backgroundTrackColor"/>
+        <attr name="progressTrackColor" />
+    </declare-styleable>
+
     <attr name="screenBackground" format="reference" />
+    <attr name="ArcProgressBar_style" format="reference"/>
+
+    <attr name="backgroundTrackColor" format="color"/>
+    <attr name="progressTrackColor" format="color" />
+
+    <attr name="descriptionTextColor" format="color" />
 
 </resources>

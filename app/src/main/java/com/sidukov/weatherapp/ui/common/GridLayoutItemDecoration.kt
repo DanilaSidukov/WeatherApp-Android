@@ -1,4 +1,4 @@
-package com.sidukov.weatherapp.ui.fragment_weather
+package com.sidukov.weatherapp.ui.common
 
 import android.content.res.Resources
 import android.graphics.Rect
@@ -6,7 +6,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.roundToInt
 
-class MiniCardViewItemDecoration(
+class GridLayoutItemDecoration(
     private val spaceSize: Int
 ) : RecyclerView.ItemDecoration() {
     override fun getItemOffsets(

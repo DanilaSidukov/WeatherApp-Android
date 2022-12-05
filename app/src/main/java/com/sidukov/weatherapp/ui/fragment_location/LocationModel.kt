@@ -2,8 +2,8 @@ package com.sidukov.weatherapp.ui.fragment_location
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sidukov.weatherapp.data.Location
-import com.sidukov.weatherapp.data.LocationRepository
+import com.sidukov.weatherapp.domain.Location
+import com.sidukov.weatherapp.data.remote.LocationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch

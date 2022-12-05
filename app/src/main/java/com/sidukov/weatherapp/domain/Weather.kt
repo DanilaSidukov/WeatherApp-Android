@@ -1,4 +1,4 @@
-package com.sidukov.weatherapp.data
+package com.sidukov.weatherapp.domain
 
 //Создаю дата (как бы объект данных), который имеет поля (данные)
 

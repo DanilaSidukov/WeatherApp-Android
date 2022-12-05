@@ -1,7 +1,9 @@
-package com.sidukov.weatherapp.data
+package com.sidukov.weatherapp.data.remote
 
 import android.content.Context
 import com.sidukov.weatherapp.R
+import com.sidukov.weatherapp.domain.Weather
+import com.sidukov.weatherapp.domain.WeatherDescription
 
 class WeatherRepository(private val context: Context) {
     //WeatherRepository - получает и возвращает данные
@@ -23,6 +25,35 @@ class WeatherRepository(private val context: Context) {
             Weather(context.getString(R.string.friday), R.drawable.ic_sky_dark, 2),
             Weather(context.getString(R.string.saturday), R.drawable.ic_sky_dark, 9),
             Weather(context.getString(R.string.sunday), R.drawable.ic_sky_dark, 13)
+        )
+    }
+
+    fun getWeatherDetails(): List<WeatherDescription> {
+        return listOf(
+            WeatherDescription(
+                R.string.air_quality,
+                "Good",
+                R.id.progress_bar,
+                R.drawable.ic_air_quality
+            ),
+            WeatherDescription(
+                R.string.aqi,
+                "72",
+                R.id.progress_bar,
+                R.drawable.ic_air_quality
+            ),
+            WeatherDescription(
+                R.string.humidity,
+                "43",
+                R.id.progress_bar,
+                R.drawable.ic_humidity
+            ),
+            WeatherDescription(
+                R.string.precipitation,
+                "3",
+                R.id.progress_bar,
+                R.drawable.ic_sky_rainy
+            )
         )
     }
 

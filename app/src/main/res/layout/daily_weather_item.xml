@@ -14,7 +14,7 @@
         android:fontFamily="@font/staatliches_regular"
         android:gravity="center"
         tools:text="Monday"
-        android:textColor="@color/grey"
+        android:textColor="?attr/descriptionTextColor"
         android:textSize="11sp" />
 
     <ImageView

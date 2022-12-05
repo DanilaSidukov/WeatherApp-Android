@@ -5,7 +5,7 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 import androidx.core.animation.doOnEnd
 
-class HeaderAnimationImage(view: View) {
+class HeaderImageAnimation(view: View) {
 
     private val animationDuration = 5000L
     var marginFlow = view.measuredWidth

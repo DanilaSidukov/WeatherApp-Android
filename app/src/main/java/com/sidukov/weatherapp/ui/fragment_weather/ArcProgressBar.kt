@@ -7,39 +7,37 @@ import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.withStyledAttributes
+import com.sidukov.weatherapp.R
 
-class CustomProgressBar @JvmOverloads constructor(
+class ArcProgressBar @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = R.style.ArcProgressBar
 ) : View(context, attrs, defStyleAttr) {
 
-    // remove
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    private val backgroundPaint = Paint().apply {
+        strokeWidth = 7f
+        style = Paint.Style.STROKE
+        pathEffect = DashPathEffect (floatArrayOf(40f, 20f),0f )
     }
-
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        super.onLayout(changed, left, top, right, bottom)
-    }
-
-    val generalPaint = Paint().apply {
-        // TODO: extract from attribute - это всё потом, когда все стил и цвета будут вынесены в styles.xml и themes.xml
-        color = Color.rgb(220,223,230)
+    private val progressPaint = Paint().apply {
         strokeWidth = 7f
         style = Paint.Style.STROKE
     }
-    private val generalPath: DashPathEffect = DashPathEffect (floatArrayOf(40f, 20f),0f )
-
-    val conditionPaint = Paint().apply {
-        color = Color.rgb(0, 179, 122)
-        strokeWidth = 7f
-        style = Paint.Style.STROKE
+    init {
+        context.withStyledAttributes(attrs, R.styleable.ArcProgressBar) {
+            backgroundPaint.apply {
+                color = getColor(R.styleable.ArcProgressBar_backgroundTrackColor, Color.GREEN)
+            }
+            progressPaint.apply {
+                color = getColor(R.styleable.ArcProgressBar_progressTrackColor, Color.GRAY)
+            }
+        }
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        generalPaint.pathEffect = generalPath
         canvas.drawArc(
             this.left.toFloat() + 60f,
             this.top.toFloat() + 60f,
@@ -48,7 +46,7 @@ class CustomProgressBar @JvmOverloads constructor(
             200f,
             140f,
             false,
-            generalPaint
+            backgroundPaint
         )
         canvas.drawArc(
             this.left.toFloat() + 60f,
@@ -58,8 +56,7 @@ class CustomProgressBar @JvmOverloads constructor(
             200f,
             90f,
             false,
-            conditionPaint
+            progressPaint
         )
     }
-
 }
