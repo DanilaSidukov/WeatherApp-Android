@@ -35,5 +35,6 @@
 <!-- location fragment -->
     <string name="location">location</string>
     <string name="add">+ Add</string>
+    <string name="today_s_forecast">today\'s forecast</string>
 
 </resources>

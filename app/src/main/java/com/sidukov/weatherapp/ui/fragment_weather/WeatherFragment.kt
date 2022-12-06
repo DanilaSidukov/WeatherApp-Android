@@ -17,8 +17,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.remote.WeatherRepository
+import com.sidukov.weatherapp.data.remote.api.APIClient
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecoration
 import com.sidukov.weatherapp.ui.fragment_location.LocationFragment
+import kotlinx.android.synthetic.main.fragment_weather.view.*
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -26,10 +28,10 @@ import java.time.format.DateTimeFormatter
 class WeatherFragment : Fragment() {
 
     private lateinit var dailyWeatherRecyclerView: RecyclerView
-
     //adapter привязывается к RecyclerView, он содержит в себе инфу об элементах в списке RecyclerView
-    private val adapterDailyWeather = DailyWeatherAdapter(emptyList())
+    private val adapterDateWeather = DailyWeatherAdapter(emptyList())
 
+    private lateinit var todayWeatherRecyclerView: RecyclerView
 
     private lateinit var currentDate: TextView
 
@@ -64,16 +66,27 @@ class WeatherFragment : Fragment() {
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
 
         //инициализация vm непосредственно
-        weatherViewModel = WeatherViewModel(WeatherRepository(requireContext()))
+        weatherViewModel = WeatherViewModel(
+            WeatherRepository(APIClient.weatherApiClient)
+        )
         //запускается Корутина с помощью launch, scope.launch выполняется асинхронно относительно общего порядка выполнения кода
         //В collect мы указываем что делать с теми данными, которые придут. Выполняется collect каждый раз, когда в weatherList появляются новые данные
         dailyWeatherRecyclerView = view.findViewById(R.id.recycler_view_weather)
         //привязываем adapter к RecycleView
-        dailyWeatherRecyclerView.adapter = adapterDailyWeather
+        dailyWeatherRecyclerView.adapter = adapterDateWeather
         dailyWeatherRecyclerView.addItemDecoration(EmptyDividerItemDecoration())
+
+        todayWeatherRecyclerView = view.findViewById(R.id.today_weather_recycler_view)
+        todayWeatherRecyclerView.adapter = adapterDateWeather
+        todayWeatherRecyclerView.addItemDecoration(EmptyDividerItemDecoration())
 
         OverScrollDecoratorHelper.setUpOverScroll(
             dailyWeatherRecyclerView,
+            OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL
+        )
+
+        OverScrollDecoratorHelper.setUpOverScroll(
+            todayWeatherRecyclerView,
             OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL
         )
 
@@ -84,7 +97,8 @@ class WeatherFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             weatherViewModel.weatherList.collect {
-                adapterDailyWeather.updateList(it)
+                vall bo
+                adapterDateWeather.updateList(it)
             }
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {

@@ -33,25 +33,25 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_sun"/>
+            app:srcCompat="@drawable/ic_sun" />
 
         <ImageView
             android:id="@+id/imageSky"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            app:srcCompat="@drawable/ic_sky_light"/>
+            app:srcCompat="@drawable/ic_sky_light" />
 
         <TextView
             android:id="@+id/text_current_temperature_weather"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:textAppearance="@style/TextAppearance.General_black"
             android:text="12"
+            android:textAppearance="@style/TextAppearance.General_black"
             android:textScaleX="2"
             android:textSize="65sp"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/text_datetime_weather"
@@ -59,9 +59,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:paddingBottom="13dp"
-            android:textColor="@color/grey"
             android:text="6-16"
-            android:textAppearance="@style/TextAppearance.Description" />
+            android:textAppearance="@style/TextAppearance.Description"
+            android:textColor="@color/grey" />
 
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
@@ -85,25 +85,55 @@
                 android:orientation="vertical">
 
                 <androidx.cardview.widget.CardView
-                    android:id="@id/card_view_weather_conditions"
+                    android:id="@+id/card_view_today_forecast"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="16dp"
-                    android:background="@color/white"
+                    style="@style/CardViewStyle"
                     app:cardCornerRadius="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.General_black"
+                            android:text="@string/today_s_forecast"
+                            android:layout_margin="16dp" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/today_weather_recycler_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="16dp"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@id/card_view_weather_conditions"
+                    style="@style/CardViewStyle"
+                    app:cardCornerRadius="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/card_view_today_forecast">
+
                     <TextView
+                        style="@style/TextAppearance.Weather_condition"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        style="@style/TextAppearance.Weather_condition"
                         android:text="@string/text_weather_conditions"
                         android:textColor="@color/color_weather_condition" />
 
                     <TextView
+                        style="@style/TextAppearance.Weather_condition"
                         android:layout_width="343dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="46dp"
@@ -111,16 +141,13 @@
                         android:paddingBottom="16dp"
                         android:text="It won't rain for the next two hours, so you don't have to worry about going outside"
                         android:textColor="@color/color_weather_condition"
-                        android:textSize="12sp"
-                        style="@style/TextAppearance.Weather_condition"/>
+                        android:textSize="12sp" />
 
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/card_view_daily_weather"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    style="@style/CardViewStyle"
                     app:cardCornerRadius="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -133,12 +160,12 @@
 
                         <TextView
                             android:id="@+id/text_daily_weather"
+                            style="@style/TextAppearance.General_grey"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="start"
                             android:text="@string/daily_weather"
-                            android:textColor="@color/grey"
-                            style="@style/TextAppearance.General_grey"/>
+                            android:textColor="@color/grey" />
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recycler_view_weather"
@@ -157,10 +184,9 @@
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/card_view_today_digest"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    style="@style/CardViewStyle"
                     app:cardCornerRadius="8dp"
+                    android:layout_marginBottom="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/card_view_daily_weather">
@@ -170,36 +196,36 @@
                         android:layout_height="match_parent">
 
                         <TextView
+                            style="@style/TextAppearance.General_grey"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="16dp"
                             android:text="@string/today_s_digest"
-                            style="@style/TextAppearance.General_grey"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
                             android:id="@+id/text_sunrise_time"
+                            style="@style/TextAppearance.General_black"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
                             android:layout_marginTop="85dp"
                             android:layout_marginRight="298dp"
                             android:text="11:33"
-                            style="@style/TextAppearance.General_black"
                             android:textColor="@color/black"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
                             android:id="@+id/text_sunrise"
+                            style="@style/TextAppearance.General_grey"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
                             android:layout_marginLeft="0dp"
+                            android:layout_marginTop="2dp"
                             android:text="@string/sunrise"
-                            style="@style/TextAppearance.General_grey"
                             android:textColor="@color/grey"
                             android:textSize="10sp"
                             app:layout_constraintEnd_toEndOf="@id/text_sunrise_time"
@@ -208,23 +234,23 @@
 
                         <TextView
                             android:id="@+id/text_sunset_time"
+                            style="@style/TextAppearance.General_black"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="85dp"
                             android:layout_marginRight="16dp"
                             android:text="19:15"
                             android:textColor="@color/black"
-                            style="@style/TextAppearance.General_black"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
                             android:id="@+id/text_sunset"
+                            style="@style/TextAppearance.General_grey"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
                             android:layout_marginLeft="0dp"
-                            style="@style/TextAppearance.General_grey"
+                            android:layout_marginTop="2dp"
                             android:text="@string/sunset"
                             android:textColor="@color/grey"
                             android:textSize="10sp"
@@ -232,25 +258,25 @@
                             app:layout_constraintStart_toStartOf="@id/text_sunset_time"
                             app:layout_constraintTop_toBottomOf="@id/text_sunset_time" />
 
-                        <com.sidukov.weatherapp.ui.fragment_weather.ArcProgressBar
-                            android:id="@+id/progress_bar"
-                            android:layout_width="wrap_content"
-                            android:layout_height="0dp"
-                            android:layout_marginLeft="15dp"
-                            android:layout_marginTop="20dp"
-                            android:layout_marginRight="15dp"
-                            app:layout_constraintBottom_toTopOf="@id/text_sunrise_time"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+<!--                        <com.sidukov.weatherapp.ui.fragment_weather.ArcProgressBar-->
+<!--                            android:id="@+id/progress_bar"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="0dp"-->
+<!--                            android:layout_marginLeft="15dp"-->
+<!--                            android:layout_marginTop="20dp"-->
+<!--                            android:layout_marginRight="15dp"-->
+<!--                            app:layout_constraintBottom_toTopOf="@id/text_sunrise_time"-->
+<!--                            app:layout_constraintEnd_toEndOf="parent"-->
+<!--                            app:layout_constraintStart_toStartOf="parent"-->
+<!--                            app:layout_constraintTop_toTopOf="parent" />-->
 
                         <TextView
                             android:id="@+id/text_daytime_condition_view"
+                            style="@style/TextAppearance.General_grey"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:layout_marginTop="140dp"
-                            style="@style/TextAppearance.General_grey"
                             android:text="@string/daytime"
                             android:textColor="@color/grey"
                             android:textSize="13sp"
@@ -259,21 +285,21 @@
 
                         <TextView
                             android:id="@+id/text_daytime_condition_condition_view"
+                            style="@style/Kaka"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            style="@style/Kaka"
                             android:text="sunny and cloudy"
                             app:layout_constraintStart_toStartOf="@id/text_daytime_condition_view"
                             app:layout_constraintTop_toBottomOf="@id/text_daytime_condition_view" />
 
                         <TextView
                             android:id="@+id/text_nighttime_condition_view"
+                            style="@style/TextAppearance.General_grey"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="150dp"
                             android:layout_marginTop="140dp"
-                            style="@style/TextAppearance.General_grey"
                             android:text="@string/night_time"
                             android:textColor="@color/grey"
                             android:textSize="13sp"
@@ -282,10 +308,10 @@
 
                         <TextView
                             android:id="@+id/text_nightitme_condition_condition_view"
+                            style="@style/Kaka"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            style="@style/Kaka"
                             android:text="sunny and cloudy"
                             app:layout_constraintStart_toStartOf="@id/text_nighttime_condition_view"
                             app:layout_constraintTop_toBottomOf="@id/text_nighttime_condition_view" />
@@ -305,12 +331,12 @@
 
                         <TextView
                             android:id="@+id/text_humidity_percent_condition_view"
+                            style="@style/TextAppearance.General_grey"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            style="@style/TextAppearance.General_grey"
-                            android:paddingBottom="16dp"
                             android:layout_marginLeft="0dp"
+                            android:layout_marginTop="4dp"
+                            android:paddingBottom="16dp"
                             android:text="43%"
                             android:textColor="@color/black"
                             android:textSize="13sp"
@@ -319,11 +345,11 @@
 
                         <TextView
                             android:id="@+id/text_air_quality_condition_view"
+                            style="@style/TextAppearance.General_grey"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="75dp"
                             android:layout_marginTop="199dp"
-                            style="@style/TextAppearance.General_grey"
                             android:text="@string/air_quality"
                             android:textColor="@color/grey"
                             android:textSize="13sp"
@@ -331,10 +357,10 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
+                            style="@style/TextAppearance.General_black"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            style="@style/TextAppearance.General_black"
                             android:paddingBottom="16dp"
                             android:text="good"
                             android:textColor="@color/black"
@@ -344,11 +370,11 @@
 
                         <TextView
                             android:id="@+id/text_chance_of_precipitation_condition_view"
+                            style="@style/TextAppearance.General_grey"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="150dp"
                             android:layout_marginTop="199dp"
-                            style="@style/TextAppearance.General_grey"
                             android:text="@string/chance_of_precipitation"
                             android:textColor="@color/grey"
                             android:textSize="13sp"
@@ -356,11 +382,11 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
+                            style="@style/TextAppearance.General_black"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            style="@style/TextAppearance.General_black"
                             android:layout_marginLeft="0dp"
+                            android:layout_marginTop="4dp"
                             android:paddingBottom="16dp"
                             android:text="13%"
                             android:textColor="@color/black"
@@ -372,21 +398,21 @@
 
                 </androidx.cardview.widget.CardView>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/card_view_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:overScrollMode="never">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/card_view_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:overScrollMode="never">
 
-            </androidx.recyclerview.widget.RecyclerView>
+                </androidx.recyclerview.widget.RecyclerView>
 
                 <Button
                     android:id="@+id/button_edit"
-                    android:background="@drawable/round_buttoun"
                     style="@style/ButtonEdit"
-                    android:textColor="@color/black"
+                    android:background="@drawable/round_buttoun"
                     android:letterSpacing="0.1"
                     android:text="@string/edit"
+                    android:textColor="@color/black"
                     app:layout_constraintTop_toBottomOf="@id/precipitation_card_view" />
 
                 <View
@@ -394,7 +420,7 @@
                     android:layout_height="28dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/button_edit"/>
+                    app:layout_constraintTop_toBottomOf="@id/button_edit" />
 
             </LinearLayout>
 

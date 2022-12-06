@@ -1,12 +1,55 @@
 package com.sidukov.weatherapp.data.remote
 
 import android.content.Context
+import android.view.View
 import com.sidukov.weatherapp.R
+import com.sidukov.weatherapp.data.remote.api.WeatherAPI
 import com.sidukov.weatherapp.domain.Weather
 import com.sidukov.weatherapp.domain.WeatherDescription
+import com.sidukov.weatherapp.domain.daily_body.DailyForecastRequestBody
+import com.sidukov.weatherapp.domain.daily_body.ForecastBody
+import retrofit2.Retrofit
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
-class WeatherRepository(private val context: Context) {
+class WeatherRepository(
+    private val weatherApi: WeatherAPI,
+    private val context: Context
+) {
     //WeatherRepository - получает и возвращает данные
+
+    private var view: View? = null
+
+    fun balka(view :View) {
+        this.view = view
+    }
+
+    suspend fun getDailyForecast(body: DailyForecastRequestBody): ForecastBody {
+
+        val b =  weatherApi.currentDayForecast(
+            latitude =  body.latitude,
+            longitude = body.longitude,
+            hourly = body.hourly,
+            timezone = body.timezone,
+            currentWeather = body.currentWeather,
+            startDate = body.startDate.format(DateTimeFormatter.ofPattern("yyyy-mm-dd")),
+            endDate = body.endDate.format(DateTimeFormatter.ofPattern("yyyy-mm-dd"))
+        )
+
+        rainSizeList = b.hourly.rain.filter { it != 0.0 }
+        snowSizeList = b.hourly.showers.filter {  }
+
+        
+
+        val a = Weather(
+            body.startDate,
+            when(b.hourly) {
+                it.
+            }
+        )
+    }
+
     fun getForecast(): List<Weather> {
         return listOf(
             // вместо контекста передавать просто ссылку на ресурс, в твоём случае случае это просто int

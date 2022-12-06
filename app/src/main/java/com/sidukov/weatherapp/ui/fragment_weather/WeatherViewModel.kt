@@ -7,18 +7,15 @@ import com.sidukov.weatherapp.data.remote.WeatherRepository
 import com.sidukov.weatherapp.domain.WeatherDescription
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 open class WeatherViewModel(
     private val repository: WeatherRepository,
 ): ViewModel() {
-    //Поле для хранения данных о погоде, оно обновляется внутри WeatherViewModel
-    private val _weatherList = MutableStateFlow<List<Weather>>(mutableListOf())
-    //Поле для получения данных фрагментом, это для того, чтобы можно было из него только получать данные
-    val weatherList = _weatherList.asSharedFlow()
-    //viewModelScope встроен в класс ViewModel, launch запускает Корутину, привязанную к жизненному циклу vm
-    private var _cardViewList = MutableStateFlow<List<WeatherDescription>>(mutableListOf())
-    val cardViewList = _cardViewList.asSharedFlow()
+
+    private val _uiStateFlow = MutableStateFlow(UiState())
+    var uiStateFlow = _uiStateFlow.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -28,4 +25,9 @@ open class WeatherViewModel(
             _cardViewList.value = repository.getWeatherDetails()
         }
     }
+
+    data class UiState(
+        val weatherList: List<Weather> = emptyList(),
+        val weatherDescriptionList: List<WeatherDescription> = emptyList()
+    )
 }

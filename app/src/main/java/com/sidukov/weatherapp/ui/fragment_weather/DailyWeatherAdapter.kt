@@ -8,6 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.domain.Weather
+import retrofit2.Call
+import retrofit2.Response
 
 // потом потом, добавить DiffCallback или DiffUtilCallback, чтобы данные обновлялись тогда, когда нужно, это позволит избавиться от notifyDataSetChanged(),
 // который добавляет определёную сложность
@@ -24,9 +26,9 @@ class DailyWeatherAdapter(private var list: List<Weather>) :
 
     //onBindViewHolder - привязывает данные к view элементам, объявленным в ViewHolder. Эти данные были отправлены в адаптер (обычно в виде списка)
     override fun onBindViewHolder(holder: DailyWeatherViewHolder, position: Int) {
-        holder.textDailyWeather.text = list[position].day
-        holder.imageDailyWeather.setImageResource(list[position].image)
-        holder.textDayTemperatureDailyWeather.text = list[position].temperature.toString()
+        holder.textDateWeather.text = list[position].date
+        holder.imageDateWeather.setImageResource(list[position].image)
+        holder.textDateTemperatureDailyWeather.text = list[position].temperature.toString()
     }
 
     override fun getItemCount(): Int {
@@ -35,9 +37,9 @@ class DailyWeatherAdapter(private var list: List<Weather>) :
 
     //holder - содержит view элементы, представленые в xml layoutе
     class DailyWeatherViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textDailyWeather: TextView = itemView.findViewById(R.id.text_day_daily_weather)
-        val imageDailyWeather: ImageView = itemView.findViewById(R.id.image_daily_weather)
-        val textDayTemperatureDailyWeather: TextView =
+        val textDateWeather: TextView = itemView.findViewById(R.id.text_day_daily_weather)
+        val imageDateWeather: ImageView = itemView.findViewById(R.id.image_daily_weather)
+        val textDateTemperatureDailyWeather: TextView =
             itemView.findViewById(R.id.text_day_temperature_daily_weather)
     }
 

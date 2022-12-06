@@ -4,4 +4,5 @@
     <item name="text_air_quality_view" type="id"/>
     <item name="text_air_quality_card_view" type="id"/>
     <item name="precipitation_card_view" type="id"/>
+    <item name="today_weather_recycler_view" type="id" />
 </resources>

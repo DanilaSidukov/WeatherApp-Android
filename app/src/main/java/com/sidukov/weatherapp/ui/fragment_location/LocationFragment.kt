@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.remote.LocationRepository
+import com.sidukov.weatherapp.domain.Location
+import com.sidukov.weatherapp.domain.daily_body.ForecastBody
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecoration
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherFragment
 
