@@ -22,7 +22,10 @@ open class WeatherViewModel(
             _weatherList.value = repository.getForecast()
         }
         viewModelScope.launch {
-            _cardViewList.value = repository.getWeatherDetails()
+            val value = repository.getCurrentDayForecast()
+            _uiStateFlow.value = _uiStateFlow.value.copy(
+                weatherList = value
+            )
         }
     }
 

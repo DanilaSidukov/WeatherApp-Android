@@ -21,6 +21,7 @@ import com.sidukov.weatherapp.data.remote.api.APIClient
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecoration
 import com.sidukov.weatherapp.ui.fragment_location.LocationFragment
 import kotlinx.android.synthetic.main.fragment_weather.view.*
+import kotlinx.android.synthetic.main.mini_card_view_item.*
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -75,6 +76,9 @@ class WeatherFragment : Fragment() {
         //привязываем adapter к RecycleView
         dailyWeatherRecyclerView.adapter = adapterDateWeather
         dailyWeatherRecyclerView.addItemDecoration(EmptyDividerItemDecoration())
+
+        adapterDateWeather.updateList(weatherViewModel.uiStateFlow.value)
+        textView.text = weatherViewModel.uiStateFlow.value.weatherList[0].date
 
         todayWeatherRecyclerView = view.findViewById(R.id.today_weather_recycler_view)
         todayWeatherRecyclerView.adapter = adapterDateWeather

@@ -1,31 +1,24 @@
 package com.sidukov.weatherapp.data.remote
 
 import android.content.Context
-import android.view.View
+import android.location.Address
+import android.location.Geocoder
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.remote.api.WeatherAPI
 import com.sidukov.weatherapp.domain.Weather
 import com.sidukov.weatherapp.domain.WeatherDescription
+import com.sidukov.weatherapp.domain.daily_body.CurrentWeather
 import com.sidukov.weatherapp.domain.daily_body.DailyForecastRequestBody
-import com.sidukov.weatherapp.domain.daily_body.ForecastBody
-import retrofit2.Retrofit
-import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class WeatherRepository(
     private val weatherApi: WeatherAPI,
     private val context: Context
 ) {
-    //WeatherRepository - получает и возвращает данные
+    //WeatherRepository - получает и возвращает данныеz
 
-    private var view: View? = null
-
-    fun balka(view :View) {
-        this.view = view
-    }
-
-    suspend fun getDailyForecast(body: DailyForecastRequestBody): ForecastBody {
+    suspend fun getCurrentDayForecast(body: DailyForecastRequestBody): Weather {
 
         val b =  weatherApi.currentDayForecast(
             latitude =  body.latitude,
@@ -37,17 +30,46 @@ class WeatherRepository(
             endDate = body.endDate.format(DateTimeFormatter.ofPattern("yyyy-mm-dd"))
         )
 
-        rainSizeList = b.hourly.rain.filter { it != 0.0 }
-        snowSizeList = b.hourly.showers.filter {  }
+        val position: Int = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        val rainSizeList = b.hourly.rain
+        val snowfallSizeList = b.hourly.snowfall
+        val cloudList = b.hourly.cloudCover
+        val headerImage = getImageByData(rainSizeList[position], snowfallSizeList[position], cloudList[position])
 
-        
+        val location = getAddress(b.latitude, b.longitude)
+        val currentTemperature = b.currentWeather.temperature
 
-        val a = Weather(
-            body.startDate,
-            when(b.hourly) {
-                it.
-            }
+        return Weather(
+            date = location,
+            image = headerImage,
+            temperature = currentTemperature.toInt()
         )
+
+    }
+
+    private fun getImageByData(rainValue: Float, snowValue: Float, cloudCover: Float): Int{
+        var imageId: Int = 0
+        val precipitationCloud: Float = 40.0f
+        val precipitationValue: Float = 0.4f
+        imageId = if (rainValue >= precipitationValue){
+            R.drawable.ic_sky_rainy_light
+        } else if (snowValue >= precipitationValue && cloudCover >= precipitationCloud){
+            R.drawable.ic_sky_snow_light
+        } else if (snowValue >= precipitationValue){
+            R.drawable.ic_snowflake
+        } else if (cloudCover >= precipitationCloud){
+            R.drawable.ic_sky_light
+        } else {
+            R.drawable.ic_sun
+        }
+        return imageId
+    }
+
+    private var geocoder: Geocoder = Geocoder(context, Locale.getDefault())
+
+    private fun getAddress(latitude: Float, longitude: Float): String{
+        val address = geocoder.getFromLocation(latitude.toDouble(), longitude.toDouble(), 1)
+        return address?.get(0)?.locality + ", " + address?.get(0)?.countryName
     }
 
     fun getForecast(): List<Weather> {
@@ -95,7 +117,7 @@ class WeatherRepository(
                 R.string.precipitation,
                 "3",
                 R.id.progress_bar,
-                R.drawable.ic_sky_rainy
+                R.drawable.ic_sky_rainy_dark
             )
         )
     }
