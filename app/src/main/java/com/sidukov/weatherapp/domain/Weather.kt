@@ -5,7 +5,8 @@ package com.sidukov.weatherapp.domain
 data class Weather(
     val date: String,
     val image: Int,
-    val temperature: Int
+    val temperature: Int,
+    val humidity: Float
 )
 
 

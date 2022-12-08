@@ -18,7 +18,7 @@ class WeatherRepository(
 ) {
     //WeatherRepository - получает и возвращает данныеz
 
-    suspend fun getCurrentDayForecast(body: DailyForecastRequestBody): Weather {
+    suspend fun getCurrentDayForecast(body: DailyForecastRequestBody): List <Weather> {
 
         val b =  weatherApi.currentDayForecast(
             latitude =  body.latitude,
@@ -34,15 +34,19 @@ class WeatherRepository(
         val rainSizeList = b.hourly.rain
         val snowfallSizeList = b.hourly.snowfall
         val cloudList = b.hourly.cloudCover
+        val humidity = b.hourly.humidity[position]
         val headerImage = getImageByData(rainSizeList[position], snowfallSizeList[position], cloudList[position])
 
         val location = getAddress(b.latitude, b.longitude)
         val currentTemperature = b.currentWeather.temperature
 
-        return Weather(
+        return listOf(
+            Weather(
             date = location,
             image = headerImage,
-            temperature = currentTemperature.toInt()
+            temperature = currentTemperature.toInt(),
+            humidity = humidity
+            )
         )
 
     }

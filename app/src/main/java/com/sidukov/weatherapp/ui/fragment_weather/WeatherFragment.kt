@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -34,7 +35,11 @@ class WeatherFragment : Fragment() {
 
     private lateinit var todayWeatherRecyclerView: RecyclerView
 
+    private lateinit var locationName: TextView
+    private lateinit var currentWeatherImage: ImageView
     private lateinit var currentDate: TextView
+    private lateinit var currentTemperature: TextView
+    private lateinit var currentHumidity: TextView
 
     private lateinit var buttonEdit: Button
 
@@ -45,6 +50,8 @@ class WeatherFragment : Fragment() {
 
     private val adapterMiniCardView = WeatherDescriptionCardAdapter(emptyList())
     private lateinit var cardViewRecyclerView: RecyclerView
+
+
 
     //Создётся менеджер Корутины (scope), CoroutineScope возвращает Корутину, Dispatchers.Main - область, в которой будет работать Корутина
     //Main обозначает, что будет выполняться это в главном потоке (где рисуются элементы, запускаются анимации..)
@@ -99,10 +106,18 @@ class WeatherFragment : Fragment() {
         cardViewRecyclerView.adapter = adapterMiniCardView
         cardViewRecyclerView.addItemDecoration(GridLayoutItemDecoration(16))
 
+        locationName = view.findViewById(R.id.text_location_weather)
+        currentWeatherImage = view.findViewById(R.id.image_main)
+        currentTemperature = view.findViewById(R.id.text_current_temperature_weather)
+        currentHumidity = view.findViewById(R.id.text_humidity_percent_condition_view)
+
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            weatherViewModel.weatherList.collect {
-                vall bo
-                adapterDateWeather.updateList(it)
+            weatherViewModel.uiStateFlow.collect {
+                adapterDateWeather.updateList(it.weatherList)
+                locationName.text = weatherViewModel.uiStateFlow.value.weatherList[0].date
+                currentWeatherImage.setImageResource(weatherViewModel.uiStateFlow.value.weatherList[0].image)
+                currentTemperature.text = weatherViewModel.uiStateFlow.value.weatherList[0].temperature.toString()
+                currentHumidity.text = weatherViewModel.uiStateFlow.value.weatherList[0].humidity.toString()
             }
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -111,7 +126,7 @@ class WeatherFragment : Fragment() {
             }
         }
 
-        val animatedImage: View = view.findViewById(R.id.imageSky)
+        val animatedImage: View = view.findViewById(R.id.image_secondary)
         //Вызываю класс, который отвечает за анимацию заглавного изображения
         animatedImage.viewTreeObserver.addOnGlobalLayoutListener {
             if (!this::animation.isInitialized) {
@@ -127,6 +142,7 @@ class WeatherFragment : Fragment() {
             transaction.replace(R.id.container, locationFragment)
             transaction.commit()
         }
+
 
         currentDate = view.findViewById(R.id.text_datetime_weather)
         currentDate.text = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM"))

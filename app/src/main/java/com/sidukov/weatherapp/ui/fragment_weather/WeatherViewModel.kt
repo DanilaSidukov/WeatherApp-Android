@@ -19,7 +19,10 @@ open class WeatherViewModel(
 
     init {
         viewModelScope.launch {
-            _weatherList.value = repository.getForecast()
+            val value = repository.getForecast()
+            _uiStateFlow.value = _uiStateFlow.value.copy(
+                weatherDescriptionList = value
+            )
         }
         viewModelScope.launch {
             val value = repository.getCurrentDayForecast()
