@@ -1,6 +1,8 @@
 package com.sidukov.weatherapp.data.remote.api
 
 import com.sidukov.weatherapp.domain.daily_body.ForecastBody
+import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -10,7 +12,7 @@ interface WeatherAPI {
     suspend fun currentDayForecast(
         @Query("latitude") latitude: Float,
         @Query("longitude") longitude: Float,
-        @Query("hourly") hourly: String = "temperature_2m,relativehumidity_2m,rain,showers,snowfall",
+        @Query("hourly", encoded = true) hourly: String = "temperature_2m,relativehumidity_2m,rain,showers,snowfall",
         @Query("current_weather") currentWeather: Boolean = true,
         // timezone values from here https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
         @Query("timezone") timezone: String,

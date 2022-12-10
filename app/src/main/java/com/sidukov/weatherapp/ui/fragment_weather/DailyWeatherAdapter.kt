@@ -43,6 +43,7 @@ class DailyWeatherAdapter(private var list: List<Weather>) :
             itemView.findViewById(R.id.text_day_temperature_daily_weather)
     }
 
+    // эта функция принимает лист, который затем назначает внутренней переменной list
     fun updateList(newList: List<Weather>) {
         list = newList
         notifyDataSetChanged()

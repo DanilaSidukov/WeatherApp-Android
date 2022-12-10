@@ -6,7 +6,7 @@ data class Weather(
     val date: String,
     val image: Int,
     val temperature: Int,
-    val humidity: Float
+    val humidity: Int
 )
 
 

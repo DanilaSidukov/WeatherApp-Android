@@ -5,13 +5,23 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object APIClient {
 
-    private const val BASE_URL = "api.open-meteo.com"
+    private const val BASE_URL = "https://api.open-meteo.com"
 
-    private var retrofit: Retrofit = Retrofit.Builder()
+    private var retrofitBase: Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    var weatherApiClient: WeatherAPI = retrofit.create(WeatherAPI::class.java)
+    var weatherApiClient: WeatherAPI = retrofitBase.create(WeatherAPI::class.java)
+
+    private const val GEO_URL = "https://api.opencagedata.com"
+
+    private var retrofitGeo: Retrofit = Retrofit.Builder()
+        .baseUrl(GEO_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    var geoApiClient: GeoAPI = retrofitGeo.create(GeoAPI::class.java)
+
 
 }

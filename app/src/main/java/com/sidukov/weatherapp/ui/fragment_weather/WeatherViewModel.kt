@@ -1,14 +1,17 @@
 package com.sidukov.weatherapp.ui.fragment_weather
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sidukov.weatherapp.domain.Weather
 import com.sidukov.weatherapp.data.remote.WeatherRepository
 import com.sidukov.weatherapp.domain.WeatherDescription
+import com.sidukov.weatherapp.domain.daily_body.DailyForecastRequestBody
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 open class WeatherViewModel(
     private val repository: WeatherRepository,
@@ -18,12 +21,12 @@ open class WeatherViewModel(
     var uiStateFlow = _uiStateFlow.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            val value = repository.getForecast()
-            _uiStateFlow.value = _uiStateFlow.value.copy(
-                weatherDescriptionList = value
-            )
-        }
+//        viewModelScope.launch {
+//            val value = repository.getForecast()
+//            _uiStateFlow.value = _uiStateFlow.value.copy(
+//                weatherDescriptionList = value
+//            )
+//        }
         viewModelScope.launch {
             val value = repository.getCurrentDayForecast()
             _uiStateFlow.value = _uiStateFlow.value.copy(

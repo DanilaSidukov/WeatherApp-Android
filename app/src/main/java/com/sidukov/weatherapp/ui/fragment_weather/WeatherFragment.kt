@@ -46,12 +46,9 @@ class WeatherFragment : Fragment() {
     //Объявляю о том, что будет vm
     private lateinit var weatherViewModel: WeatherViewModel
     private lateinit var animation: HeaderImageAnimation
-    private lateinit var nestedScrollView: CustomScrollView
 
     private val adapterMiniCardView = WeatherDescriptionCardAdapter(emptyList())
     private lateinit var cardViewRecyclerView: RecyclerView
-
-
 
     //Создётся менеджер Корутины (scope), CoroutineScope возвращает Корутину, Dispatchers.Main - область, в которой будет работать Корутина
     //Main обозначает, что будет выполняться это в главном потоке (где рисуются элементы, запускаются анимации..)
@@ -66,7 +63,6 @@ class WeatherFragment : Fragment() {
     }
 
     //Вызывается после создания фрагмента (View)
-    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -75,7 +71,7 @@ class WeatherFragment : Fragment() {
 
         //инициализация vm непосредственно
         weatherViewModel = WeatherViewModel(
-            WeatherRepository(APIClient.weatherApiClient)
+            WeatherRepository(APIClient.weatherApiClient, requireContext(), APIClient.geoApiClient)
         )
         //запускается Корутина с помощью launch, scope.launch выполняется асинхронно относительно общего порядка выполнения кода
         //В collect мы указываем что делать с теми данными, которые придут. Выполняется collect каждый раз, когда в weatherList появляются новые данные
@@ -83,9 +79,6 @@ class WeatherFragment : Fragment() {
         //привязываем adapter к RecycleView
         dailyWeatherRecyclerView.adapter = adapterDateWeather
         dailyWeatherRecyclerView.addItemDecoration(EmptyDividerItemDecoration())
-
-        adapterDateWeather.updateList(weatherViewModel.uiStateFlow.value)
-        textView.text = weatherViewModel.uiStateFlow.value.weatherList[0].date
 
         todayWeatherRecyclerView = view.findViewById(R.id.today_weather_recycler_view)
         todayWeatherRecyclerView.adapter = adapterDateWeather
@@ -112,18 +105,19 @@ class WeatherFragment : Fragment() {
         currentHumidity = view.findViewById(R.id.text_humidity_percent_condition_view)
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            weatherViewModel.uiStateFlow.collect {
-                adapterDateWeather.updateList(it.weatherList)
-                locationName.text = weatherViewModel.uiStateFlow.value.weatherList[0].date
-                currentWeatherImage.setImageResource(weatherViewModel.uiStateFlow.value.weatherList[0].image)
-                currentTemperature.text = weatherViewModel.uiStateFlow.value.weatherList[0].temperature.toString()
-                currentHumidity.text = weatherViewModel.uiStateFlow.value.weatherList[0].humidity.toString()
+            weatherViewModel.uiStateFlow.collect { uiState ->
+                if (uiState.weatherList.isEmpty()) return@collect
+                adapterDateWeather.updateList(uiState.weatherList)
+                locationName.text = uiState.weatherList[0].date
+                currentWeatherImage.setImageResource(uiState.weatherList[0].image)
+                currentTemperature.text = uiState.weatherList[0].temperature.toString()
+                currentHumidity.text = uiState.weatherList[0].humidity.toString()
             }
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            weatherViewModel.cardViewList.collect {
-                adapterMiniCardView.updateList(it)
-            }
+//            weatherViewModel.cardViewList.collect {
+//                adapterMiniCardView.updateList(it)
+//            }
         }
 
         val animatedImage: View = view.findViewById(R.id.image_secondary)

@@ -7,12 +7,6 @@ data class CurrentWeather(
     val temperature: Float,
     @SerializedName("time")
     val time: String,
-    @SerializedName("weathercode")
-    val weatherCode: Int,
-    @SerializedName("winddirection")
-    val windDirection: Float,
-    @SerializedName("windspeed")
-    val windSpeed: Float,
     val date: String,
     val image: Int,
 )
