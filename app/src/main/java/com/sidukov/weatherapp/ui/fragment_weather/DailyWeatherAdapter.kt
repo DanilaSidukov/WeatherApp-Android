@@ -27,7 +27,7 @@ class DailyWeatherAdapter(private var list: List<Weather>) :
     //onBindViewHolder - привязывает данные к view элементам, объявленным в ViewHolder. Эти данные были отправлены в адаптер (обычно в виде списка)
     override fun onBindViewHolder(holder: DailyWeatherViewHolder, position: Int) {
         holder.textDateWeather.text = list[position].date
-        holder.imageDateWeather.setImageResource(list[position].image)
+        holder.imageDateWeather.setImageResource(list[position].imageMain.second)
         holder.textDateTemperatureDailyWeather.text = list[position].temperature.toString()
     }
 

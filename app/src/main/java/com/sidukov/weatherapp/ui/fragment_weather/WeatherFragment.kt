@@ -36,7 +36,8 @@ class WeatherFragment : Fragment() {
     private lateinit var todayWeatherRecyclerView: RecyclerView
 
     private lateinit var locationName: TextView
-    private lateinit var currentWeatherImage: ImageView
+    private lateinit var currentWeatherImageMain: ImageView
+    private lateinit var currentWeatherMovingImage: ImageView
     private lateinit var currentDate: TextView
     private lateinit var currentTemperature: TextView
     private lateinit var currentHumidity: TextView
@@ -100,16 +101,24 @@ class WeatherFragment : Fragment() {
         cardViewRecyclerView.addItemDecoration(GridLayoutItemDecoration(16))
 
         locationName = view.findViewById(R.id.text_location_weather)
-        currentWeatherImage = view.findViewById(R.id.image_main)
+        currentWeatherImageMain = view.findViewById(R.id.image_main)
+        currentWeatherMovingImage = view.findViewById(R.id.image_secondary)
         currentTemperature = view.findViewById(R.id.text_current_temperature_weather)
         currentHumidity = view.findViewById(R.id.text_humidity_percent_condition_view)
+
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             weatherViewModel.uiStateFlow.collect { uiState ->
                 if (uiState.weatherList.isEmpty()) return@collect
                 adapterDateWeather.updateList(uiState.weatherList)
                 locationName.text = uiState.weatherList[0].date
-                currentWeatherImage.setImageResource(uiState.weatherList[0].image)
+                if (uiState.weatherList[0].imageMain.first == uiState.weatherList[0].imageMain.second){
+                    currentWeatherImageMain.setImageResource(0)
+                    currentWeatherMovingImage.setImageResource(uiState.weatherList[0].imageMain.second)
+                } else{
+                    currentWeatherImageMain.setImageResource(uiState.weatherList[0].imageMain.first)
+                    currentWeatherMovingImage.setImageResource(uiState.weatherList[0].imageMain.second)
+                }
                 currentTemperature.text = uiState.weatherList[0].temperature.toString()
                 currentHumidity.text = uiState.weatherList[0].humidity.toString()
             }
@@ -120,7 +129,7 @@ class WeatherFragment : Fragment() {
 //            }
         }
 
-        val animatedImage: View = view.findViewById(R.id.image_secondary)
+        val animatedImage: View = currentWeatherMovingImage
         //Вызываю класс, который отвечает за анимацию заглавного изображения
         animatedImage.viewTreeObserver.addOnGlobalLayoutListener {
             if (!this::animation.isInitialized) {

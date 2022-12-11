@@ -57,33 +57,32 @@ class WeatherRepository(
         val humidity = b.hourly.humidity[position]
         val headerImage =
             getImageByData(rainSizeList[position], snowfallSizeList[position], cloudList[position], b.currentWeather.temperature)
-
         val location = getAddress(b.latitude, b.longitude)
         val currentTemperature = b.currentWeather.temperature
 
         return listOf(
             Weather(
                 date = location,
-                image = headerImage,
+                imageMain = headerImage,
                 temperature = currentTemperature.toInt(),
                 humidity = humidity.toInt()
             )
         )
     }
 
-    private fun getImageByData(rainValue: Float, snowValue: Float, cloudCover: Float, temperature: Float): Int {
-        var imageId: Int = 0
+    private fun getImageByData(rainValue: Float, snowValue: Float, cloudCover: Float, temperature: Float): Pair<Int, Int> {
+        val imageId : Pair <Int, Int> = Pair(0, 1)
         val precipitationCloud: Float = 40.0f
         val precipitationValue: Float = 0.4f
         val temperatureValue: Float = -3f
-        imageId = if (rainValue >= precipitationValue) {
-            return R.drawable.ic_sky_rainy_light
-        } else if (snowValue >= precipitationValue && cloudCover >= precipitationCloud) {
-            return R.drawable.ic_sky_snow_light
-        } else if (snowValue >= precipitationValue && temperatureValue > temperature || temperatureValue > temperature) {
-            return R.drawable.ic_snowflake
-        } else if (cloudCover >= precipitationCloud) {
-            return R.drawable.ic_sky_light
+        if (rainValue >= precipitationValue && rainValue > snowValue && cloudCover >= precipitationCloud) {
+            return imageId.copy(first = R.drawable.ic_sky_rainy_light, second = R.drawable.ic_sky_rainy_light)
+        } else if (snowValue >= precipitationValue && snowValue > rainValue && cloudCover >= precipitationCloud) {
+            return imageId.copy(first = R.drawable.ic_sky_snow_light, second = R.drawable.ic_sky_snow_light)
+        } else if (temperature < temperatureValue && snowValue < precipitationValue) {
+            return imageId.copy(first = R.drawable.ic_snowflake, second = R.drawable.ic_snowflake)
+        } else if (snowValue < precipitationValue && rainValue < precipitationValue && temperature > temperatureValue && cloudCover > precipitationCloud) {
+            return imageId.copy(first = R.drawable.ic_sun, second = R.drawable.ic_sky_light)
         } else {
             R.drawable.ic_sun
         }
