@@ -1,6 +1,7 @@
 package com.sidukov.weatherapp.ui.fragment_weather
 
 import android.annotation.SuppressLint
+import android.location.Geocoder
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,6 +27,7 @@ import kotlinx.android.synthetic.main.mini_card_view_item.*
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class WeatherFragment : Fragment() {
 
@@ -41,6 +43,7 @@ class WeatherFragment : Fragment() {
     private lateinit var currentDate: TextView
     private lateinit var currentTemperature: TextView
     private lateinit var currentHumidity: TextView
+    private lateinit var todayDescription: TextView
 
     private lateinit var buttonEdit: Button
 
@@ -64,7 +67,7 @@ class WeatherFragment : Fragment() {
     }
 
     //Вызывается после создания фрагмента (View)
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -72,7 +75,7 @@ class WeatherFragment : Fragment() {
 
         //инициализация vm непосредственно
         weatherViewModel = WeatherViewModel(
-            WeatherRepository(APIClient.weatherApiClient, requireContext(), APIClient.geoApiClient)
+            WeatherRepository(APIClient.weatherApiClient, Geocoder(requireContext()), APIClient.geoApiClient)
         )
         //запускается Корутина с помощью launch, scope.launch выполняется асинхронно относительно общего порядка выполнения кода
         //В collect мы указываем что делать с теми данными, которые придут. Выполняется collect каждый раз, когда в weatherList появляются новые данные
@@ -105,7 +108,7 @@ class WeatherFragment : Fragment() {
         currentWeatherMovingImage = view.findViewById(R.id.image_secondary)
         currentTemperature = view.findViewById(R.id.text_current_temperature_weather)
         currentHumidity = view.findViewById(R.id.text_humidity_percent_condition_view)
-
+        todayDescription = view.findViewById(R.id.weather_conditions_description)
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             weatherViewModel.uiStateFlow.collect { uiState ->
@@ -113,14 +116,15 @@ class WeatherFragment : Fragment() {
                 adapterDateWeather.updateList(uiState.weatherList)
                 locationName.text = uiState.weatherList[0].date
                 if (uiState.weatherList[0].imageMain.first == uiState.weatherList[0].imageMain.second){
-                    currentWeatherImageMain.setImageResource(0)
-                    currentWeatherMovingImage.setImageResource(uiState.weatherList[0].imageMain.second)
+                    currentWeatherImageMain.setImageResource(uiState.weatherList[0].imageMain.second)
+                    currentWeatherMovingImage.setImageResource(0)
                 } else{
                     currentWeatherImageMain.setImageResource(uiState.weatherList[0].imageMain.first)
                     currentWeatherMovingImage.setImageResource(uiState.weatherList[0].imageMain.second)
                 }
                 currentTemperature.text = uiState.weatherList[0].temperature.toString()
-                currentHumidity.text = uiState.weatherList[0].humidity.toString()
+                currentHumidity.text = "${uiState.weatherList[0].humidity} %"
+                todayDescription.text = getString(uiState.weatherList[0].description)
             }
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -129,7 +133,7 @@ class WeatherFragment : Fragment() {
 //            }
         }
 
-        val animatedImage: View = currentWeatherMovingImage
+        val animatedImage = currentWeatherMovingImage
         //Вызываю класс, который отвечает за анимацию заглавного изображения
         animatedImage.viewTreeObserver.addOnGlobalLayoutListener {
             if (!this::animation.isInitialized) {
@@ -146,9 +150,9 @@ class WeatherFragment : Fragment() {
             transaction.commit()
         }
 
-
         currentDate = view.findViewById(R.id.text_datetime_weather)
         currentDate.text = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM"))
+
     }
 }
 

@@ -37,4 +37,12 @@
     <string name="add">+ Add</string>
     <string name="today_s_forecast">today\'s forecast</string>
 
+<!-- set weather condition description -->
+    <string name="rainy">It may rain during the hour, don\'t forget your umbrella.</string>
+    <string name="snowfall">Snowfall is possible within an hour</string>
+    <string name="cold">It\'s cold outside, so dress warmer.</string>
+    <string name="cloud_cover">Now the weather is cloudy, there will be no precipitation</string>
+    <string name="sunny">It\'s sunny outside, enjoy the weather</string>
+    <string name="error">Can\'t provide a likely prognosis at this time </string>
+    
 </resources>

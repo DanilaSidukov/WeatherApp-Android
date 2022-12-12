@@ -28,6 +28,7 @@
             android:textColor="@color/black" />
 
         <ImageView
+            app:layout_constraintTop_toBottomOf="@id/text_location_weather"
             android:id="@+id/image_main"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -133,6 +134,7 @@
                         android:textColor="@color/color_weather_condition" />
 
                     <TextView
+                        android:id="@+id/weather_conditions_description"
                         style="@style/TextAppearance.Weather_condition"
                         android:layout_width="343dp"
                         android:layout_height="wrap_content"

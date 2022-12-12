@@ -12,25 +12,21 @@ import java.util.*
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
+enum class DescriptionCondition(val value: Int) {
+    Cold(R.string.cold),
+    Sunny(R.string.sunny),
+    Rainy(R.string.rainy),
+    Error(R.string.error),
+    Snowfall(R.string.snowfall),
+    CloudCover(R.string.cloud_cover)
+}
+
 class ExampleUnitTest {
     @Test
     fun openLink() {
 
-//
-//        val a: Response<String> = APIClient.geoApiClient.geoData(city = "New York, USA")
-//        println(a.raw())
-//
-//        APIClient.geoApiClient.geoData(city = "New York, USA").enqueue(object : Callback<String> {
-//            override fun onResponse(call: Call<String>, response: Response<String>) {
-//                println("SDFSDFSDFDF")
-//                println(response.body())
-//            }
-//
-//            override fun onFailure(call: Call<String>, t: Throwable) {
-//                println("SDFRWWDGSDGSDF")
-//                println(t)
-//            }
-//        })
+        val a = DescriptionCondition.Cold
+        println(a.value)
 
     }
 }

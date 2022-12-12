@@ -10,6 +10,8 @@ import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.domain.Weather
 import retrofit2.Call
 import retrofit2.Response
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 // потом потом, добавить DiffCallback или DiffUtilCallback, чтобы данные обновлялись тогда, когда нужно, это позволит избавиться от notifyDataSetChanged(),
 // который добавляет определёную сложность
@@ -26,7 +28,7 @@ class DailyWeatherAdapter(private var list: List<Weather>) :
 
     //onBindViewHolder - привязывает данные к view элементам, объявленным в ViewHolder. Эти данные были отправлены в адаптер (обычно в виде списка)
     override fun onBindViewHolder(holder: DailyWeatherViewHolder, position: Int) {
-        holder.textDateWeather.text = list[position].date
+        holder.textDateWeather.text = LocalDate.now().dayOfWeek.name
         holder.imageDateWeather.setImageResource(list[position].imageMain.second)
         holder.textDateTemperatureDailyWeather.text = list[position].temperature.toString()
     }
