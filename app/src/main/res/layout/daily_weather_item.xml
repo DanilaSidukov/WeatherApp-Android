@@ -8,7 +8,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/text_day_daily_weather"
+        android:id="@+id/text_date_weather"
         android:layout_width="45dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/staatliches_regular"
@@ -18,7 +18,7 @@
         android:textSize="11sp" />
 
     <ImageView
-        android:id="@+id/image_daily_weather"
+        android:id="@+id/image_date_weather"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginTop="8dp"
@@ -29,7 +29,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/text_day_temperature_daily_weather"
+        android:id="@+id/text_temperature_date_weather"
         android:layout_width="45dp"
         android:layout_height="24dp"
         android:layout_marginTop="4dp"

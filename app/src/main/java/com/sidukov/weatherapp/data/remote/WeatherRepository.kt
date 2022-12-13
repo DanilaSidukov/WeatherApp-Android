@@ -66,25 +66,26 @@ class WeatherRepository(
         val location = getAddress(b.latitude, b.longitude)
         val currentTemperature = b.currentWeather.temperature
 
-        return (0..24).map { i ->
+        return (0..23).map { i ->
             Weather(
                 i.toString(),
                 getImageByData(rainSizeList[i], snowfallSizeList[i], cloudList[i], b.hourly.temperature[i]),
                 b.hourly.temperature[i].toInt(),
-                humidity
+                b.hourly.humidity[i].toInt(),
+                currentCondition.value
             )
         }
 
         // возвращаем список из одного элемента, мы этом элементе данные только по текущему часу
-        return listOf(
-            Weather(
-                date = location,
-                imageMain = headerImage,
-                temperature = currentTemperature.toInt(),
-                humidity = humidity.toInt(),
-                description = currentCondition.value
-            )
-        )
+//        return listOf(
+//            Weather(
+//                date = location,
+//                imageMain = headerImage,
+//                temperature = currentTemperature.toInt(),
+//                humidity = humidity.toInt(),
+//                description = currentCondition.value
+//            )
+//        )
     }
 
     private fun getImageByData(rainValue: Float, snowValue: Float, cloudCover: Float, temperature: Float): Pair<Int, Int> {

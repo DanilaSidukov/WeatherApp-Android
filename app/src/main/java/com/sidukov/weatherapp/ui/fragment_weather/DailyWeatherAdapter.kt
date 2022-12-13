@@ -8,10 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.domain.Weather
-import retrofit2.Call
-import retrofit2.Response
+import kotlinx.coroutines.flow.merge
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 // потом потом, добавить DiffCallback или DiffUtilCallback, чтобы данные обновлялись тогда, когда нужно, это позволит избавиться от notifyDataSetChanged(),
 // который добавляет определёную сложность
@@ -39,15 +37,19 @@ class DailyWeatherAdapter(private var list: List<Weather>) :
 
     //holder - содержит view элементы, представленые в xml layoutе
     class DailyWeatherViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textDateWeather: TextView = itemView.findViewById(R.id.text_day_daily_weather)
-        val imageDateWeather: ImageView = itemView.findViewById(R.id.image_daily_weather)
+        val textDateWeather: TextView = itemView.findViewById(R.id.text_date_weather)
+        val imageDateWeather: ImageView = itemView.findViewById(R.id.image_date_weather)
         val textDateTemperatureDailyWeather: TextView =
-            itemView.findViewById(R.id.text_day_temperature_daily_weather)
+            itemView.findViewById(R.id.text_temperature_date_weather)
     }
 
     // эта функция принимает лист, который затем назначает внутренней переменной list
     fun updateList(newList: List<Weather>) {
         list = newList
+        notifyDataSetChanged()
+    }
+    fun addList(newList: List<Weather>) : List<Weather>{
+        return newList.plus(newList)
         notifyDataSetChanged()
     }
 }
