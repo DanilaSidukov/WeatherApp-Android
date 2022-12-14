@@ -28,6 +28,8 @@ class WeatherRepository(
         val geocodingData = geoAPI.geoData(
             city = "Yoshkar-Ola, Russia".htmlEncode()
         )
+
+
         // Это мы создаём объект с данными, которые передадим в API запрос
         val requestBody = DailyForecastRequestBody(
             geocodingData.results[0].geometry.latitude,
@@ -66,9 +68,10 @@ class WeatherRepository(
         val location = getAddress(b.latitude, b.longitude)
         val currentTemperature = b.currentWeather.temperature
 
+
         return (0..23).map { i ->
             Weather(
-                i.toString(),
+                location,
                 getImageByData(rainSizeList[i], snowfallSizeList[i], cloudList[i], b.hourly.temperature[i]),
                 b.hourly.temperature[i].toInt(),
                 b.hourly.humidity[i].toInt(),

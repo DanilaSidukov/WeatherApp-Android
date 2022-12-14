@@ -24,16 +24,19 @@ import com.sidukov.weatherapp.ui.fragment_location.LocationFragment
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class WeatherFragment : Fragment() {
 
     private lateinit var dailyWeatherRecyclerView: RecyclerView
 
     //adapter привязывается к RecyclerView, он содержит в себе инфу об элементах в списке RecyclerView
-    private val adapterDateWeather = DailyWeatherAdapter(emptyList())
+    private val adapterCurrentWeather = DailyWeatherAdapter(emptyList())
+
+    private val adapterHourlyWeather = DailyWeatherAdapter(emptyList())
 
     private lateinit var todayWeatherRecyclerView: RecyclerView
+
+    private lateinit var tempList: List <Weather>
 
     private lateinit var locationName: TextView
     private lateinit var currentWeatherImageMain: ImageView
@@ -44,6 +47,7 @@ class WeatherFragment : Fragment() {
     private lateinit var todayDescription: TextView
 
     var image: Pair<Int, Int> = Pair(0, 0)
+    var collectImage: Pair<Int, Int> = Pair(0, 0)
 
     private lateinit var buttonEdit: Button
 
@@ -85,11 +89,11 @@ class WeatherFragment : Fragment() {
         //В collect мы указываем что делать с теми данными, которые придут. Выполняется collect каждый раз, когда в weatherList появляются новые данные
         dailyWeatherRecyclerView = view.findViewById(R.id.recycler_view_weather)
         //привязываем adapter к RecycleView
-        dailyWeatherRecyclerView.adapter = adapterDateWeather
+        dailyWeatherRecyclerView.adapter = adapterCurrentWeather
         dailyWeatherRecyclerView.addItemDecoration(EmptyDividerItemDecoration())
 
         todayWeatherRecyclerView = view.findViewById(R.id.today_weather_recycler_view)
-        todayWeatherRecyclerView.adapter = adapterDateWeather
+        todayWeatherRecyclerView.adapter = adapterHourlyWeather
         todayWeatherRecyclerView.addItemDecoration(EmptyDividerItemDecoration())
 
         OverScrollDecoratorHelper.setUpOverScroll(
@@ -114,45 +118,47 @@ class WeatherFragment : Fragment() {
         currentHumidity = view.findViewById(R.id.text_humidity_percent_condition_view)
         todayDescription = view.findViewById(R.id.weather_conditions_description)
 
-        val index: Int = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        val index: Int = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH")).toInt()
+        println("INDEX HERE - $index")
 
-        val transparentImage = R.drawable.ic_sky_with_sun_light
+        var flagWeatherList = false
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             weatherViewModel.uiStateFlow.collect { uiState ->
                 if (uiState.weatherList.isEmpty()) return@collect
-                adapterDateWeather.updateList(uiState.weatherList)
+                adapterHourlyWeather.updateList(uiState.weatherList)
                 locationName.text = uiState.weatherList[0].date
-                if (uiState.weatherList[0].imageMain.first == uiState.weatherList[0].imageMain.second) {
-                    currentWeatherImageMain.setImageResource(uiState.weatherList[0].imageMain.second)
+                if (uiState.weatherList[index].imageMain.first == uiState.weatherList[index].imageMain.second) {
+                    println("POSITION = $index")
+                    currentWeatherImageMain.setImageResource(uiState.weatherList[index].imageMain.second)
                     currentWeatherMovingImage.setImageResource(0)
                 } else {
-                    currentWeatherImageMain.setImageResource(uiState.weatherList[0].imageMain.first)
-                    currentWeatherMovingImage.setImageResource(uiState.weatherList[0].imageMain.second)
+                    currentWeatherImageMain.setImageResource(uiState.weatherList[index].imageMain.first)
+                    currentWeatherMovingImage.setImageResource(uiState.weatherList[index].imageMain.second)
                 }
-                currentTemperature.text = uiState.weatherList[0].temperature.toString()
-                currentHumidity.text = "${uiState.weatherList[0].humidity} %"
-                todayDescription.text = getString(uiState.weatherList[0].description)
+                currentTemperature.text = uiState.weatherList[index].temperature.toString()
+                currentHumidity.text = "${uiState.weatherList[index].humidity} %"
+                todayDescription.text = getString(uiState.weatherList[index].description)
 
                 (index..23).map { index ->
                     println("IT IS = F L A G = $index")
                     val hour = if (index < 10) "0$index"
                     else index.toString()
 
-                    if (uiState.weatherList[0].imageMain.first == uiState.weatherList[0].imageMain.second) {
-                        image.copy(uiState.weatherList[0].imageMain.second, 0)
+                    collectImage = if (uiState.weatherList[index].imageMain.first == uiState.weatherList[index].imageMain.second) {
+                        image.copy(0 , uiState.weatherList[index].imageMain.first)
                     } else {
-                        image.copy(first = 0, second = transparentImage)
+                        image.copy(uiState.weatherList[index].imageMain.first, uiState.weatherList[index].imageMain.second)
                     }
 
                     val hourlyItem = Weather(
                         hour,
-                        image,
+                        collectImage,
                         uiState.weatherList[index].temperature,
                         humidity = 0,
                         description = 0
                     )
-                    adapterDateWeather.addList(listOf(hourlyItem))
+                    tempList = listOf(hourlyItem)
                 }
             }
         }
