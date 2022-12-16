@@ -7,19 +7,20 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
-import com.sidukov.weatherapp.domain.Weather
-import kotlinx.coroutines.flow.merge
+import com.sidukov.weatherapp.domain.CurrentWeather
+import com.sidukov.weatherapp.domain.HourlyWeather
 import java.time.LocalDate
-import java.time.format.TextStyle
-import java.util.*
 
 // потом потом, добавить DiffCallback или DiffUtilCallback, чтобы данные обновлялись тогда, когда нужно, это позволит избавиться от notifyDataSetChanged(),
 // который добавляет определёную сложность
 //<> - generic class, он работает с типом объекта, который к нему приходит, в нашем случае с DailyWeatherViewHolder
-class DailyWeatherAdapter(private var list: List<Weather>) :
+class DailyWeatherAdapter(
+    private var currentWeather: List<CurrentWeather>,
+    private var hourlyWeather: List<HourlyWeather>
+) :
     RecyclerView.Adapter<DailyWeatherAdapter.DailyWeatherViewHolder>() {
 
-    private val listOfDay: Map<Int, String> = mapOf (
+    private val listOfDay: Map<Int, String> = mapOf(
         1 to "Monday",
         2 to "Tuesday",
         3 to "Wednesday",
@@ -30,6 +31,7 @@ class DailyWeatherAdapter(private var list: List<Weather>) :
     )
 
     private var dayCounter = LocalDate.now().dayOfWeek.value
+    private var hourlyCounter: Int = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DailyWeatherViewHolder {
         //создаётся view объект
@@ -40,15 +42,13 @@ class DailyWeatherAdapter(private var list: List<Weather>) :
 
     //onBindViewHolder - привязывает данные к view элементам, объявленным в ViewHolder. Эти данные были отправлены в адаптер (обычно в виде списка)
     override fun onBindViewHolder(holder: DailyWeatherViewHolder, position: Int) {
-        holder.textDateWeather.text = getDay(dayCounter)  //LocalDate.now().dayOfWeek.name
-        holder.imageDateWeather.setImageResource(list[position].imageMain.second)
-        holder.textDateTemperatureDailyWeather.text = list[position].temperature.toString()
-        dayCounter += 1
-        if (dayCounter > 7) dayCounter = 1
+        holder.textDateWeather.text = hourlyWeather[position].hour
+        holder.imageDateWeather.setImageResource(hourlyWeather[position].image.second)
+        holder.textDateTemperatureDailyWeather.text = hourlyWeather[position].temperature.toString()
     }
 
     override fun getItemCount(): Int {
-        return list.size
+        return hourlyWeather.size
     }
 
     //holder - содержит view элементы, представленые в xml layoutе
@@ -60,17 +60,19 @@ class DailyWeatherAdapter(private var list: List<Weather>) :
     }
 
     // эта функция принимает лист, который затем назначает внутренней переменной list
-    fun updateList(newList: List<Weather>) {
-        list = newList
+    fun updateList(current: List<CurrentWeather>, hourlyList: List<HourlyWeather>) {
+        hourlyWeather = hourlyList
+        currentWeather = current
         notifyDataSetChanged()
     }
-    fun addList(newList: List<Weather>) : List<Weather>{
+
+    fun addList(newList: List<HourlyWeather>): List<HourlyWeather> {
         return newList.plus(newList)
         notifyDataSetChanged()
     }
 
     fun getDay(counter: Int): String {
-        for (i in listOfDay.keys){
+        for (i in listOfDay.keys) {
             if (counter == i) {
                 return listOfDay[counter].toString()
             }

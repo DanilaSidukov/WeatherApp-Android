@@ -1,13 +1,13 @@
 package com.sidukov.weatherapp.data.remote
 
-import android.content.Context
 import android.location.Geocoder
 import androidx.core.text.htmlEncode
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.TimezoneMapper
 import com.sidukov.weatherapp.data.remote.api.GeoAPI
 import com.sidukov.weatherapp.data.remote.api.WeatherAPI
-import com.sidukov.weatherapp.domain.Weather
+import com.sidukov.weatherapp.domain.CurrentWeather
+import com.sidukov.weatherapp.domain.HourlyWeather
 import com.sidukov.weatherapp.domain.WeatherDescription
 import com.sidukov.weatherapp.domain.daily_body.DailyForecastRequestBody
 import java.time.LocalDateTime
@@ -23,7 +23,9 @@ class WeatherRepository(
 
     private lateinit var currentCondition: DescriptionCondition
 
-    suspend fun getCurrentDayForecast(): List<Weather> {
+    private lateinit var tempList: List<HourlyWeather>
+
+    suspend fun getCurrentDayForecast(): Pair<List<CurrentWeather>, List<HourlyWeather>> {
 
         val geocodingData = geoAPI.geoData(
             city = "Yoshkar-Ola, Russia".htmlEncode()
@@ -41,7 +43,8 @@ class WeatherRepository(
             true
         )
 
-        val timeZone = TimezoneMapper.latLngToTimezoneString(requestBody.latitude, requestBody.longitude)
+        val timeZone =
+            TimezoneMapper.latLngToTimezoneString(requestBody.latitude, requestBody.longitude)
 
         // здесь мы передаём данные, которые создали выше, и получаем список элементов
         val b = weatherApi.currentDayForecast(
@@ -56,7 +59,6 @@ class WeatherRepository(
 
         // здесь мы находим текущий час, он совпадает с индексом элемента в пришедшем с серверва списке
         val position: Int = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-
         val rainSizeList = b.hourly.rain
         val snowfallSizeList = b.hourly.snowfall
         val cloudList = b.hourly.cloudCover
@@ -64,53 +66,113 @@ class WeatherRepository(
         val humidity = b.hourly.humidity[position]
         // определяем картинку
         val headerImage =
-            getImageByData(rainSizeList[position], snowfallSizeList[position], cloudList[position], b.currentWeather.temperature)
+            getImageByData(
+                rainSizeList[position],
+                snowfallSizeList[position],
+                cloudList[position],
+                b.currentWeather.temperature
+            )
         val location = getAddress(b.latitude, b.longitude)
         val currentTemperature = b.currentWeather.temperature
 
-
-        return (0..23).map { i ->
-            Weather(
-                location,
-                getImageByData(rainSizeList[i], snowfallSizeList[i], cloudList[i], b.hourly.temperature[i]),
-                b.hourly.temperature[i].toInt(),
-                b.hourly.humidity[i].toInt(),
-                currentCondition.value
+        // все данные о погоде по текущему часу
+        val currentWeatherCurrentData = listOf(
+            CurrentWeather(
+                date = location,
+                imageMain = getImageByData(
+                    rainSizeList[position],
+                    snowfallSizeList[position],
+                    cloudList[position],
+                    b.hourly.temperature[position]
+                ),
+                temperature = b.hourly.temperature[position].toInt(),
+                humidity = b.hourly.humidity[position].toInt(),
+                description = currentCondition.value
             )
+        )
+
+        var hourlyWeatherList : List <HourlyWeather> = emptyList()
+        var tempString = ""
+
+        (0..23).map { hour ->
+            tempString = if (hour < 10) {
+                "0$hour:00"
+            } else "$hour:00"
+            tempList = listOf(
+                    HourlyWeather(
+                        hour = tempString,
+                        image = getImageByData(
+                            rainSizeList[hour],
+                            snowfallSizeList[hour],
+                            cloudList[hour],
+                            b.hourly.temperature[hour]
+                        ),
+                        temperature = b.hourly.temperature[hour].toInt()
+                    )
+                )
+            hourlyWeatherList = hourlyWeatherList.plus(tempList)
         }
 
-        // возвращаем список из одного элемента, мы этом элементе данные только по текущему часу
-//        return listOf(
+        return Pair(currentWeatherCurrentData, hourlyWeatherList)
+
+        // здесь мы находим текущий час, он совпадает с индексом элемента в пришедшем с серверва списке
+//        val position: Int = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+//
+//        val rainSizeList = b.hourly.rain
+//        val snowfallSizeList = b.hourly.snowfall
+//        val cloudList = b.hourly.cloudCover
+//        // извлекаем влажность из списка, там 24 элемента, по позиции, определённой выше. то есть по индексу position
+//        val humidity = b.hourly.humidity[position]
+//        // определяем картинку
+//        val headerImage =
+//            getImageByData(rainSizeList[position], snowfallSizeList[position], cloudList[position], b.currentWeather.temperature)
+//        val location = getAddress(b.latitude, b.longitude)
+//        val currentTemperature = b.currentWeather.temperature
+//
+//
+//        return (0..23).map { i ->
 //            Weather(
-//                date = location,
-//                imageMain = headerImage,
-//                temperature = currentTemperature.toInt(),
-//                humidity = humidity.toInt(),
-//                description = currentCondition.value
+//                location,
+//                getImageByData(rainSizeList[i], snowfallSizeList[i], cloudList[i], b.hourly.temperature[i]),
+//                b.hourly.temperature[i].toInt(),
+//                b.hourly.humidity[i].toInt(),
+//                currentCondition.value
 //            )
-//        )
+//        }
     }
 
-    private fun getImageByData(rainValue: Float, snowValue: Float, cloudCover: Float, temperature: Float): Pair<Int, Int> {
-        val imageId : Pair <Int, Int> = Pair(0, 1)
+
+    private fun getImageByData(
+        rainValue: Float,
+        snowValue: Float,
+        cloudCover: Float,
+        temperature: Float
+    ): Pair<Int, Int> {
+        val imageId: Pair<Int, Int> = Pair(0, 1)
         val precipitationCloud = 40.0f
         val precipitationValue = 0.4f
         val temperatureValue: Float = -3f
         if (rainValue >= precipitationValue && rainValue > snowValue) {
             currentCondition = DescriptionCondition.Rainy
-            return imageId.copy(first = R.drawable.ic_sky_rainy_light, second = R.drawable.ic_sky_rainy_light)
+            return imageId.copy(
+                first = R.drawable.ic_sky_rainy_light,
+                second = R.drawable.ic_sky_rainy_light
+            )
         } else if (snowValue >= precipitationValue && snowValue > rainValue && cloudCover >= precipitationCloud) {
             currentCondition = DescriptionCondition.Snowfall
-            return imageId.copy(first = R.drawable.ic_sky_snow_light, second = R.drawable.ic_sky_snow_light)
+            return imageId.copy(
+                first = R.drawable.ic_sky_snow_light,
+                second = R.drawable.ic_sky_snow_light
+            )
         } else if (temperature < temperatureValue && snowValue < precipitationValue) {
             currentCondition = DescriptionCondition.Cold
             return imageId.copy(first = R.drawable.ic_snowflake, second = R.drawable.ic_snowflake)
         } else if (snowValue < precipitationValue && temperature > temperatureValue && cloudCover > precipitationCloud) {
             currentCondition = DescriptionCondition.CloudCover
             return imageId.copy(first = R.drawable.ic_sun, second = R.drawable.ic_sky_light)
-        } else if (temperature > temperatureValue && snowValue < precipitationValue && cloudCover < precipitationCloud)  {
+        } else if (temperature > temperatureValue && snowValue < precipitationValue && cloudCover < precipitationCloud) {
             currentCondition = DescriptionCondition.Sunny
-            return imageId.copy (first = R.drawable.ic_sun, second = R.drawable.ic_sun)
+            return imageId.copy(first = R.drawable.ic_sun, second = R.drawable.ic_sun)
         } else {
             currentCondition = DescriptionCondition.Error
             return imageId
