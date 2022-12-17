@@ -38,11 +38,19 @@
     <string name="today_s_forecast">today\'s forecast</string>
 
 <!-- set weather condition description -->
-    <string name="rainy">It may rain during the hour, don\'t forget your umbrella.</string>
-    <string name="snowfall">Snowfall is possible within an hour</string>
-    <string name="cold">It\'s cold outside, so dress warmer.</string>
-    <string name="cloud_cover">Now the weather is cloudy, there will be no precipitation</string>
-    <string name="sunny">It\'s sunny outside, enjoy the weather</string>
+    <string name="clear">Clear sky, have a good time</string>
+    <string name="mainly_clear">Mainly clear, partly cloudy, and overcast</string>
+    <string name="fog">Fog and depositing rime fog</string>
+    <string name="drizzle">Drizzle: Light, moderate, and dense intensity</string>
+    <string name="freezing_drizzle">Freezing Drizzle: Light and dense intensity</string>
+    <string name="rain">Rain: Slight, moderate and heavy intensity</string>
+    <string name="freezing_rain">Freezing Rain: Light and heavy intensity</string>
+    <string name="snow_fall">Snow fall: Slight, moderate, and heavy intensity</string>
+    <string name="snow_grains">Snow grains expected, be careful!</string>
+    <string name="rain_showers">Rain showers: Slight, moderate, and violent</string>
+    <string name="snow_showers">Snow showers slight and heavy</string>
+    <string name="thunderstorm">Thunderstorm: Slight or moderate</string>
+    <string name="thunderstorm_rain">Thunderstorm: Slight or moderate</string>
     <string name="error">Can\'t provide a likely prognosis at this time </string>
     
 </resources>

@@ -1,8 +1,8 @@
-package com.sidukov.weatherapp.domain.daily_body
+package com.sidukov.weatherapp.domain.today_body
 
 import com.google.gson.annotations.SerializedName
 
-data class ForecastBody(
+data class TodayForecastBody(
     @SerializedName("current_weather")
     val currentWeather: CurrentWeather,
     @SerializedName("hourly")
@@ -15,4 +15,6 @@ data class ForecastBody(
     val longitude: Float,
     @SerializedName("timezone")
     val timezone: String,
+    @SerializedName("weathercode")
+    val weatherCode: Int
 )

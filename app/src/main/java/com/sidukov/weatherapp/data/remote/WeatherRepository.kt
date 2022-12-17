@@ -10,6 +10,8 @@ import com.sidukov.weatherapp.domain.CurrentWeather
 import com.sidukov.weatherapp.domain.HourlyWeather
 import com.sidukov.weatherapp.domain.WeatherDescription
 import com.sidukov.weatherapp.domain.daily_body.DailyForecastRequestBody
+import com.sidukov.weatherapp.domain.daily_body.temp_pack.DailyForecastBody
+import com.sidukov.weatherapp.domain.today_body.TodayForecastRequestBody
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -33,7 +35,7 @@ class WeatherRepository(
 
 
         // Это мы создаём объект с данными, которые передадим в API запрос
-        val requestBody = DailyForecastRequestBody(
+        val requestBody = TodayForecastRequestBody(
             geocodingData.results[0].geometry.latitude,
             geocodingData.results[0].geometry.longitude,
             geocodingData.results[0].components.country_code,
@@ -54,7 +56,7 @@ class WeatherRepository(
             timezone = timeZone.toString(),
             currentWeather = true,
             startDate = requestBody.startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-            endDate = requestBody.endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            endDate = requestBody.endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
         )
 
         // здесь мы находим текущий час, он совпадает с индексом элемента в пришедшем с серверва списке
@@ -87,7 +89,7 @@ class WeatherRepository(
                 ),
                 temperature = b.hourly.temperature[position].toInt(),
                 humidity = b.hourly.humidity[position].toInt(),
-                description = currentCondition.value
+                description = getDescription(b.currentWeather.weathercode).value
             )
         )
 
@@ -114,33 +116,21 @@ class WeatherRepository(
         }
 
         return Pair(currentWeatherCurrentData, hourlyWeatherList)
-
-        // здесь мы находим текущий час, он совпадает с индексом элемента в пришедшем с серверва списке
-//        val position: Int = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-//
-//        val rainSizeList = b.hourly.rain
-//        val snowfallSizeList = b.hourly.snowfall
-//        val cloudList = b.hourly.cloudCover
-//        // извлекаем влажность из списка, там 24 элемента, по позиции, определённой выше. то есть по индексу position
-//        val humidity = b.hourly.humidity[position]
-//        // определяем картинку
-//        val headerImage =
-//            getImageByData(rainSizeList[position], snowfallSizeList[position], cloudList[position], b.currentWeather.temperature)
-//        val location = getAddress(b.latitude, b.longitude)
-//        val currentTemperature = b.currentWeather.temperature
-//
-//
-//        return (0..23).map { i ->
-//            Weather(
-//                location,
-//                getImageByData(rainSizeList[i], snowfallSizeList[i], cloudList[i], b.hourly.temperature[i]),
-//                b.hourly.temperature[i].toInt(),
-//                b.hourly.humidity[i].toInt(),
-//                currentCondition.value
-//            )
-//        }
     }
 
+    suspend fun getDailyForecast(): List<DailyForecastBody>{
+        val geocodingData = geoAPI.geoData(
+            city = "Yoshkar-Ola, Russia".htmlEncode()
+        )
+        val requestBody = DailyForecastRequestBody(
+            latitude = geocodingData.results[0].geometry.latitude,
+            longitude = geocodingData.results[0].geometry.longitude,
+            timezone = geocodingData.results[0].components.country_code,
+            startDate = LocalDateTime.now(),
+            endDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-${LocalDateTime.now().dayOfMonth+14}")),
+            daily = "weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset"
+        )
+    }
 
     private fun getImageByData(
         rainValue: Float,
@@ -153,25 +143,20 @@ class WeatherRepository(
         val precipitationValue = 0.4f
         val temperatureValue: Float = -3f
         if (rainValue >= precipitationValue && rainValue > snowValue) {
-            currentCondition = DescriptionCondition.Rainy
             return imageId.copy(
                 first = R.drawable.ic_sky_rainy_light,
                 second = R.drawable.ic_sky_rainy_light
             )
         } else if (snowValue >= precipitationValue && snowValue > rainValue && cloudCover >= precipitationCloud) {
-            currentCondition = DescriptionCondition.Snowfall
             return imageId.copy(
                 first = R.drawable.ic_sky_snow_light,
                 second = R.drawable.ic_sky_snow_light
             )
         } else if (temperature < temperatureValue && snowValue < precipitationValue) {
-            currentCondition = DescriptionCondition.Cold
             return imageId.copy(first = R.drawable.ic_snowflake, second = R.drawable.ic_snowflake)
         } else if (snowValue < precipitationValue && temperature > temperatureValue && cloudCover > precipitationCloud) {
-            currentCondition = DescriptionCondition.CloudCover
             return imageId.copy(first = R.drawable.ic_sun, second = R.drawable.ic_sky_light)
         } else if (temperature > temperatureValue && snowValue < precipitationValue && cloudCover < precipitationCloud) {
-            currentCondition = DescriptionCondition.Sunny
             return imageId.copy(first = R.drawable.ic_sun, second = R.drawable.ic_sun)
         } else {
             currentCondition = DescriptionCondition.Error
@@ -180,12 +165,38 @@ class WeatherRepository(
     }
 
     enum class DescriptionCondition(val value: Int) {
-        Cold(R.string.cold),
-        Sunny(R.string.sunny),
-        Rainy(R.string.rainy),
+        Clear(R.string.clear),
+        MainlyClear(R.string.mainly_clear),
+        Fog(R.string.fog),
+        Drizzle(R.string.drizzle),
+        FreezingDrizzle(R.string.freezing_drizzle),
+        Rain(R.string.rain),
+        FreezingRain(R.string.freezing_rain),
+        SnowFall(R.string.snow_fall),
+        SnowGrains(R.string.snow_grains),
+        RainShowers(R.string.rain_showers),
+        SnowShowers(R.string.snow_showers),
+        Thunderstorm(R.string.thunderstorm),
+        ThunderstormRain(R.string.thunderstorm_rain),
         Error(R.string.error),
-        Snowfall(R.string.snowfall),
-        CloudCover(R.string.cloud_cover)
+    }
+
+    private fun getDescription(value: Int): DescriptionCondition{
+        if (value == 0) currentCondition = DescriptionCondition.Clear
+        else if (value == 1 || value == 2 || value == 3) currentCondition = DescriptionCondition.MainlyClear
+        else if (value == 45 || value == 48) currentCondition = DescriptionCondition.Fog
+        else if (value == 51 || value == 53 || value == 55) currentCondition = DescriptionCondition.Drizzle
+        else if (value == 56 || value == 57 ) currentCondition = DescriptionCondition.FreezingDrizzle
+        else if (value == 61 || value == 63 || value == 65) currentCondition = DescriptionCondition.Rain
+        else if (value == 66 || value == 67) currentCondition =DescriptionCondition.FreezingRain
+        else if (value == 71 || value == 73 || value == 75) currentCondition = DescriptionCondition.SnowFall
+        else if (value == 77) currentCondition = DescriptionCondition.SnowGrains
+        else if (value ==80 || value == 81 || value == 82) currentCondition = DescriptionCondition.RainShowers
+        else if (value == 85 || value == 86) currentCondition = DescriptionCondition.SnowShowers
+        else if (value == 95) currentCondition = DescriptionCondition.Thunderstorm
+        else if (value == 96 || value == 99) currentCondition = DescriptionCondition.ThunderstormRain
+        else currentCondition = DescriptionCondition.Error
+        return currentCondition
     }
 
     private fun getAddress(latitude: Float, longitude: Float): String {

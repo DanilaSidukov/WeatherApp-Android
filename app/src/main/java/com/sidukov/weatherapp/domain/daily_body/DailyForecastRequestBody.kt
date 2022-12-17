@@ -7,7 +7,6 @@ data class DailyForecastRequestBody(
     val longitude: Float,
     val timezone: String,
     val startDate: LocalDateTime,
-    val endDate: LocalDateTime,
-    val hourly: String = "temperature_2m,relativehumidity_2m,rain,snowfall,cloudcover_mid",
-    val currentWeather: Boolean = true,
+    val endDate: String,
+    val daily: String = "weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset"
 )

@@ -15,3 +15,4 @@ data class HourlyWeather(
     val image: Pair <Int, Int>,
     val temperature: Int
 )
+
