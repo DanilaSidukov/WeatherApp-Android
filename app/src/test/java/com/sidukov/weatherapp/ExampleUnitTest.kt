@@ -40,7 +40,9 @@ class ExampleUnitTest {
         LocalDateTime.now().dayOfMonth+14
         val add = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-${LocalDateTime.now().dayOfMonth+14}"))
 
-        println("TIME IS - $add")
+        val day = LocalDateTime.now().dayOfWeek.toString()
+
+        println("TIME IS - $day")
 
 
 //        val a = DescriptionCondition.Cold

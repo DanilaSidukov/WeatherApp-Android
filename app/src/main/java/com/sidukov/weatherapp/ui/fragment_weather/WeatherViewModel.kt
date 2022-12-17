@@ -4,8 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sidukov.weatherapp.domain.CurrentWeather
 import com.sidukov.weatherapp.data.remote.WeatherRepository
-import com.sidukov.weatherapp.domain.HourlyWeather
-import com.sidukov.weatherapp.domain.WeatherDescription
+import com.sidukov.weatherapp.domain.WeatherShort
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -16,6 +15,7 @@ open class WeatherViewModel(
 
     private val _uiStateFlow = MutableStateFlow(UiState())
     var uiStateFlow = _uiStateFlow.asStateFlow()
+
 
     init {
 //        viewModelScope.launch {
@@ -32,13 +32,16 @@ open class WeatherViewModel(
             )
         }
         viewModelScope.launch {
-//            val value =
+            val value = repository.getDailyForecast()
+            _uiStateFlow.value = _uiStateFlow.value.copy(
+                dailyCurrentWeatherData = value
+            )
         }
     }
 
     data class UiState(
         val currentDay: List <CurrentWeather> = emptyList(),
-        val hourlyCurrentWeatherData: List<HourlyWeather> = emptyList(),
-        val dailyWeatherData: List<WeatherDescription> = emptyList()
+        val hourlyCurrentWeatherData: List<WeatherShort> = emptyList(),
+        val dailyCurrentWeatherData: List<WeatherShort> = emptyList()
     )
 }

@@ -10,9 +10,9 @@ data class CurrentWeather(
     val description: Int
 )
 
-data class HourlyWeather(
+data class WeatherShort(
     val hour: String,
-    val image: Pair <Int, Int>,
+    val image: Int,
     val temperature: Int
 )
 

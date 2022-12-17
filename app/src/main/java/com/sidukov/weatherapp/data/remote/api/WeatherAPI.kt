@@ -20,7 +20,7 @@ interface WeatherAPI {
         @Query("end_date") endDate: String,
     ): TodayForecastBody
 
-    // @GET("v1/forecast")
+    @GET("v1/forecast")
     suspend fun weeklyDailyForecast(
         @Query("latitude") latitude: Float,
         @Query("longitude") longitude: Float,

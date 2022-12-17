@@ -7,10 +7,9 @@ import com.sidukov.weatherapp.data.TimezoneMapper
 import com.sidukov.weatherapp.data.remote.api.GeoAPI
 import com.sidukov.weatherapp.data.remote.api.WeatherAPI
 import com.sidukov.weatherapp.domain.CurrentWeather
-import com.sidukov.weatherapp.domain.HourlyWeather
+import com.sidukov.weatherapp.domain.WeatherShort
 import com.sidukov.weatherapp.domain.WeatherDescription
 import com.sidukov.weatherapp.domain.daily_body.DailyForecastRequestBody
-import com.sidukov.weatherapp.domain.daily_body.temp_pack.DailyForecastBody
 import com.sidukov.weatherapp.domain.today_body.TodayForecastRequestBody
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -25,9 +24,11 @@ class WeatherRepository(
 
     private lateinit var currentCondition: DescriptionCondition
 
-    private lateinit var tempList: List<HourlyWeather>
+    private lateinit var tempListHours: List<WeatherShort>
 
-    suspend fun getCurrentDayForecast(): Pair<List<CurrentWeather>, List<HourlyWeather>> {
+    private lateinit var tempListDays: List<WeatherShort>
+
+    suspend fun getCurrentDayForecast(): Pair<List<CurrentWeather>, List<WeatherShort>> {
 
         val geocodingData = geoAPI.geoData(
             city = "Yoshkar-Ola, Russia".htmlEncode()
@@ -49,7 +50,7 @@ class WeatherRepository(
             TimezoneMapper.latLngToTimezoneString(requestBody.latitude, requestBody.longitude)
 
         // здесь мы передаём данные, которые создали выше, и получаем список элементов
-        val b = weatherApi.currentDayForecast(
+        val weatherTodayData = weatherApi.currentDayForecast(
             latitude = requestBody.latitude,
             longitude = requestBody.longitude,
             hourly = requestBody.hourly,
@@ -61,21 +62,21 @@ class WeatherRepository(
 
         // здесь мы находим текущий час, он совпадает с индексом элемента в пришедшем с серверва списке
         val position: Int = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-        val rainSizeList = b.hourly.rain
-        val snowfallSizeList = b.hourly.snowfall
-        val cloudList = b.hourly.cloudCover
+        val rainSizeList = weatherTodayData.hourly.rain
+        val snowfallSizeList = weatherTodayData.hourly.snowfall
+        val cloudList = weatherTodayData.hourly.cloudCover
         // извлекаем влажность из списка, там 24 элемента, по позиции, определённой выше. то есть по индексу position
-        val humidity = b.hourly.humidity[position]
+        val humidity = weatherTodayData.hourly.humidity[position]
         // определяем картинку
         val headerImage =
             getImageByData(
                 rainSizeList[position],
                 snowfallSizeList[position],
                 cloudList[position],
-                b.currentWeather.temperature
+                weatherTodayData.currentWeather.temperature
             )
-        val location = getAddress(b.latitude, b.longitude)
-        val currentTemperature = b.currentWeather.temperature
+        val location = getAddress(weatherTodayData.latitude, weatherTodayData.longitude)
+        val currentTemperature = weatherTodayData.currentWeather.temperature
 
         // все данные о погоде по текущему часу
         val currentWeatherCurrentData = listOf(
@@ -85,40 +86,40 @@ class WeatherRepository(
                     rainSizeList[position],
                     snowfallSizeList[position],
                     cloudList[position],
-                    b.hourly.temperature[position]
+                    weatherTodayData.hourly.temperature[position]
                 ),
-                temperature = b.hourly.temperature[position].toInt(),
-                humidity = b.hourly.humidity[position].toInt(),
-                description = getDescription(b.currentWeather.weathercode).value
+                temperature = weatherTodayData.hourly.temperature[position].toInt(),
+                humidity = weatherTodayData.hourly.humidity[position].toInt(),
+                description = getDescription(weatherTodayData.currentWeather.weathercode).value
             )
         )
 
-        var hourlyWeatherList : List <HourlyWeather> = emptyList()
+        var weatherShortList : List <WeatherShort> = emptyList()
         var tempString = ""
 
         (0..23).map { hour ->
             tempString = if (hour < 10) {
                 "0$hour:00"
             } else "$hour:00"
-            tempList = listOf(
-                    HourlyWeather(
+            tempListHours = listOf(
+                    WeatherShort(
                         hour = tempString,
-                        image = getImageByData(
+                        image = getHourlyImageByData(
                             rainSizeList[hour],
                             snowfallSizeList[hour],
                             cloudList[hour],
-                            b.hourly.temperature[hour]
+                            weatherTodayData.hourly.temperature[hour]
                         ),
-                        temperature = b.hourly.temperature[hour].toInt()
+                        temperature = weatherTodayData.hourly.temperature[hour].toInt()
                     )
                 )
-            hourlyWeatherList = hourlyWeatherList.plus(tempList)
+            weatherShortList = weatherShortList.plus(tempListHours)
         }
 
-        return Pair(currentWeatherCurrentData, hourlyWeatherList)
+        return Pair(currentWeatherCurrentData, weatherShortList)
     }
 
-    suspend fun getDailyForecast(): List<DailyForecastBody>{
+    suspend fun getDailyForecast(): List<WeatherShort>{
         val geocodingData = geoAPI.geoData(
             city = "Yoshkar-Ola, Russia".htmlEncode()
         )
@@ -130,6 +131,53 @@ class WeatherRepository(
             endDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-${LocalDateTime.now().dayOfMonth+14}")),
             daily = "weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset"
         )
+
+        val timeZone = TimezoneMapper.latLngToTimezoneString(requestBody.latitude, requestBody.longitude)
+
+        val weatherDailyData = weatherApi.weeklyDailyForecast(
+            latitude = requestBody.latitude,
+            longitude = requestBody.longitude,
+            daily = requestBody.daily,
+            timezone = timeZone.toString(),
+            startDate = requestBody.startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+            endDate = requestBody.endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        )
+
+        val days : Map<Int, String> = mapOf(
+            1 to "MONDAY",
+            2 to "TUESDAY",
+            3 to "WEDNESDAY",
+            4 to "THURSDAY",
+            5 to "FRIDAY",
+            6 to "SATURDAY",
+            7 to "SUNDAY"
+        )
+
+        var dailyWeatherList : List <WeatherShort> = emptyList()
+        val templistValuesDays = days.values
+        println("$templistValuesDays")
+        var beginDayOfWeek = ""
+
+        beginDayOfWeek = templistValuesDays.first { item ->
+            item.uppercase() == LocalDateTime.now().dayOfWeek.toString()
+        }.toString()
+
+        var indexDaysOfWeek = days.filterValues { it == beginDayOfWeek }.keys.toList()[0]
+
+        (0..14).map { day ->
+            tempListDays = listOf(
+                WeatherShort(
+                    hour = days[indexDaysOfWeek].toString(),
+                    image = getImageByWeatherCode(weatherDailyData.daily.weathercode[day]),
+                    temperature = getDailyTemperature(weatherDailyData.daily.temperature_max[day], weatherDailyData.daily.temperature_min[day])
+                )
+            )
+            if (indexDaysOfWeek > 6) indexDaysOfWeek = 1
+            else indexDaysOfWeek += 1
+
+            dailyWeatherList = dailyWeatherList.plus(tempListDays)
+        }
+        return dailyWeatherList
     }
 
     private fun getImageByData(
@@ -231,6 +279,45 @@ class WeatherRepository(
                 R.drawable.ic_sky_rainy_dark
             )
         )
+    }
+
+    private fun getImageByWeatherCode(code: Int): Int{
+        if (code == 0) return R.drawable.ic_sun
+        else if (code == 1 || code == 2 || code == 3 || code == 45 || code == 48) return R.drawable.ic_sky_with_sun_light
+        else if (code in 51 .. 67 || code in 80 .. 82) return R.drawable.ic_sky_rainy_light
+        else if (code == 71) return R.drawable.ic_snowflake
+        else if (code in 73 .. 77 || code in 85 .. 86) return R.drawable.ic_sky_snow_light
+        else return R.drawable.ic_sky_rainy_dark
+    }
+
+    private fun getDailyTemperature(max: Float, min: Float): Int{
+        val temperature = (max + min) / 2
+        return temperature.toInt()
+    }
+
+    private fun getHourlyImageByData(
+        rainValue: Float,
+        snowValue: Float,
+        cloudCover: Float,
+        temperature: Float
+    ): Int{
+        val precipitationCloud = 40.0f
+        val precipitationValue = 0.4f
+        val temperatureValue: Float = -3f
+        if (rainValue >= precipitationValue && rainValue > snowValue) {
+            return R.drawable.ic_sky_rainy_light
+        } else if (snowValue >= precipitationValue && snowValue > rainValue && cloudCover >= precipitationCloud) {
+            return R.drawable.ic_sky_snow_light
+        } else if (temperature < temperatureValue && snowValue < precipitationValue) {
+            return R.drawable.ic_snowflake
+        } else if (snowValue < precipitationValue && temperature > temperatureValue && cloudCover > precipitationCloud) {
+            return R.drawable.ic_sky_with_sun_light
+        } else if (temperature > temperatureValue && snowValue < precipitationValue && cloudCover < precipitationCloud) {
+            return R.drawable.ic_sun
+        } else {
+            currentCondition = DescriptionCondition.Error
+            return 0
+        }
     }
 
 }

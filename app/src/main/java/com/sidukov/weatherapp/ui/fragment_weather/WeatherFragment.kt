@@ -30,13 +30,13 @@ class WeatherFragment : Fragment() {
     private lateinit var dailyWeatherRecyclerView: RecyclerView
 
     //adapter привязывается к RecyclerView, он содержит в себе инфу об элементах в списке RecyclerView
-    private val adapterCurrentWeather = DailyWeatherAdapter(emptyList() ,emptyList())
+    private val adapterDailyWeather = DailyWeatherAdapter(emptyList())
 
-    private val adapterHourlyWeather = DailyWeatherAdapter(emptyList(), emptyList())
+    private val adapterTodayWeather = DailyWeatherAdapter(emptyList())
 
     private lateinit var todayWeatherRecyclerView: RecyclerView
 
-    private lateinit var tempList: List <CurrentWeather>
+    private lateinit var tempList: List<CurrentWeather>
 
     private lateinit var locationName: TextView
     private lateinit var currentWeatherImageMain: ImageView
@@ -89,11 +89,11 @@ class WeatherFragment : Fragment() {
         //В collect мы указываем что делать с теми данными, которые придут. Выполняется collect каждый раз, когда в weatherList появляются новые данные
         dailyWeatherRecyclerView = view.findViewById(R.id.recycler_view_weather)
         //привязываем adapter к RecycleView
-        dailyWeatherRecyclerView.adapter = adapterCurrentWeather
+        dailyWeatherRecyclerView.adapter = adapterDailyWeather
         dailyWeatherRecyclerView.addItemDecoration(EmptyDividerItemDecoration())
 
         todayWeatherRecyclerView = view.findViewById(R.id.today_weather_recycler_view)
-        todayWeatherRecyclerView.adapter = adapterHourlyWeather
+        todayWeatherRecyclerView.adapter = adapterTodayWeather
         todayWeatherRecyclerView.addItemDecoration(EmptyDividerItemDecoration())
 
         OverScrollDecoratorHelper.setUpOverScroll(
@@ -126,9 +126,9 @@ class WeatherFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             weatherViewModel.uiStateFlow.collect { uiState ->
                 if (uiState.hourlyCurrentWeatherData.isEmpty()) return@collect
-                adapterHourlyWeather.updateList(uiState.currentDay, uiState.hourlyCurrentWeatherData)
-                println("index hour list = ${uiState.hourlyCurrentWeatherData}")
-                adapterHourlyWeather.addList(uiState.hourlyCurrentWeatherData)
+                adapterTodayWeather.updateList(uiState.hourlyCurrentWeatherData)
+                adapterDailyWeather.updateList(uiState.dailyCurrentWeatherData)
+
                 locationName.text = uiState.currentDay[0].date
                 if (uiState.currentDay[0].imageMain.first == uiState.currentDay[0].imageMain.second) {
                     currentWeatherImageMain.setImageResource(uiState.currentDay[0].imageMain.second)
@@ -140,14 +140,14 @@ class WeatherFragment : Fragment() {
                 currentTemperature.text = uiState.currentDay[0].temperature.toString()
                 currentHumidity.text = "${uiState.currentDay[0].humidity} %"
                 todayDescription.text = getString(uiState.currentDay[0].description)
-
             }
         }
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-//            weatherViewModel.cardViewList.collect {
-//                adapterMiniCardView.updateList(it)
+//        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+//            weatherViewModel.uiStateFlow.collect{ uiState ->
+//                if (uiState.dailyWeatherData.isEmpty()) return@collect
+//
 //            }
-        }
+//        }
 
         val animatedImage = currentWeatherMovingImage
         //Вызываю класс, который отвечает за анимацию заглавного изображения

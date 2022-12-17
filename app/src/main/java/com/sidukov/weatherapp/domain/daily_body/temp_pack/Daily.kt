@@ -8,9 +8,9 @@ data class Daily(
     @SerializedName("sunset")
     val sunset: List<String>,
     @SerializedName("temperature_2m_max")
-    val temperature_max: List<Double>,
+    val temperature_max: List<Float>,
     @SerializedName("temperature_2m_min")
-    val temperature_min: List<Double>,
+    val temperature_min: List<Float>,
     @SerializedName("time")
     val dayOfWeek: List<String>,
     @SerializedName("weathercode")
