@@ -148,7 +148,6 @@ class WeatherRepository(
 
         var dailyWeatherList: List<WeatherShort> = emptyList()
         val templistValuesDays = days.values
-        println("$templistValuesDays")
         var beginDayOfWeek = ""
 
         beginDayOfWeek = templistValuesDays.first { item ->
@@ -337,27 +336,24 @@ class WeatherRepository(
             ).get(
                 ChronoField.MINUTE_OF_DAY
             )
-        println("RISE = $sunRiseMinute")
         val sunSetMinute =
             LocalDateTime.parse(set).toEpochSecond(ZoneOffset.UTC) * 1000 + LocalDateTime.parse(set)
                 .get(
                     ChronoField.MINUTE_OF_DAY
                 )
-        println("SET = $sunSetMinute")
         val nowMinute =
             LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000 + LocalDateTime.now().get(
                 ChronoField.MINUTE_OF_DAY
             )
-        println("NOW = $nowMinute")
 
+        var tempValue = 0f
         var sunValue = 0f
 
         if (nowMinute < sunRiseMinute) sunValue = 0f
         if (nowMinute > sunSetMinute) sunValue = 140f
         if (nowMinute in (sunRiseMinute + 1) until sunSetMinute) {
-            val onePart = sunSetMinute / 140
-            sunValue = (onePart * nowMinute).toFloat()
-            println("PROGRESS = ${sunValue}")
+            val onePart = (sunSetMinute - sunRiseMinute )/ 140
+            sunValue = ((nowMinute - sunRiseMinute) / onePart).toFloat()
             return sunValue
         }
         return sunValue
