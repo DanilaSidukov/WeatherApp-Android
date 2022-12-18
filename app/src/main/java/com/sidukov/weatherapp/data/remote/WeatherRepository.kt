@@ -7,12 +7,14 @@ import com.sidukov.weatherapp.data.TimezoneMapper
 import com.sidukov.weatherapp.data.remote.api.GeoAPI
 import com.sidukov.weatherapp.data.remote.api.WeatherAPI
 import com.sidukov.weatherapp.domain.CurrentWeather
-import com.sidukov.weatherapp.domain.WeatherShort
 import com.sidukov.weatherapp.domain.WeatherDescription
+import com.sidukov.weatherapp.domain.WeatherShort
 import com.sidukov.weatherapp.domain.daily_body.DailyForecastRequestBody
 import com.sidukov.weatherapp.domain.today_body.TodayForecastRequestBody
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoField
 import java.util.*
 
 //WeatherRepository - получает и возвращает данные
@@ -28,7 +30,7 @@ class WeatherRepository(
 
     private lateinit var tempListDays: List<WeatherShort>
 
-    suspend fun getCurrentDayForecast(): Pair<List<CurrentWeather>, List<WeatherShort>> {
+    suspend fun getCurrentDayForecast(): Pair<CurrentWeather, List<WeatherShort>> {
 
         val geocodingData = geoAPI.geoData(
             city = "Yoshkar-Ola, Russia".htmlEncode()
@@ -66,35 +68,23 @@ class WeatherRepository(
         val snowfallSizeList = weatherTodayData.hourly.snowfall
         val cloudList = weatherTodayData.hourly.cloudCover
         // извлекаем влажность из списка, там 24 элемента, по позиции, определённой выше. то есть по индексу position
-        val humidity = weatherTodayData.hourly.humidity[position]
-        // определяем картинку
-        val headerImage =
-            getImageByData(
+        val location = getAddress(weatherTodayData.latitude, weatherTodayData.longitude)
+
+        // все данные о погоде по текущему часу
+        val currentWeatherCurrentData = CurrentWeather(
+            date = location,
+            imageMain = getImageByData(
                 rainSizeList[position],
                 snowfallSizeList[position],
                 cloudList[position],
-                weatherTodayData.currentWeather.temperature
-            )
-        val location = getAddress(weatherTodayData.latitude, weatherTodayData.longitude)
-        val currentTemperature = weatherTodayData.currentWeather.temperature
-
-        // все данные о погоде по текущему часу
-        val currentWeatherCurrentData = listOf(
-            CurrentWeather(
-                date = location,
-                imageMain = getImageByData(
-                    rainSizeList[position],
-                    snowfallSizeList[position],
-                    cloudList[position],
-                    weatherTodayData.hourly.temperature[position]
-                ),
-                temperature = weatherTodayData.hourly.temperature[position].toInt(),
-                humidity = weatherTodayData.hourly.humidity[position].toInt(),
-                description = getDescription(weatherTodayData.currentWeather.weathercode).value
-            )
+                weatherTodayData.hourly.temperature[position]
+            ),
+            temperature = weatherTodayData.hourly.temperature[position].toInt(),
+            humidity = weatherTodayData.hourly.humidity[position].toInt(),
+            description = getDescription(weatherTodayData.currentWeather.weathercode).value
         )
 
-        var weatherShortList : List <WeatherShort> = emptyList()
+        var weatherShortList: List<WeatherShort> = emptyList()
         var tempString = ""
 
         (0..23).map { hour ->
@@ -102,24 +92,26 @@ class WeatherRepository(
                 "0$hour:00"
             } else "$hour:00"
             tempListHours = listOf(
-                    WeatherShort(
-                        hour = tempString,
-                        image = getHourlyImageByData(
-                            rainSizeList[hour],
-                            snowfallSizeList[hour],
-                            cloudList[hour],
-                            weatherTodayData.hourly.temperature[hour]
-                        ),
-                        temperature = weatherTodayData.hourly.temperature[hour].toInt()
-                    )
+                WeatherShort(
+                    hour = tempString,
+                    image = getHourlyImageByData(
+                        rainSizeList[hour],
+                        snowfallSizeList[hour],
+                        cloudList[hour],
+                        weatherTodayData.hourly.temperature[hour]
+                    ),
+                    temperature = weatherTodayData.hourly.temperature[hour].toInt(),
+                    " ",
+                    " "
                 )
+            )
             weatherShortList = weatherShortList.plus(tempListHours)
         }
 
         return Pair(currentWeatherCurrentData, weatherShortList)
     }
 
-    suspend fun getDailyForecast(): List<WeatherShort>{
+    suspend fun getDailyForecast(): Pair<List<WeatherShort>, Float> {
         val geocodingData = geoAPI.geoData(
             city = "Yoshkar-Ola, Russia".htmlEncode()
         )
@@ -128,11 +120,12 @@ class WeatherRepository(
             longitude = geocodingData.results[0].geometry.longitude,
             timezone = geocodingData.results[0].components.country_code,
             startDate = LocalDateTime.now(),
-            endDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-${LocalDateTime.now().dayOfMonth+14}")),
+            endDate = LocalDateTime.now().plusWeeks(2),
             daily = "weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset"
         )
 
-        val timeZone = TimezoneMapper.latLngToTimezoneString(requestBody.latitude, requestBody.longitude)
+        val timeZone =
+            TimezoneMapper.latLngToTimezoneString(requestBody.latitude, requestBody.longitude)
 
         val weatherDailyData = weatherApi.weeklyDailyForecast(
             latitude = requestBody.latitude,
@@ -143,7 +136,7 @@ class WeatherRepository(
             endDate = requestBody.endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         )
 
-        val days : Map<Int, String> = mapOf(
+        val days: Map<Int, String> = mapOf(
             1 to "MONDAY",
             2 to "TUESDAY",
             3 to "WEDNESDAY",
@@ -153,7 +146,7 @@ class WeatherRepository(
             7 to "SUNDAY"
         )
 
-        var dailyWeatherList : List <WeatherShort> = emptyList()
+        var dailyWeatherList: List<WeatherShort> = emptyList()
         val templistValuesDays = days.values
         println("$templistValuesDays")
         var beginDayOfWeek = ""
@@ -169,7 +162,12 @@ class WeatherRepository(
                 WeatherShort(
                     hour = days[indexDaysOfWeek].toString(),
                     image = getImageByWeatherCode(weatherDailyData.daily.weathercode[day]),
-                    temperature = getDailyTemperature(weatherDailyData.daily.temperature_max[day], weatherDailyData.daily.temperature_min[day])
+                    temperature = getDailyTemperature(
+                        weatherDailyData.daily.temperature_max[day],
+                        weatherDailyData.daily.temperature_min[day]
+                    ),
+                    sunrise = convertSunRiseOrSet(weatherDailyData.daily.sunrise[day]),
+                    sunset = convertSunRiseOrSet(weatherDailyData.daily.sunset[day])
                 )
             )
             if (indexDaysOfWeek > 6) indexDaysOfWeek = 1
@@ -177,7 +175,10 @@ class WeatherRepository(
 
             dailyWeatherList = dailyWeatherList.plus(tempListDays)
         }
-        return dailyWeatherList
+        return Pair(
+            dailyWeatherList,
+            getSweepAngle(weatherDailyData.daily.sunrise[0], weatherDailyData.daily.sunset[0])
+        )
     }
 
     private fun getImageByData(
@@ -229,20 +230,20 @@ class WeatherRepository(
         Error(R.string.error),
     }
 
-    private fun getDescription(value: Int): DescriptionCondition{
+    private fun getDescription(value: Int): DescriptionCondition {
         if (value == 0) currentCondition = DescriptionCondition.Clear
-        else if (value == 1 || value == 2 || value == 3) currentCondition = DescriptionCondition.MainlyClear
-        else if (value == 45 || value == 48) currentCondition = DescriptionCondition.Fog
-        else if (value == 51 || value == 53 || value == 55) currentCondition = DescriptionCondition.Drizzle
-        else if (value == 56 || value == 57 ) currentCondition = DescriptionCondition.FreezingDrizzle
-        else if (value == 61 || value == 63 || value == 65) currentCondition = DescriptionCondition.Rain
-        else if (value == 66 || value == 67) currentCondition =DescriptionCondition.FreezingRain
-        else if (value == 71 || value == 73 || value == 75) currentCondition = DescriptionCondition.SnowFall
+        else if (value in 1..3) currentCondition = DescriptionCondition.MainlyClear
+        else if (value in 45..48) currentCondition = DescriptionCondition.Fog
+        else if (value in 51..55) currentCondition = DescriptionCondition.Drizzle
+        else if (value in 56..57) currentCondition = DescriptionCondition.FreezingDrizzle
+        else if (value in 61..65) currentCondition = DescriptionCondition.Rain
+        else if (value in 66..67) currentCondition = DescriptionCondition.FreezingRain
+        else if (value in 71..75) currentCondition = DescriptionCondition.SnowFall
         else if (value == 77) currentCondition = DescriptionCondition.SnowGrains
-        else if (value ==80 || value == 81 || value == 82) currentCondition = DescriptionCondition.RainShowers
-        else if (value == 85 || value == 86) currentCondition = DescriptionCondition.SnowShowers
+        else if (value in 80..82) currentCondition = DescriptionCondition.RainShowers
+        else if (value in 85..86) currentCondition = DescriptionCondition.SnowShowers
         else if (value == 95) currentCondition = DescriptionCondition.Thunderstorm
-        else if (value == 96 || value == 99) currentCondition = DescriptionCondition.ThunderstormRain
+        else if (value in 96..99) currentCondition = DescriptionCondition.ThunderstormRain
         else currentCondition = DescriptionCondition.Error
         return currentCondition
     }
@@ -281,16 +282,16 @@ class WeatherRepository(
         )
     }
 
-    private fun getImageByWeatherCode(code: Int): Int{
+    private fun getImageByWeatherCode(code: Int): Int {
         if (code == 0) return R.drawable.ic_sun
-        else if (code == 1 || code == 2 || code == 3 || code == 45 || code == 48) return R.drawable.ic_sky_with_sun_light
-        else if (code in 51 .. 67 || code in 80 .. 82) return R.drawable.ic_sky_rainy_light
+        else if (code in 1..3 || code in 45..48) return R.drawable.ic_sky_with_sun_light
+        else if (code in 51..67 || code in 80..82) return R.drawable.ic_sky_rainy_light
         else if (code == 71) return R.drawable.ic_snowflake
-        else if (code in 73 .. 77 || code in 85 .. 86) return R.drawable.ic_sky_snow_light
+        else if (code in 73..77 || code in 85..86) return R.drawable.ic_sky_snow_light
         else return R.drawable.ic_sky_rainy_dark
     }
 
-    private fun getDailyTemperature(max: Float, min: Float): Int{
+    private fun getDailyTemperature(max: Float, min: Float): Int {
         val temperature = (max + min) / 2
         return temperature.toInt()
     }
@@ -300,7 +301,7 @@ class WeatherRepository(
         snowValue: Float,
         cloudCover: Float,
         temperature: Float
-    ): Int{
+    ): Int {
         val precipitationCloud = 40.0f
         val precipitationValue = 0.4f
         val temperatureValue: Float = -3f
@@ -318,6 +319,48 @@ class WeatherRepository(
             currentCondition = DescriptionCondition.Error
             return 0
         }
+    }
+
+    private fun convertSunRiseOrSet(sunData: String): String {
+        val str = sunData.toCharArray()
+        var tempString = ""
+        (11..15).map {
+            tempString += str[it]
+        }
+        return tempString
+    }
+
+    fun getSweepAngle(rise: String, set: String): Float {
+        val sunRiseMinute =
+            LocalDateTime.parse(rise).toEpochSecond(ZoneOffset.UTC) * 1000 + LocalDateTime.parse(
+                rise
+            ).get(
+                ChronoField.MINUTE_OF_DAY
+            )
+        println("RISE = $sunRiseMinute")
+        val sunSetMinute =
+            LocalDateTime.parse(set).toEpochSecond(ZoneOffset.UTC) * 1000 + LocalDateTime.parse(set)
+                .get(
+                    ChronoField.MINUTE_OF_DAY
+                )
+        println("SET = $sunSetMinute")
+        val nowMinute =
+            LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000 + LocalDateTime.now().get(
+                ChronoField.MINUTE_OF_DAY
+            )
+        println("NOW = $nowMinute")
+
+        var sunValue = 0f
+
+        if (nowMinute < sunRiseMinute) sunValue = 0f
+        if (nowMinute > sunSetMinute) sunValue = 140f
+        if (nowMinute in (sunRiseMinute + 1) until sunSetMinute) {
+            val onePart = sunSetMinute / 140
+            sunValue = (onePart * nowMinute).toFloat()
+            println("PROGRESS = ${sunValue}")
+            return sunValue
+        }
+        return sunValue
     }
 
 }

@@ -21,6 +21,7 @@ import com.sidukov.weatherapp.data.remote.api.APIClient
 import com.sidukov.weatherapp.domain.CurrentWeather
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecoration
 import com.sidukov.weatherapp.ui.fragment_location.LocationFragment
+import kotlinx.coroutines.flow.collect
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -45,6 +46,9 @@ class WeatherFragment : Fragment() {
     private lateinit var currentTemperature: TextView
     private lateinit var currentHumidity: TextView
     private lateinit var todayDescription: TextView
+    private lateinit var sunsetTime: TextView
+    private lateinit var sunriseTime: TextView
+    private lateinit var arcProgressBar: ArcProgressBar
 
     var image: Pair<Int, Int> = Pair(0, 0)
     var collectImage: Pair<Int, Int> = Pair(0, 0)
@@ -66,7 +70,6 @@ class WeatherFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //Возвращает View всего xml(fragment_weather)
         return inflater.inflate(R.layout.fragment_weather, container, false)
     }
 
@@ -88,7 +91,6 @@ class WeatherFragment : Fragment() {
         //запускается Корутина с помощью launch, scope.launch выполняется асинхронно относительно общего порядка выполнения кода
         //В collect мы указываем что делать с теми данными, которые придут. Выполняется collect каждый раз, когда в weatherList появляются новые данные
         dailyWeatherRecyclerView = view.findViewById(R.id.recycler_view_weather)
-        //привязываем adapter к RecycleView
         dailyWeatherRecyclerView.adapter = adapterDailyWeather
         dailyWeatherRecyclerView.addItemDecoration(EmptyDividerItemDecoration())
 
@@ -117,40 +119,46 @@ class WeatherFragment : Fragment() {
         currentTemperature = view.findViewById(R.id.text_current_temperature_weather)
         currentHumidity = view.findViewById(R.id.text_humidity_percent_condition_view)
         todayDescription = view.findViewById(R.id.weather_conditions_description)
+        sunriseTime = view.findViewById(R.id.text_sunrise_time)
+        sunsetTime = view.findViewById(R.id.text_sunset_time)
+        arcProgressBar = view.findViewById(R.id.progress_bar)
 
         val index: Int = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH")).toInt()
-        println("INDEX HERE - $index")
 
         var flagWeatherList = false
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            weatherViewModel.uiStateFlow.collect { uiState ->
-                if (uiState.hourlyCurrentWeatherData.isEmpty()) return@collect
-                adapterTodayWeather.updateList(uiState.hourlyCurrentWeatherData)
-                adapterDailyWeather.updateList(uiState.dailyCurrentWeatherData)
-
-                locationName.text = uiState.currentDay[0].date
-                if (uiState.currentDay[0].imageMain.first == uiState.currentDay[0].imageMain.second) {
-                    currentWeatherImageMain.setImageResource(uiState.currentDay[0].imageMain.second)
+            weatherViewModel.todayStateFlow.collect { uiTodayState ->
+                // adapterTodayWeather.updateList(uiTodayState.hourlyWeatha)
+                locationName.text = uiTodayState.date
+                if (uiTodayState.imageMain.first == uiTodayState.imageMain.second) {
+                    currentWeatherImageMain.setImageResource(uiTodayState.imageMain.second)
                     currentWeatherMovingImage.setImageResource(0)
                 } else {
-                    currentWeatherImageMain.setImageResource(uiState.currentDay[0].imageMain.first)
-                    currentWeatherMovingImage.setImageResource(uiState.currentDay[0].imageMain.second)
+                    currentWeatherImageMain.setImageResource(uiTodayState.imageMain.first)
+                    currentWeatherMovingImage.setImageResource(uiTodayState.imageMain.second)
                 }
-                currentTemperature.text = uiState.currentDay[0].temperature.toString()
-                currentHumidity.text = "${uiState.currentDay[0].humidity} %"
-                todayDescription.text = getString(uiState.currentDay[0].description)
+                currentTemperature.text = uiTodayState.temperature.toString()
+                currentHumidity.text = "${uiTodayState.humidity} %"
+                todayDescription.text = getString(uiTodayState.description)
+                arcProgressBar.sunGetCondition = uiTodayState.arcAngle
             }
         }
-//        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-//            weatherViewModel.uiStateFlow.collect{ uiState ->
-//                if (uiState.dailyWeatherData.isEmpty()) return@collect
-//
-//            }
-//        }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            weatherViewModel.hourlyStateFlow.collect { uiHourlyState ->
+                adapterTodayWeather.updateList(uiHourlyState)
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            weatherViewModel.dailyStateFlow.collect { uiDailyState ->
+                if (uiDailyState.isEmpty()) return@collect
+                adapterDailyWeather.updateList(uiDailyState)
+                sunriseTime.text = uiDailyState[0].sunrise
+                sunsetTime.text = uiDailyState[0].sunset
+            }
+        }
 
         val animatedImage = currentWeatherMovingImage
-        //Вызываю класс, который отвечает за анимацию заглавного изображения
         animatedImage.viewTreeObserver.addOnGlobalLayoutListener {
             if (!this::animation.isInitialized) {
                 animation = HeaderImageAnimation(animatedImage)
