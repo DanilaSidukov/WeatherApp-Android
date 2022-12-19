@@ -14,7 +14,6 @@ import com.sidukov.weatherapp.domain.today_body.TodayForecastRequestBody
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoField
 import java.util.*
 
 //WeatherRepository - получает и возвращает данные
@@ -23,8 +22,6 @@ class WeatherRepository(
     private val geocoder: Geocoder,
     private val geoAPI: GeoAPI
 ) {
-
-    private lateinit var currentCondition: DescriptionCondition
 
     private lateinit var tempListHours: List<WeatherShort>
 
@@ -44,7 +41,7 @@ class WeatherRepository(
             geocodingData.results[0].components.country_code,
             LocalDateTime.now(),
             LocalDateTime.now(),
-            hourly = "temperature_2m,relativehumidity_2m,rain,snowfall,cloudcover_mid",
+            hourly = "temperature_2m,relativehumidity_2m,precipitation,rain,snowfall,weathercode,cloudcover_mid",
             true
         )
 
@@ -74,14 +71,15 @@ class WeatherRepository(
         val currentWeatherCurrentData = CurrentWeather(
             date = location,
             imageMain = getImageByData(
-                rainSizeList[position],
-                snowfallSizeList[position],
-                cloudList[position],
-                weatherTodayData.hourly.temperature[position]
+                weatherTodayData.hourly.hourlyWeatherCode[position]
             ),
             temperature = weatherTodayData.hourly.temperature[position].toInt(),
             humidity = weatherTodayData.hourly.humidity[position].toInt(),
-            description = getDescription(weatherTodayData.currentWeather.weathercode).value
+            description = DescriptionToday.valueFromRange(weatherTodayData.currentWeather.weathercode).value,
+            currentWeatherCode = weatherTodayData.hourly.hourlyWeatherCode[0],
+            precipitation = weatherTodayData.hourly.precipitation[position],
+            dayTimeDigest = DescriptionDigest.valueFromRange(weatherTodayData.hourly.hourlyWeatherCode[13]).value,
+            nightTimeDigest = DescriptionDigest.valueFromRange (weatherTodayData.hourly.hourlyWeatherCode[22]).value
         )
 
         var weatherShortList: List<WeatherShort> = emptyList()
@@ -95,10 +93,7 @@ class WeatherRepository(
                 WeatherShort(
                     hour = tempString,
                     image = getHourlyImageByData(
-                        rainSizeList[hour],
-                        snowfallSizeList[hour],
-                        cloudList[hour],
-                        weatherTodayData.hourly.temperature[hour]
+                        weatherTodayData.hourly.hourlyWeatherCode[hour]
                     ),
                     temperature = weatherTodayData.hourly.temperature[hour].toInt(),
                     " ",
@@ -180,71 +175,69 @@ class WeatherRepository(
         )
     }
 
-    private fun getImageByData(
-        rainValue: Float,
-        snowValue: Float,
-        cloudCover: Float,
-        temperature: Float
-    ): Pair<Int, Int> {
-        val imageId: Pair<Int, Int> = Pair(0, 1)
-        val precipitationCloud = 40.0f
-        val precipitationValue = 0.4f
-        val temperatureValue: Float = -3f
-        if (rainValue >= precipitationValue && rainValue > snowValue) {
-            return imageId.copy(
-                first = R.drawable.ic_sky_rainy_light,
-                second = R.drawable.ic_sky_rainy_light
-            )
-        } else if (snowValue >= precipitationValue && snowValue > rainValue && cloudCover >= precipitationCloud) {
-            return imageId.copy(
-                first = R.drawable.ic_sky_snow_light,
-                second = R.drawable.ic_sky_snow_light
-            )
-        } else if (temperature < temperatureValue && snowValue < precipitationValue) {
-            return imageId.copy(first = R.drawable.ic_snowflake, second = R.drawable.ic_snowflake)
-        } else if (snowValue < precipitationValue && temperature > temperatureValue && cloudCover > precipitationCloud) {
-            return imageId.copy(first = R.drawable.ic_sun, second = R.drawable.ic_sky_light)
-        } else if (temperature > temperatureValue && snowValue < precipitationValue && cloudCover < precipitationCloud) {
-            return imageId.copy(first = R.drawable.ic_sun, second = R.drawable.ic_sun)
-        } else {
-            currentCondition = DescriptionCondition.Error
-            return imageId
+    private fun getImageByData(code: Int): Pair<Int, Int> {
+
+        if (code == 0) return Pair(R.drawable.ic_sun, R.drawable.ic_sun)
+        else if (code in 1..3 || code in 45..48) return Pair(
+            R.drawable.ic_sun,
+            R.drawable.ic_sky_light
+        )
+        else if (code in 51..67 || code in 80..82) return Pair(
+            R.drawable.ic_sky_rainy_light,
+            R.drawable.ic_sky_rainy_light
+        )
+        else if (code == 71) return Pair(R.drawable.ic_snowflake, R.drawable.ic_snowflake)
+        else if (code in 73..77 || code in 85..86) return Pair(
+            R.drawable.ic_sky_snow_light,
+            R.drawable.ic_sky_snow_light
+        )
+        else return Pair(R.drawable.ic_sky_rainy_dark, R.drawable.ic_sky_rainy_dark)
+    }
+
+    enum class DescriptionToday(val wc: IntRange, val value: Int) {
+        Clear(0..0, R.string.clear),
+        MainlyClear(1..3, R.string.mainly_clear),
+        Fog(45..48, R.string.fog),
+        Drizzle(51..55, R.string.drizzle),
+        FreezingDrizzle(56..57, R.string.freezing_drizzle),
+        Rain(61..65, R.string.rain),
+        FreezingRain(66..67, R.string.freezing_rain),
+        SnowFall(71..75, R.string.snow_fall),
+        SnowGrains(77..77, R.string.snow_grains),
+        RainShowers(80..82, R.string.rain_showers),
+        SnowShowers(85..86, R.string.snow_showers),
+        Thunderstorm(95..95, R.string.thunderstorm),
+        ThunderstormRain(96..99, R.string.thunderstorm_rain),
+        Error(IntRange.EMPTY, R.string.error);
+
+        companion object {
+            fun valueFromRange(num: Int): DescriptionToday {
+                return values().firstOrNull { num in it.wc } ?: Error
+            }
         }
     }
 
-    enum class DescriptionCondition(val value: Int) {
-        Clear(R.string.clear),
-        MainlyClear(R.string.mainly_clear),
-        Fog(R.string.fog),
-        Drizzle(R.string.drizzle),
-        FreezingDrizzle(R.string.freezing_drizzle),
-        Rain(R.string.rain),
-        FreezingRain(R.string.freezing_rain),
-        SnowFall(R.string.snow_fall),
-        SnowGrains(R.string.snow_grains),
-        RainShowers(R.string.rain_showers),
-        SnowShowers(R.string.snow_showers),
-        Thunderstorm(R.string.thunderstorm),
-        ThunderstormRain(R.string.thunderstorm_rain),
-        Error(R.string.error),
-    }
+    enum class DescriptionDigest(val wc: IntRange, val value: Int) {
+        ClearDigest(0..0, R.string.clear_digest),
+        MainlyClearDigest(1..3, R.string.mainly_clear_digest),
+        FogDigest(45..48, R.string.fog_digest),
+        DrizzleDigest(51..55, R.string.drizzle_digest),
+        FreezingDrizzleDigest(56..57, R.string.freezing_drizzle_digest),
+        RainDigest(61..65, R.string.rain_digest),
+        FreezingRainDigest(66..67, R.string.freezing_rain_digest),
+        SnowFallDigest(71..75, R.string.snow_fall_digest),
+        SnowGrainsDigest(77..77, R.string.snow_grains_digest),
+        RainShowersDigest(80..82, R.string.rain_showers_digest),
+        SnowShowersDigest(85..86, R.string.snow_showers_digest),
+        ThunderstormDigest(95..95, R.string.thunderstorm_digest),
+        ThunderstormRainDigest(96..99, R.string.thunderstorm_rain_digest),
+        ErrorDigest(IntRange.EMPTY, R.string.error_digest);
 
-    private fun getDescription(value: Int): DescriptionCondition {
-        if (value == 0) currentCondition = DescriptionCondition.Clear
-        else if (value in 1..3) currentCondition = DescriptionCondition.MainlyClear
-        else if (value in 45..48) currentCondition = DescriptionCondition.Fog
-        else if (value in 51..55) currentCondition = DescriptionCondition.Drizzle
-        else if (value in 56..57) currentCondition = DescriptionCondition.FreezingDrizzle
-        else if (value in 61..65) currentCondition = DescriptionCondition.Rain
-        else if (value in 66..67) currentCondition = DescriptionCondition.FreezingRain
-        else if (value in 71..75) currentCondition = DescriptionCondition.SnowFall
-        else if (value == 77) currentCondition = DescriptionCondition.SnowGrains
-        else if (value in 80..82) currentCondition = DescriptionCondition.RainShowers
-        else if (value in 85..86) currentCondition = DescriptionCondition.SnowShowers
-        else if (value == 95) currentCondition = DescriptionCondition.Thunderstorm
-        else if (value in 96..99) currentCondition = DescriptionCondition.ThunderstormRain
-        else currentCondition = DescriptionCondition.Error
-        return currentCondition
+        companion object{
+            fun valueFromRange(num: Int): DescriptionDigest {
+                return values().firstOrNull { num in it.wc } ?: ErrorDigest
+            }
+        }
     }
 
     private fun getAddress(latitude: Float, longitude: Float): String {
@@ -295,29 +288,13 @@ class WeatherRepository(
         return temperature.toInt()
     }
 
-    private fun getHourlyImageByData(
-        rainValue: Float,
-        snowValue: Float,
-        cloudCover: Float,
-        temperature: Float
-    ): Int {
-        val precipitationCloud = 40.0f
-        val precipitationValue = 0.4f
-        val temperatureValue: Float = -3f
-        if (rainValue >= precipitationValue && rainValue > snowValue) {
-            return R.drawable.ic_sky_rainy_light
-        } else if (snowValue >= precipitationValue && snowValue > rainValue && cloudCover >= precipitationCloud) {
-            return R.drawable.ic_sky_snow_light
-        } else if (temperature < temperatureValue && snowValue < precipitationValue) {
-            return R.drawable.ic_snowflake
-        } else if (snowValue < precipitationValue && temperature > temperatureValue && cloudCover > precipitationCloud) {
-            return R.drawable.ic_sky_with_sun_light
-        } else if (temperature > temperatureValue && snowValue < precipitationValue && cloudCover < precipitationCloud) {
-            return R.drawable.ic_sun
-        } else {
-            currentCondition = DescriptionCondition.Error
-            return 0
-        }
+    private fun getHourlyImageByData(code: Int): Int {
+        if (code == 0) return R.drawable.ic_sun
+        else if (code in 1..3 || code in 45..48) return R.drawable.ic_sky_with_sun_light
+        else if (code in 51..67 || code in 80..82) return R.drawable.ic_sky_rainy_light
+        else if (code == 71) return R.drawable.ic_snowflake
+        else if (code in 73..77 || code in 85..86) return R.drawable.ic_sky_snow_light
+        else return R.drawable.ic_sky_rainy_dark
     }
 
     private fun convertSunRiseOrSet(sunData: String): String {
@@ -329,34 +306,17 @@ class WeatherRepository(
         return tempString
     }
 
-    fun getSweepAngle(rise: String, set: String): Float {
-        val sunRiseMinute =
-            LocalDateTime.parse(rise).toEpochSecond(ZoneOffset.UTC) * 1000 + LocalDateTime.parse(
-                rise
-            ).get(
-                ChronoField.MINUTE_OF_DAY
-            )
-        val sunSetMinute =
-            LocalDateTime.parse(set).toEpochSecond(ZoneOffset.UTC) * 1000 + LocalDateTime.parse(set)
-                .get(
-                    ChronoField.MINUTE_OF_DAY
-                )
-        val nowMinute =
-            LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000 + LocalDateTime.now().get(
-                ChronoField.MINUTE_OF_DAY
-            )
+    private fun getSweepAngle(rise: String, set: String): Float {
+        val sunRiseMinute = LocalDateTime.parse(rise).toEpochSecond(ZoneOffset.UTC)
+        val sunSetMinute = LocalDateTime.parse(set).toEpochSecond(ZoneOffset.UTC)
+        val nowMinute = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
 
-        var tempValue = 0f
-        var sunValue = 0f
-
-        if (nowMinute < sunRiseMinute) sunValue = 0f
-        if (nowMinute > sunSetMinute) sunValue = 140f
-        if (nowMinute in (sunRiseMinute + 1) until sunSetMinute) {
-            val onePart = (sunSetMinute - sunRiseMinute )/ 140
-            sunValue = ((nowMinute - sunRiseMinute) / onePart).toFloat()
-            return sunValue
-        }
-        return sunValue
+        return if (nowMinute <= sunRiseMinute)
+            0f
+        else if (nowMinute in sunRiseMinute..sunSetMinute)
+                ((nowMinute - sunRiseMinute) / ((sunSetMinute - sunRiseMinute) / 140f))
+        else
+            140f
     }
 
 }

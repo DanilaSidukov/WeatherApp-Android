@@ -14,5 +14,9 @@ data class Hourly(
     @SerializedName("relativehumidity_2m")
     val humidity: List<Float>,
     @SerializedName("time")
-    val time: List<String>
+    val time: List<String>,
+    @SerializedName("weathercode")
+    val hourlyWeatherCode: List<Int>,
+    @SerializedName("precipitation")
+    val precipitation: List <Float>
 )

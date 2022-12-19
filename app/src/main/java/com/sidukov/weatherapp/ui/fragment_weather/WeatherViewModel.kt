@@ -26,8 +26,8 @@ open class WeatherViewModel(
     init {
         viewModelScope.launch {
             val value = repository.getDailyForecast()
-            _dailyStateFlow.emit(value.first)
-            _todayStateFlow.emit(
+            _dailyStateFlow.tryEmit(value.first)
+            _todayStateFlow.tryEmit(
                 _todayStateFlow.first().copy(
                     arcAngle = value.second
                 )

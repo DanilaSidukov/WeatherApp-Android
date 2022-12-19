@@ -8,7 +8,7 @@ data class TodayForecastRequestBody(
     val timezone: String,
     val startDate: LocalDateTime,
     val endDate: LocalDateTime,
-    val hourly: String = "temperature_2m,relativehumidity_2m,rain,snowfall,cloudcover_mid",
+    val hourly: String = "temperature_2m,relativehumidity_2m,precipitation,rain,snowfall,weathercode,cloudcover_mid",
     val currentWeather: Boolean = true,
 )
 

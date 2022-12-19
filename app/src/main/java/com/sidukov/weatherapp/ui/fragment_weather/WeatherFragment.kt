@@ -22,6 +22,7 @@ import com.sidukov.weatherapp.domain.CurrentWeather
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecoration
 import com.sidukov.weatherapp.ui.fragment_location.LocationFragment
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -49,6 +50,9 @@ class WeatherFragment : Fragment() {
     private lateinit var sunsetTime: TextView
     private lateinit var sunriseTime: TextView
     private lateinit var arcProgressBar: ArcProgressBar
+    private lateinit var currentPrecipitation: TextView
+    private lateinit var currentDayTimeDigest: TextView
+    private lateinit var currentNightTimeDigest: TextView
 
     var image: Pair<Int, Int> = Pair(0, 0)
     var collectImage: Pair<Int, Int> = Pair(0, 0)
@@ -122,6 +126,9 @@ class WeatherFragment : Fragment() {
         sunriseTime = view.findViewById(R.id.text_sunrise_time)
         sunsetTime = view.findViewById(R.id.text_sunset_time)
         arcProgressBar = view.findViewById(R.id.progress_bar)
+        currentPrecipitation = view.findViewById(R.id.precipitation_data)
+        currentDayTimeDigest = view.findViewById(R.id.text_daytime_condition_condition_view)
+        currentNightTimeDigest = view.findViewById(R.id.text_nightitme_condition_condition_view)
 
         val index: Int = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH")).toInt()
 
@@ -129,7 +136,6 @@ class WeatherFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             weatherViewModel.todayStateFlow.collect { uiTodayState ->
-                // adapterTodayWeather.updateList(uiTodayState.hourlyWeatha)
                 locationName.text = uiTodayState.date
                 if (uiTodayState.imageMain.first == uiTodayState.imageMain.second) {
                     currentWeatherImageMain.setImageResource(uiTodayState.imageMain.second)
@@ -142,6 +148,10 @@ class WeatherFragment : Fragment() {
                 currentHumidity.text = "${uiTodayState.humidity} %"
                 todayDescription.text = getString(uiTodayState.description)
                 arcProgressBar.sunGetCondition = uiTodayState.arcAngle
+                println("received = ${arcProgressBar.sunGetCondition}")
+                currentPrecipitation.text = "${uiTodayState.precipitation.toInt()} %"
+                currentDayTimeDigest.text = getString(uiTodayState.dayTimeDigest)
+                currentNightTimeDigest.text = getString(uiTodayState.nightTimeDigest)
             }
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {

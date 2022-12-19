@@ -25,7 +25,7 @@ import java.util.*
 //    CloudCover(R.string.cloud_cover)
 //}
 //
-class ExampleUnitTest {
+class ExampleUnitDescriptionDigest {
     @Test
     fun openLink() {
 

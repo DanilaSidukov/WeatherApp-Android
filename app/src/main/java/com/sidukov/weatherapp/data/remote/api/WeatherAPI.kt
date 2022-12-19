@@ -12,7 +12,7 @@ interface WeatherAPI {
     suspend fun currentDayForecast(
         @Query("latitude") latitude: Float,
         @Query("longitude") longitude: Float,
-        @Query("hourly", encoded = true) hourly: String = "temperature_2m,relativehumidity_2m,rain,showers,snowfall",
+        @Query("hourly", encoded = true) hourly: String = "temperature_2m,relativehumidity_2m,precipitation,rain,showers,snowfall,weathercode",
         @Query("current_weather") currentWeather: Boolean = true,
         // timezone values from here https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
         @Query("timezone") timezone: String,

@@ -24,7 +24,7 @@ class ArcProgressBar @JvmOverloads constructor(
     defStyleAttr: Int = R.style.ArcProgressBar
 ) : View(context, attrs, defStyleAttr) {
 
-    var sunGetCondition: Float = 0f
+    var sunGetCondition: Float? = null
     set(value) {
         field = value
         invalidate()
@@ -63,16 +63,18 @@ class ArcProgressBar @JvmOverloads constructor(
             false,
             backgroundPaint
         )
-        canvas.drawArc(
-            this.left.toFloat() + 60f,
-            this.top.toFloat() + 60f,
-            this.right.toFloat() - 60f,
-            this.bottom.toFloat(),
-            200f,
-            // start - 0, end - 140
-            sunGetCondition,
-            false,
-            progressPaint
-        )
+        sunGetCondition?.let {
+            canvas.drawArc(
+                this.left.toFloat() + 60f,
+                this.top.toFloat() + 60f,
+                this.right.toFloat() - 60f,
+                this.bottom.toFloat(),
+                200f,
+                // start - 0, end - 140
+                it,
+                false,
+                progressPaint
+            )
+        }
     }
 }

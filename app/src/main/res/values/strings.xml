@@ -52,5 +52,21 @@
     <string name="thunderstorm">Thunderstorm: Slight or moderate</string>
     <string name="thunderstorm_rain">Thunderstorm: Slight or moderate</string>
     <string name="error">Can\'t provide a likely prognosis at this time </string>
+
+<!-- set weather condition daytime and night time description -->
+    <string name="clear_digest">Clear sky</string>
+    <string name="mainly_clear_digest">Mainly clear</string>
+    <string name="fog_digest">Fog weather</string>
+    <string name="drizzle_digest">Drizzle weather</string>
+    <string name="freezing_drizzle_digest">Freezing Drizzle</string>
+    <string name="rain_digest">Rain weather</string>
+    <string name="freezing_rain_digest">Freezing Rain</string>
+    <string name="snow_fall_digest">Snow fall</string>
+    <string name="snow_grains_digest">Snow grains</string>
+    <string name="rain_showers_digest">Rain showers</string>
+    <string name="snow_showers_digest">Snow showers</string>
+    <string name="thunderstorm_digest">Thunderstorm weather</string>
+    <string name="thunderstorm_rain_digest">Thunderstorm moderate</string>
+    <string name="error_digest">Can\'t provide</string>
     
 </resources>

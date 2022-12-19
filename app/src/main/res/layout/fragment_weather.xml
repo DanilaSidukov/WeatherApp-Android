@@ -384,6 +384,7 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
+                            android:id="@+id/precipitation_data"
                             style="@style/TextAppearance.General_black"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
