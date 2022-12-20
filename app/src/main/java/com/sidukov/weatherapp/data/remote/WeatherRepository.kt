@@ -15,6 +15,7 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.properties.Delegates
 
 //WeatherRepository - получает и возвращает данные
 class WeatherRepository(
@@ -68,19 +69,20 @@ class WeatherRepository(
         val location = getAddress(weatherTodayData.latitude, weatherTodayData.longitude)
 
         // все данные о погоде по текущему часу
-        val currentWeatherCurrentData = CurrentWeather(
-            date = location,
-            imageMain = getImageByData(
-                weatherTodayData.hourly.hourlyWeatherCode[position]
-            ),
-            temperature = weatherTodayData.hourly.temperature[position].toInt(),
-            humidity = weatherTodayData.hourly.humidity[position].toInt(),
-            description = DescriptionToday.valueFromRange(weatherTodayData.currentWeather.weathercode).value,
-            currentWeatherCode = weatherTodayData.hourly.hourlyWeatherCode[0],
-            precipitation = weatherTodayData.hourly.precipitation[position],
-            dayTimeDigest = DescriptionDigest.valueFromRange(weatherTodayData.hourly.hourlyWeatherCode[13]).value,
-            nightTimeDigest = DescriptionDigest.valueFromRange (weatherTodayData.hourly.hourlyWeatherCode[22]).value
-        )
+        val currentWeatherCurrentData =
+            CurrentWeather(
+                date = location,
+                imageMain = getImageByData(
+                    weatherTodayData.hourly.hourlyWeatherCode[position]
+                ),
+                temperature = weatherTodayData.hourly.temperature[position].toInt(),
+                humidity = weatherTodayData.hourly.humidity[position].toInt(),
+                description = DescriptionToday.valueFromRange(weatherTodayData.currentWeather.weathercode).value,
+                currentWeatherCode = weatherTodayData.hourly.hourlyWeatherCode[0],
+                precipitation = weatherTodayData.hourly.precipitation[position],
+                dayTimeDigest = DescriptionDigest.valueFromRange(weatherTodayData.hourly.hourlyWeatherCode[13]).value,
+                nightTimeDigest = DescriptionDigest.valueFromRange(weatherTodayData.hourly.hourlyWeatherCode[22]).value
+            )
 
         var weatherShortList: List<WeatherShort> = emptyList()
         var tempString = ""
@@ -169,6 +171,7 @@ class WeatherRepository(
 
             dailyWeatherList = dailyWeatherList.plus(tempListDays)
         }
+
         return Pair(
             dailyWeatherList,
             getSweepAngle(weatherDailyData.daily.sunrise[0], weatherDailyData.daily.sunset[0])
@@ -233,7 +236,7 @@ class WeatherRepository(
         ThunderstormRainDigest(96..99, R.string.thunderstorm_rain_digest),
         ErrorDigest(IntRange.EMPTY, R.string.error_digest);
 
-        companion object{
+        companion object {
             fun valueFromRange(num: Int): DescriptionDigest {
                 return values().firstOrNull { num in it.wc } ?: ErrorDigest
             }
@@ -306,17 +309,22 @@ class WeatherRepository(
         return tempString
     }
 
+    companion object {
+        var angle = Float.NaN
+    }
+
     private fun getSweepAngle(rise: String, set: String): Float {
+
         val sunRiseMinute = LocalDateTime.parse(rise).toEpochSecond(ZoneOffset.UTC)
         val sunSetMinute = LocalDateTime.parse(set).toEpochSecond(ZoneOffset.UTC)
         val nowMinute = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
 
-        return if (nowMinute <= sunRiseMinute)
+        angle = if (nowMinute <= sunRiseMinute)
             0f
         else if (nowMinute in sunRiseMinute..sunSetMinute)
-                ((nowMinute - sunRiseMinute) / ((sunSetMinute - sunRiseMinute) / 140f))
+            ((nowMinute - sunRiseMinute) / ((sunSetMinute - sunRiseMinute) / 140f))
         else
             140f
+        return angle
     }
-
 }

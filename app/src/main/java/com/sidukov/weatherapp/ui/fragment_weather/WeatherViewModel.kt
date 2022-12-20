@@ -22,16 +22,15 @@ open class WeatherViewModel(
     private val _dailyStateFlow = MutableStateFlow<List<WeatherShort>>(emptyList())
     var dailyStateFlow = _dailyStateFlow.asStateFlow()
 
+    private val _angleStateFlow = MutableStateFlow(Float.NaN)
+    var angleStateFlow = _angleStateFlow.asStateFlow()
 
     init {
         viewModelScope.launch {
             val value = repository.getDailyForecast()
             _dailyStateFlow.tryEmit(value.first)
-            _todayStateFlow.tryEmit(
-                _todayStateFlow.first().copy(
-                    arcAngle = value.second
-                )
-            )
+            if (value.second.isNaN()) return@launch
+            _angleStateFlow.tryEmit(value.second)
         }
 
         viewModelScope.launch {

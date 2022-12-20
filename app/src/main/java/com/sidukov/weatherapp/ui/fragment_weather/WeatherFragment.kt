@@ -147,7 +147,6 @@ class WeatherFragment : Fragment() {
                 currentTemperature.text = uiTodayState.temperature.toString()
                 currentHumidity.text = "${uiTodayState.humidity} %"
                 todayDescription.text = getString(uiTodayState.description)
-                arcProgressBar.sunGetCondition = uiTodayState.arcAngle
                 println("received = ${arcProgressBar.sunGetCondition}")
                 currentPrecipitation.text = "${uiTodayState.precipitation.toInt()} %"
                 currentDayTimeDigest.text = getString(uiTodayState.dayTimeDigest)
@@ -156,6 +155,7 @@ class WeatherFragment : Fragment() {
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             weatherViewModel.hourlyStateFlow.collect { uiHourlyState ->
+                if (uiHourlyState.isEmpty()) return@collect
                 adapterTodayWeather.updateList(uiHourlyState)
             }
         }
@@ -165,6 +165,12 @@ class WeatherFragment : Fragment() {
                 adapterDailyWeather.updateList(uiDailyState)
                 sunriseTime.text = uiDailyState[0].sunrise
                 sunsetTime.text = uiDailyState[0].sunset
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            weatherViewModel.angleStateFlow.collect{ uiAngleState ->
+                if (uiAngleState.isNaN()) return@collect
+                arcProgressBar.sunGetCondition = uiAngleState
             }
         }
 

@@ -10,7 +10,6 @@ data class CurrentWeather(
     val temperature: Int,
     val humidity: Int,
     val description: Int,
-    val arcAngle: Float = 0f,
     val currentWeatherCode: Int,
     val precipitation: Float,
     val dayTimeDigest: Int,
