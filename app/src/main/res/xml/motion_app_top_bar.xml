@@ -85,13 +85,13 @@
             motion:layout_constraintTop_toTopOf="parent" />
         <Constraint
             android:id="@+id/text_current_temperature_weather"
-            android:layout_width="101dp"
+            android:layout_width="130dp"
             android:layout_height="91dp"
             android:layout_marginTop="16dp"
             android:scaleX="0.6"
             android:scaleY="1.2"
             motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintHorizontal_bias="0.412"
+            motion:layout_constraintHorizontal_bias="0.312"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toTopOf="parent"/>
         <Constraint

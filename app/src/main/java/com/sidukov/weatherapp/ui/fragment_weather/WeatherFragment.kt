@@ -2,6 +2,8 @@ package com.sidukov.weatherapp.ui.fragment_weather
 
 import android.annotation.SuppressLint
 import android.location.Geocoder
+import android.media.AudioManager
+import android.media.AudioTrack
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,11 +23,10 @@ import com.sidukov.weatherapp.data.remote.api.APIClient
 import com.sidukov.weatherapp.domain.CurrentWeather
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecoration
 import com.sidukov.weatherapp.ui.fragment_location.LocationFragment
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+
 
 class WeatherFragment : Fragment() {
 
@@ -33,12 +34,11 @@ class WeatherFragment : Fragment() {
 
     //adapter привязывается к RecyclerView, он содержит в себе инфу об элементах в списке RecyclerView
     private val adapterDailyWeather = DailyWeatherAdapter(emptyList())
-
     private val adapterTodayWeather = DailyWeatherAdapter(emptyList())
+    private val adapterMiniCardView = WeatherDescriptionCardAdapter(emptyList())
 
     private lateinit var todayWeatherRecyclerView: RecyclerView
-
-    private lateinit var tempList: List<CurrentWeather>
+    private lateinit var cardViewRecyclerView: RecyclerView
 
     private lateinit var locationName: TextView
     private lateinit var currentWeatherImageMain: ImageView
@@ -53,18 +53,13 @@ class WeatherFragment : Fragment() {
     private lateinit var currentPrecipitation: TextView
     private lateinit var currentDayTimeDigest: TextView
     private lateinit var currentNightTimeDigest: TextView
-
-    var image: Pair<Int, Int> = Pair(0, 0)
-    var collectImage: Pair<Int, Int> = Pair(0, 0)
+    private lateinit var currentAQI: TextView
 
     private lateinit var buttonEdit: Button
 
     //Объявляю о том, что будет vm
     private lateinit var weatherViewModel: WeatherViewModel
     private lateinit var animation: HeaderImageAnimation
-
-    private val adapterMiniCardView = WeatherDescriptionCardAdapter(emptyList())
-    private lateinit var cardViewRecyclerView: RecyclerView
 
     //Создётся менеджер Корутины (scope), CoroutineScope возвращает Корутину, Dispatchers.Main - область, в которой будет работать Корутина
     //Main обозначает, что будет выполняться это в главном потоке (где рисуются элементы, запускаются анимации..)
@@ -89,7 +84,8 @@ class WeatherFragment : Fragment() {
             WeatherRepository(
                 APIClient.weatherApiClient,
                 Geocoder(requireContext()),
-                APIClient.geoApiClient
+                APIClient.geoApiClient,
+                APIClient.aqiApiClient
             )
         )
         //запускается Корутина с помощью launch, scope.launch выполняется асинхронно относительно общего порядка выполнения кода
@@ -102,6 +98,12 @@ class WeatherFragment : Fragment() {
         todayWeatherRecyclerView.adapter = adapterTodayWeather
         todayWeatherRecyclerView.addItemDecoration(EmptyDividerItemDecoration())
 
+        cardViewRecyclerView = view.findViewById(R.id.card_view_recycler_view)
+        cardViewRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+        cardViewRecyclerView.adapter = adapterMiniCardView
+        cardViewRecyclerView.addItemDecoration(GridLayoutItemDecoration(16))
+
+
         OverScrollDecoratorHelper.setUpOverScroll(
             dailyWeatherRecyclerView,
             OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL
@@ -112,10 +114,10 @@ class WeatherFragment : Fragment() {
             OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL
         )
 
-        cardViewRecyclerView = view.findViewById(R.id.card_view_recycler_view)
-        cardViewRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-        cardViewRecyclerView.adapter = adapterMiniCardView
-        cardViewRecyclerView.addItemDecoration(GridLayoutItemDecoration(16))
+        OverScrollDecoratorHelper.setUpStaticOverScroll(
+            cardViewRecyclerView,
+            OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL,
+        )
 
         locationName = view.findViewById(R.id.text_location_weather)
         currentWeatherImageMain = view.findViewById(R.id.image_main)
@@ -129,6 +131,7 @@ class WeatherFragment : Fragment() {
         currentPrecipitation = view.findViewById(R.id.precipitation_data)
         currentDayTimeDigest = view.findViewById(R.id.text_daytime_condition_condition_view)
         currentNightTimeDigest = view.findViewById(R.id.text_nightitme_condition_condition_view)
+        currentAQI = view.findViewById(R.id.aqi_data_today_digest)
 
         val index: Int = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH")).toInt()
 
@@ -147,10 +150,10 @@ class WeatherFragment : Fragment() {
                 currentTemperature.text = uiTodayState.temperature.toString()
                 currentHumidity.text = "${uiTodayState.humidity} %"
                 todayDescription.text = getString(uiTodayState.description)
-                println("received = ${arcProgressBar.sunGetCondition}")
                 currentPrecipitation.text = "${uiTodayState.precipitation.toInt()} %"
                 currentDayTimeDigest.text = getString(uiTodayState.dayTimeDigest)
                 currentNightTimeDigest.text = getString(uiTodayState.nightTimeDigest)
+                currentAQI.text = getString(uiTodayState.currentAQI)
             }
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -171,6 +174,14 @@ class WeatherFragment : Fragment() {
             weatherViewModel.angleStateFlow.collect{ uiAngleState ->
                 if (uiAngleState.isNaN()) return@collect
                 arcProgressBar.sunGetCondition = uiAngleState
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            weatherViewModel.todayCardViewDescription.collect{ uiWeatherDescription ->
+                if (uiWeatherDescription.isEmpty()) return@collect
+                uiWeatherDescription[0].information = getString(uiWeatherDescription[0].information.toInt())
+                adapterMiniCardView.updateList(uiWeatherDescription)
+
             }
         }
 

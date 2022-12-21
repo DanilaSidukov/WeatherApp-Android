@@ -18,7 +18,7 @@
     <string name="air_quality">air quality</string>
     <string name="chance_of_precipitation">chance of precipitation</string>
 <!-- card views -->
-    <string name="good">good</string>
+    <string name="good_temp">good</string>
     <string name="aqi">aqi</string>
     <string name="precipitation">precipitation</string>
     <string name="edit">Edit</string>
@@ -68,5 +68,15 @@
     <string name="thunderstorm_digest">Thunderstorm weather</string>
     <string name="thunderstorm_rain_digest">Thunderstorm moderate</string>
     <string name="error_digest">Can\'t provide</string>
+    
+<!-- set aqi description -->
+    <string name="good">Good</string>
+    <string name="fair">Fair</string>
+    <string name="moderate">Moderate</string>
+    <string name="poor">Poor</string>
+    <string name="very_poor">Very poor</string>
+    <string name="highly_poor">Highly poor</string>
+    <string name="error_aqi">Error</string>
+    
     
 </resources>

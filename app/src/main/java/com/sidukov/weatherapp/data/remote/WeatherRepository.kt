@@ -4,6 +4,7 @@ import android.location.Geocoder
 import androidx.core.text.htmlEncode
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.TimezoneMapper
+import com.sidukov.weatherapp.data.remote.api.AqiAPI
 import com.sidukov.weatherapp.data.remote.api.GeoAPI
 import com.sidukov.weatherapp.data.remote.api.WeatherAPI
 import com.sidukov.weatherapp.domain.CurrentWeather
@@ -11,6 +12,7 @@ import com.sidukov.weatherapp.domain.WeatherDescription
 import com.sidukov.weatherapp.domain.WeatherShort
 import com.sidukov.weatherapp.domain.daily_body.DailyForecastRequestBody
 import com.sidukov.weatherapp.domain.today_body.TodayForecastRequestBody
+import java.sql.DataTruncation
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -21,14 +23,15 @@ import kotlin.properties.Delegates
 class WeatherRepository(
     private val weatherApi: WeatherAPI,
     private val geocoder: Geocoder,
-    private val geoAPI: GeoAPI
+    private val geoAPI: GeoAPI,
+    private val aqiAPI: AqiAPI
 ) {
 
     private lateinit var tempListHours: List<WeatherShort>
 
     private lateinit var tempListDays: List<WeatherShort>
 
-    suspend fun getCurrentDayForecast(): Pair<CurrentWeather, List<WeatherShort>> {
+    suspend fun getCurrentDayForecast(): Triple <CurrentWeather, List<WeatherShort>, List<WeatherDescription>> {
 
         val geocodingData = geoAPI.geoData(
             city = "Yoshkar-Ola, Russia".htmlEncode()
@@ -49,6 +52,17 @@ class WeatherRepository(
         val timeZone =
             TimezoneMapper.latLngToTimezoneString(requestBody.latitude, requestBody.longitude)
 
+        val aqiData = aqiAPI.getCurrentAQI(
+            latitude = requestBody.latitude,
+            longitude = requestBody.longitude,
+            hourly = "european_aqi",
+            timezone = timeZone.toString(),
+            startDate = requestBody.startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+            endDate = requestBody.endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        )
+
+        println(aqiData)
+
         // здесь мы передаём данные, которые создали выше, и получаем список элементов
         val weatherTodayData = weatherApi.currentDayForecast(
             latitude = requestBody.latitude,
@@ -62,9 +76,6 @@ class WeatherRepository(
 
         // здесь мы находим текущий час, он совпадает с индексом элемента в пришедшем с серверва списке
         val position: Int = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-        val rainSizeList = weatherTodayData.hourly.rain
-        val snowfallSizeList = weatherTodayData.hourly.snowfall
-        val cloudList = weatherTodayData.hourly.cloudCover
         // извлекаем влажность из списка, там 24 элемента, по позиции, определённой выше. то есть по индексу position
         val location = getAddress(weatherTodayData.latitude, weatherTodayData.longitude)
 
@@ -81,8 +92,10 @@ class WeatherRepository(
                 currentWeatherCode = weatherTodayData.hourly.hourlyWeatherCode[0],
                 precipitation = weatherTodayData.hourly.precipitation[position],
                 dayTimeDigest = DescriptionDigest.valueFromRange(weatherTodayData.hourly.hourlyWeatherCode[13]).value,
-                nightTimeDigest = DescriptionDigest.valueFromRange(weatherTodayData.hourly.hourlyWeatherCode[22]).value
+                nightTimeDigest = DescriptionDigest.valueFromRange(weatherTodayData.hourly.hourlyWeatherCode[22]).value,
+                currentAQI = DescriptionAQI.getDescriptionAQI(aqiData.AQIHourly.aqiList[position]).value
             )
+
 
         var weatherShortList: List<WeatherShort> = emptyList()
         var tempString = ""
@@ -105,7 +118,34 @@ class WeatherRepository(
             weatherShortList = weatherShortList.plus(tempListHours)
         }
 
-        return Pair(currentWeatherCurrentData, weatherShortList)
+        val weatherDescription = listOf(
+            WeatherDescription(
+                name = R.string.air_quality,
+                information = DescriptionAQI.getDescriptionAQI(aqiData.AQIHourly.aqiList[position]).value.toString(),
+                progressBar = R.id.progress_bar,
+                image = R.drawable.ic_air_quality
+            ),
+            WeatherDescription(
+                R.string.aqi,
+                aqiData.AQIHourly.aqiList[position].toString(),
+                R.id.progress_bar,
+                R.drawable.ic_air_quality
+            ),
+            WeatherDescription(
+                R.string.humidity,
+                weatherTodayData.hourly.humidity[position].toInt().toString() + " %",
+                R.id.progress_bar,
+                R.drawable.ic_humidity
+            ),
+            WeatherDescription(
+                R.string.precipitation,
+                weatherTodayData.hourly.precipitation[position].toInt().toString() + " %",
+                R.id.progress_bar,
+                R.drawable.ic_sky_rainy_dark
+            )
+        )
+
+        return Triple(currentWeatherCurrentData, weatherShortList, weatherDescription)
     }
 
     suspend fun getDailyForecast(): Pair<List<WeatherShort>, Float> {
@@ -243,39 +283,55 @@ class WeatherRepository(
         }
     }
 
+    enum class DescriptionAQI(val wc: IntRange, val value: Int){
+        Good(0..10, R.string.good),
+        Fair(10..20, R.string.fair),
+        Moderate(20..25, R.string.moderate),
+        Poor(25..50, R.string.poor),
+        VeryPoor(50..75, R.string.very_poor),
+        HighlyPoor(75..800, R.string.highly_poor),
+        Error(IntRange.EMPTY, R.string.error_aqi);
+
+        companion object{
+            fun getDescriptionAQI(num: Int): DescriptionAQI {
+                return values().firstOrNull {num in it.wc} ?: Error
+            }
+        }
+    }
+
     private fun getAddress(latitude: Float, longitude: Float): String {
         val address = geocoder.getFromLocation(latitude.toDouble(), longitude.toDouble(), 1)
         return address?.get(0)?.locality + ", " + address?.get(0)?.countryName
     }
 
-    fun getWeatherDetails(): List<WeatherDescription> {
-        return listOf(
-            WeatherDescription(
-                R.string.air_quality,
-                "Good",
-                R.id.progress_bar,
-                R.drawable.ic_air_quality
-            ),
-            WeatherDescription(
-                R.string.aqi,
-                "72",
-                R.id.progress_bar,
-                R.drawable.ic_air_quality
-            ),
-            WeatherDescription(
-                R.string.humidity,
-                "43",
-                R.id.progress_bar,
-                R.drawable.ic_humidity
-            ),
-            WeatherDescription(
-                R.string.precipitation,
-                "3",
-                R.id.progress_bar,
-                R.drawable.ic_sky_rainy_dark
-            )
-        )
-    }
+//    fun getWeatherDetails(): List<WeatherDescription> {
+//        return listOf(
+//            WeatherDescription(
+//                R.string.air_quality,
+//                "Good",
+//                R.id.progress_bar,
+//                R.drawable.ic_air_quality
+//            ),
+//            WeatherDescription(
+//                R.string.aqi,
+//                "72",
+//                R.id.progress_bar,
+//                R.drawable.ic_air_quality
+//            ),
+//            WeatherDescription(
+//                R.string.humidity,
+//                "43",
+//                R.id.progress_bar,
+//                R.drawable.ic_humidity
+//            ),
+//            WeatherDescription(
+//                R.string.precipitation,
+//                "3",
+//                R.id.progress_bar,
+//                R.drawable.ic_sky_rainy_dark
+//            )
+//        )
+//    }
 
     private fun getImageByWeatherCode(code: Int): Int {
         if (code == 0) return R.drawable.ic_sun

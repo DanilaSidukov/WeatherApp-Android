@@ -26,6 +26,7 @@ class WeatherDescriptionCardAdapter(private var list: List<WeatherDescription>) 
         holder.information.text = list[position].information
         holder.progressBar.progress = list[position].progressBar
         holder.image.setImageResource(list[position].image)
+
     }
 
     override fun getItemCount(): Int {

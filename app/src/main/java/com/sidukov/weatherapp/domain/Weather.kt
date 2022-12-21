@@ -13,7 +13,8 @@ data class CurrentWeather(
     val currentWeatherCode: Int,
     val precipitation: Float,
     val dayTimeDigest: Int,
-    val nightTimeDigest: Int
+    val nightTimeDigest: Int,
+    val currentAQI: Int
 )
 
 data class WeatherShort(
