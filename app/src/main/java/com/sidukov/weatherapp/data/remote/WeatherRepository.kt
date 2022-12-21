@@ -1,6 +1,7 @@
 package com.sidukov.weatherapp.data.remote
 
 import android.location.Geocoder
+import android.widget.ProgressBar
 import androidx.core.text.htmlEncode
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.TimezoneMapper
@@ -118,30 +119,31 @@ class WeatherRepository(
             weatherShortList = weatherShortList.plus(tempListHours)
         }
 
+
         val weatherDescription = listOf(
             WeatherDescription(
                 name = R.string.air_quality,
                 information = DescriptionAQI.getDescriptionAQI(aqiData.AQIHourly.aqiList[position]).value.toString(),
-                progressBar = R.id.progress_bar,
+                progress = aqiData.AQIHourly.aqiList[position],
                 image = R.drawable.ic_air_quality
             ),
             WeatherDescription(
-                R.string.aqi,
-                aqiData.AQIHourly.aqiList[position].toString(),
-                R.id.progress_bar,
-                R.drawable.ic_air_quality
+                name = R.string.aqi,
+                information = aqiData.AQIHourly.aqiList[position].toString(),
+                progress = aqiData.AQIHourly.aqiList[position],
+                image = R.drawable.ic_air_quality
             ),
             WeatherDescription(
-                R.string.humidity,
-                weatherTodayData.hourly.humidity[position].toInt().toString() + " %",
-                R.id.progress_bar,
-                R.drawable.ic_humidity
+                name = R.string.humidity,
+                information = weatherTodayData.hourly.humidity[position].toInt().toString() + " %",
+                progress = weatherTodayData.hourly.humidity[position].toInt(),
+                image = R.drawable.ic_humidity
             ),
             WeatherDescription(
-                R.string.precipitation,
-                weatherTodayData.hourly.precipitation[position].toInt().toString() + " %",
-                R.id.progress_bar,
-                R.drawable.ic_sky_rainy_dark
+                name = R.string.precipitation,
+                information = weatherTodayData.hourly.precipitation[position].toInt().toString() + " %",
+                progress = weatherTodayData.hourly.precipitation[position].toInt(),
+                image = R.drawable.ic_sky_rainy_dark
             )
         )
 
@@ -284,12 +286,12 @@ class WeatherRepository(
     }
 
     enum class DescriptionAQI(val wc: IntRange, val value: Int){
-        Good(0..10, R.string.good),
-        Fair(10..20, R.string.fair),
-        Moderate(20..25, R.string.moderate),
-        Poor(25..50, R.string.poor),
-        VeryPoor(50..75, R.string.very_poor),
-        HighlyPoor(75..800, R.string.highly_poor),
+        Good(0..20, R.string.good),
+        Fair(20..40, R.string.fair),
+        Moderate(40..60, R.string.moderate),
+        Poor(60..80, R.string.poor),
+        VeryPoor(80..100, R.string.very_poor),
+        HighlyPoor(100..800, R.string.highly_poor),
         Error(IntRange.EMPTY, R.string.error_aqi);
 
         companion object{
@@ -303,35 +305,6 @@ class WeatherRepository(
         val address = geocoder.getFromLocation(latitude.toDouble(), longitude.toDouble(), 1)
         return address?.get(0)?.locality + ", " + address?.get(0)?.countryName
     }
-
-//    fun getWeatherDetails(): List<WeatherDescription> {
-//        return listOf(
-//            WeatherDescription(
-//                R.string.air_quality,
-//                "Good",
-//                R.id.progress_bar,
-//                R.drawable.ic_air_quality
-//            ),
-//            WeatherDescription(
-//                R.string.aqi,
-//                "72",
-//                R.id.progress_bar,
-//                R.drawable.ic_air_quality
-//            ),
-//            WeatherDescription(
-//                R.string.humidity,
-//                "43",
-//                R.id.progress_bar,
-//                R.drawable.ic_humidity
-//            ),
-//            WeatherDescription(
-//                R.string.precipitation,
-//                "3",
-//                R.id.progress_bar,
-//                R.drawable.ic_sky_rainy_dark
-//            )
-//        )
-//    }
 
     private fun getImageByWeatherCode(code: Int): Int {
         if (code == 0) return R.drawable.ic_sun

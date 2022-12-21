@@ -2,14 +2,13 @@ package com.sidukov.weatherapp.ui.fragment_weather
 
 import android.annotation.SuppressLint
 import android.location.Geocoder
-import android.media.AudioManager
-import android.media.AudioTrack
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -20,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.remote.WeatherRepository
 import com.sidukov.weatherapp.data.remote.api.APIClient
-import com.sidukov.weatherapp.domain.CurrentWeather
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecoration
 import com.sidukov.weatherapp.ui.fragment_location.LocationFragment
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
@@ -54,6 +52,7 @@ class WeatherFragment : Fragment() {
     private lateinit var currentDayTimeDigest: TextView
     private lateinit var currentNightTimeDigest: TextView
     private lateinit var currentAQI: TextView
+    private lateinit var actualProgress: ProgressBar
 
     private lateinit var buttonEdit: Button
 
@@ -127,7 +126,7 @@ class WeatherFragment : Fragment() {
         todayDescription = view.findViewById(R.id.weather_conditions_description)
         sunriseTime = view.findViewById(R.id.text_sunrise_time)
         sunsetTime = view.findViewById(R.id.text_sunset_time)
-        arcProgressBar = view.findViewById(R.id.progress_bar)
+        arcProgressBar = view.findViewById(R.id.arc_progress_bar)
         currentPrecipitation = view.findViewById(R.id.precipitation_data)
         currentDayTimeDigest = view.findViewById(R.id.text_daytime_condition_condition_view)
         currentNightTimeDigest = view.findViewById(R.id.text_nightitme_condition_condition_view)

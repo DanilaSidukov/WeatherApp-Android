@@ -1,5 +1,6 @@
 package com.sidukov.weatherapp.ui.fragment_weather
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,14 +20,18 @@ class WeatherDescriptionCardAdapter(private var list: List<WeatherDescription>) 
         return MiniCardViewHolder(view)
     }
 
+    @SuppressLint("ResourceAsColor")
     override fun onBindViewHolder(holder: MiniCardViewHolder, position: Int) {
         // вот здесь можно извлекать из данных значения с помощью контекста, например:
         // holder.name.context.getString(...)
         holder.name.text = holder.name.context.getString(list[position].name)
         holder.information.text = list[position].information
-        holder.progressBar.progress = list[position].progressBar
+//        if (list[position].progress > 70) {
+//            holder.progressBar.secondaryProgress = R.color.progress_yellow
+//        }
+        holder.progressBar.progress = list[position].progress
         holder.image.setImageResource(list[position].image)
-
+//"#EF9D4B"
     }
 
     override fun getItemCount(): Int {
@@ -36,9 +41,11 @@ class WeatherDescriptionCardAdapter(private var list: List<WeatherDescription>) 
     class MiniCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.text_name_card_view)
         val information: TextView = itemView.findViewById(R.id.text_condition_card_view)
-        var progressBar: ProgressBar = itemView.findViewById(R.id.progress_bar)
+        var progressBar: ProgressBar = itemView.findViewById(R.id.arc_progress_bar)
         val image: ImageView = itemView.findViewById(R.id.image_card_view)
     }
+
+
 
     fun updateList(newList: List<WeatherDescription>) {
         list = newList

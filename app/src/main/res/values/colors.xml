@@ -13,4 +13,5 @@
     <color name="green">#00B37A</color>
     <color name="grey_2">#DCDFE6</color>
     <color name="grey_3">#bfbfbf</color>
+    <color name="progress_yellow">#E5CE55</color>
 </resources>
