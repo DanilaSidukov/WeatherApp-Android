@@ -77,6 +77,10 @@
     <string name="very_poor">Very poor</string>
     <string name="highly_poor">Highly poor</string>
     <string name="error_aqi">Error</string>
-    
-    
+    <string name="enter_location">Enter location :</string>
+    <string name="new_york_america">New-York, America</string>
+    <string name="enter">Enter</string>
+    <string name="cancel">Cancel</string>
+
+
 </resources>

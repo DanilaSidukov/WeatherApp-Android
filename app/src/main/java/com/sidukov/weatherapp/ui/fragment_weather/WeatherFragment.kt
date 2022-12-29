@@ -1,8 +1,14 @@
 package com.sidukov.weatherapp.ui.fragment_weather
 
 import android.annotation.SuppressLint
+import android.graphics.Color
+import android.graphics.ColorFilter
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
+import android.graphics.drawable.Drawable
 import android.location.Geocoder
 import android.os.Bundle
+import android.support.annotation.ColorRes
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +16,9 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
@@ -180,7 +188,6 @@ class WeatherFragment : Fragment() {
                 if (uiWeatherDescription.isEmpty()) return@collect
                 uiWeatherDescription[0].information = getString(uiWeatherDescription[0].information.toInt())
                 adapterMiniCardView.updateList(uiWeatherDescription)
-
             }
         }
 
@@ -205,5 +212,6 @@ class WeatherFragment : Fragment() {
 
     }
 }
+
 
 

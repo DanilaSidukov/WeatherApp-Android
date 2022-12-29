@@ -103,8 +103,8 @@ class WeatherRepository(
 
         (0..23).map { hour ->
             tempString = if (hour < 10) {
-                "0$hour:00"
-            } else "$hour:00"
+                "0$hour"
+            } else "$hour"
             tempListHours = listOf(
                 WeatherShort(
                     hour = tempString,
@@ -142,7 +142,7 @@ class WeatherRepository(
             WeatherDescription(
                 name = R.string.precipitation,
                 information = weatherTodayData.hourly.precipitation[position].toInt().toString() + " %",
-                progress = weatherTodayData.hourly.precipitation[position].toInt(),
+                progress = weatherTodayData.hourly.precipitation[position].toInt() * 100,
                 image = R.drawable.ic_sky_rainy_dark
             )
         )

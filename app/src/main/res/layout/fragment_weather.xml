@@ -413,7 +413,7 @@
                 <Button
                     android:id="@+id/button_edit"
                     style="@style/ButtonEdit"
-                    android:background="@drawable/round_buttoun"
+                    android:background="@drawable/round_button"
                     android:letterSpacing="0.1"
                     android:text="@string/edit"
                     android:textColor="@color/black"

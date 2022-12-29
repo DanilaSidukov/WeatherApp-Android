@@ -20,7 +20,11 @@
         <item name="backgroundTrackColor">@color/grey_2</item>
         <item name="progressTrackColor">@color/green</item>
         <item name="descriptionTextColor">@color/grey_3</item>
+        <item name="descriptionGreyTextColor">@color/grey</item>
 
         <item name="ArcProgressBar_style">@style/ArcProgressBar</item>
+
+        <item name="progressYellow">@color/progress_yellow</item>
+        <item name="progressGreen">@color/progress_green</item>
     </style>
 </resources>

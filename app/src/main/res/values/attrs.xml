@@ -14,4 +14,9 @@
 
     <attr name="descriptionTextColor" format="color" />
 
+    <attr name="descriptionGreyTextColor" format="color" />
+
+    <attr name="progressYellow" format="color" />
+    <attr name="progressGreen" format="color" />
+
 </resources>
