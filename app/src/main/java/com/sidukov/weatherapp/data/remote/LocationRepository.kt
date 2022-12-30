@@ -1,14 +1,12 @@
 package com.sidukov.weatherapp.data.remote
 
 import com.sidukov.weatherapp.R
+import com.sidukov.weatherapp.data.local.LocationDao
 import com.sidukov.weatherapp.domain.Location
 
-class LocationRepository {
+class LocationRepository(
+    private val locationDao: LocationDao
+) {
 
-    fun getLocationData(): List<Location>{
-        return listOf(
-            Location("New york", true , true, true, "14", "3-12", R.drawable.ic_sky_rainy_dark),
-            Location("Dima Sidukov", false , false, false, "14", "3-12", R.drawable.ic_sun)
-        )
-    }
+    suspend fun getLocationData() = locationDao.getAll()
 }

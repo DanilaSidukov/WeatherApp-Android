@@ -2,6 +2,7 @@ package com.sidukov.weatherapp.data.remote.api
 
 import com.sidukov.weatherapp.domain.geo_api.GeocodingData
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query

@@ -1,10 +1,11 @@
 package com.sidukov.weatherapp.data.remote
 
 import android.location.Geocoder
-import android.widget.ProgressBar
 import androidx.core.text.htmlEncode
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.TimezoneMapper
+import com.sidukov.weatherapp.data.local.EntityLocation
+import com.sidukov.weatherapp.data.local.LocationDao
 import com.sidukov.weatherapp.data.remote.api.AqiAPI
 import com.sidukov.weatherapp.data.remote.api.GeoAPI
 import com.sidukov.weatherapp.data.remote.api.WeatherAPI
@@ -13,26 +14,25 @@ import com.sidukov.weatherapp.domain.WeatherDescription
 import com.sidukov.weatherapp.domain.WeatherShort
 import com.sidukov.weatherapp.domain.daily_body.DailyForecastRequestBody
 import com.sidukov.weatherapp.domain.today_body.TodayForecastRequestBody
-import java.sql.DataTruncation
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.properties.Delegates
 
 //WeatherRepository - получает и возвращает данные
 class WeatherRepository(
     private val weatherApi: WeatherAPI,
     private val geocoder: Geocoder,
     private val geoAPI: GeoAPI,
-    private val aqiAPI: AqiAPI
+    private val aqiAPI: AqiAPI,
+    private val locationDao: LocationDao
 ) {
 
     private lateinit var tempListHours: List<WeatherShort>
 
     private lateinit var tempListDays: List<WeatherShort>
 
-    suspend fun getCurrentDayForecast(): Triple <CurrentWeather, List<WeatherShort>, List<WeatherDescription>> {
+    suspend fun getCurrentDayForecast(city: String): Triple <CurrentWeather, List<WeatherShort>, List<WeatherDescription>> {
 
         val geocodingData = geoAPI.geoData(
             city = "Yoshkar-Ola, Russia".htmlEncode()
@@ -108,7 +108,7 @@ class WeatherRepository(
             tempListHours = listOf(
                 WeatherShort(
                     hour = tempString,
-                    image = getHourlyImageByData(
+                    image = getImageByWeatherCode(
                         weatherTodayData.hourly.hourlyWeatherCode[hour]
                     ),
                     temperature = weatherTodayData.hourly.temperature[hour].toInt(),
@@ -146,6 +146,20 @@ class WeatherRepository(
                 image = R.drawable.ic_sky_rainy_dark
             )
         )
+
+        if (geocodingData.results[0].toString() != ""){
+            locationDao.insertData(
+                EntityLocation(
+                    name = location,
+                    date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM")),
+                    temperature = currentWeatherCurrentData.temperature,
+                    image = getImageByWeatherCode(
+                        weatherTodayData.hourly.hourlyWeatherCode[position]
+                    ),
+                    checkBoolean = false
+                )
+            )
+        }
 
         return Triple(currentWeatherCurrentData, weatherShortList, weatherDescription)
     }
@@ -320,14 +334,14 @@ class WeatherRepository(
         return temperature.toInt()
     }
 
-    private fun getHourlyImageByData(code: Int): Int {
-        if (code == 0) return R.drawable.ic_sun
-        else if (code in 1..3 || code in 45..48) return R.drawable.ic_sky_with_sun_light
-        else if (code in 51..67 || code in 80..82) return R.drawable.ic_sky_rainy_light
-        else if (code == 71) return R.drawable.ic_snowflake
-        else if (code in 73..77 || code in 85..86) return R.drawable.ic_sky_snow_light
-        else return R.drawable.ic_sky_rainy_dark
-    }
+//    private fun getHourlyImageByData(code: Int): Int {
+//        if (code == 0) return R.drawable.ic_sun
+//        else if (code in 1..3 || code in 45..48) return R.drawable.ic_sky_with_sun_light
+//        else if (code in 51..67 || code in 80..82) return R.drawable.ic_sky_rainy_light
+//        else if (code == 71) return R.drawable.ic_snowflake
+//        else if (code in 73..77 || code in 85..86) return R.drawable.ic_sky_snow_light
+//        else return R.drawable.ic_sky_rainy_dark
+//    }
 
     private fun convertSunRiseOrSet(sunData: String): String {
         val str = sunData.toCharArray()

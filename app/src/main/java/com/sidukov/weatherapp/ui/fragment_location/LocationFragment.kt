@@ -19,7 +19,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
+import com.sidukov.weatherapp.data.local.LocationDao
 import com.sidukov.weatherapp.data.remote.LocationRepository
+import com.sidukov.weatherapp.ui.WeatherApplication
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecoration
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherFragment
 import kotlinx.android.synthetic.main.activity_main.*
@@ -48,7 +50,11 @@ class LocationFragment: Fragment(), OnWeatherCardClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        locationModel = LocationModel(LocationRepository())
+        locationModel = LocationModel(
+            LocationRepository(
+                locationDao = WeatherApplication.database.daoLocation()
+            )
+        )
         recyclerViewLocation = view.findViewById(R.id.recycler_view_location)
         recyclerViewLocation.layoutManager = GridLayoutManager(requireContext(), 2)
         recyclerViewLocation.adapter = adapterLocation

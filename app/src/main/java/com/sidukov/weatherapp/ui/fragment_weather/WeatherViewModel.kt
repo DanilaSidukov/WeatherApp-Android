@@ -38,7 +38,7 @@ open class WeatherViewModel(
         }
 
         viewModelScope.launch {
-            val value = repository.getCurrentDayForecast()
+            val value = repository.getCurrentDayForecast(" ")
 
             _todayStateFlow.emit(value.first)
 

@@ -10,12 +10,13 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
+import com.sidukov.weatherapp.data.local.EntityLocation
 import com.sidukov.weatherapp.domain.Location
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class LocationViewAdapter(
-    private var list: List<Location>,
+    private var list: List<EntityLocation>,
     private var listener: OnWeatherCardClickListener
 ) : RecyclerView.Adapter<LocationViewAdapter.ViewHolder>() {
 
@@ -33,26 +34,19 @@ class LocationViewAdapter(
             listener.onWeatherCardClicked()
         }
 
-        val locationViewModel = list[position]
         holder.locationName?.text = list[position].name
-        if (locationViewModel.shouldShowLocation) {
+        if (list[position].checkBoolean) {
             holder.location?.text = holder.location?.context?.getString(R.string.location)
-        } else {
-            holder.location?.visibility = View.GONE
-        }
-        if (locationViewModel.shouldShowCheckImage) {
             holder.imageCheck?.setImageResource(R.drawable.ic_check)
-        } else {
-            holder.imageCheck?.visibility = View.GONE
-        }
-        if (locationViewModel.shouldShowGpsImage) {
             holder.imageGps?.setImageResource(R.drawable.ic_gps)
         } else {
+            holder.location?.visibility = View.GONE
+            holder.imageCheck?.visibility = View.GONE
             holder.imageGps?.visibility = View.GONE
         }
-        holder.currentTemperature?.text = list[position].currentTemperature
-        holder.currentDate?.text = convertToDate()
-        holder.imageWeather?.setImageResource(locationViewModel.weatherImage)
+        holder.currentTemperature?.text = list[position].temperature.toString()
+        holder.currentDate?.text = list[position].date
+        holder.imageWeather?.setImageResource(list[position].image)
     }
 
     override fun getItemCount(): Int {
@@ -69,17 +63,17 @@ class LocationViewAdapter(
         val imageWeather: ImageView? = row.findViewById(R.id.image_weather_location)
     }
 
-    fun updateListLocation(newList: List<Location>) {
+    fun updateListLocation(newList: List<EntityLocation>) {
         list = newList
         notifyDataSetChanged()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun convertToDate(): String {
-        val formatterDayMonthLocation = DateTimeFormatter.ofPattern("dd-MM")
-        val currentDayMonthLocation = LocalDateTime.now().format(formatterDayMonthLocation)
-        return currentDayMonthLocation.toString()
-    }
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    private fun convertToDate(): String {
+//        val formatterDayMonthLocation = DateTimeFormatter.ofPattern("dd-MM")
+//        val currentDayMonthLocation = LocalDateTime.now().format(formatterDayMonthLocation)
+//        return currentDayMonthLocation.toString()
+//    }
 
 }
 

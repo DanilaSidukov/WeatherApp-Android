@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.remote.WeatherRepository
 import com.sidukov.weatherapp.data.remote.api.APIClient
+import com.sidukov.weatherapp.ui.WeatherApplication
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecoration
 import com.sidukov.weatherapp.ui.fragment_location.LocationFragment
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
@@ -92,7 +93,8 @@ class WeatherFragment : Fragment() {
                 APIClient.weatherApiClient,
                 Geocoder(requireContext()),
                 APIClient.geoApiClient,
-                APIClient.aqiApiClient
+                APIClient.aqiApiClient,
+                WeatherApplication.database.daoLocation()
             )
         )
         //запускается Корутина с помощью launch, scope.launch выполняется асинхронно относительно общего порядка выполнения кода
