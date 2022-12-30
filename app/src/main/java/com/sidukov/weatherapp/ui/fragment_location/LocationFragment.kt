@@ -1,5 +1,7 @@
 package com.sidukov.weatherapp.ui.fragment_location
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
@@ -8,8 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -18,6 +22,8 @@ import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.remote.LocationRepository
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecoration
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherFragment
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.custom_dialog.view.*
 
 class LocationFragment: Fragment(), OnWeatherCardClickListener {
     private val adapterLocation = LocationViewAdapter(emptyList(), this)
@@ -25,11 +31,10 @@ class LocationFragment: Fragment(), OnWeatherCardClickListener {
     private lateinit var recyclerViewLocation: RecyclerView
 
     private lateinit var buttonOpenDialog: Button
-    private lateinit var buttonEnterLocation: Button
-    private lateinit var buttonCloseDialog: Button
-    private lateinit var locationDialog: Dialog
 
-    private lateinit var editEnterLocation: TextView
+    private lateinit var locationDialogView: View
+    private lateinit var locationDialog: AlertDialog.Builder
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,6 +44,7 @@ class LocationFragment: Fragment(), OnWeatherCardClickListener {
         return inflater.inflate(R.layout.fragment_choose_location, container, false)
     }
 
+    @SuppressLint("InflateParams")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -54,28 +60,23 @@ class LocationFragment: Fragment(), OnWeatherCardClickListener {
             }
         }
 
-        locationDialog = Dialog(requireContext())
-        locationDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        locationDialog.setCancelable(false)
-        locationDialog.setContentView(R.layout.custom_dialog)
-
         buttonOpenDialog = view.findViewById(R.id.button_add_location)
 
-
         buttonOpenDialog.setOnClickListener {
+            locationDialogView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_dialog,  null, false)
+            locationDialog = AlertDialog.Builder(requireContext())
+                .setView(locationDialogView)
 
-            buttonEnterLocation = it.findViewById(R.id.button_enter)
-            buttonCloseDialog = it.findViewById(R.id.button_cancel)
-            editEnterLocation = it.findViewById(R.id.edit_enter_location)
-
-            buttonEnterLocation.setOnClickListener {
-                locationDialog.dismiss()
+            if (locationDialogView.parent != null){
+                (locationDialogView.parent as ViewGroup).removeView(locationDialogView)
             }
-
-            buttonCloseDialog.setOnClickListener {
-                locationDialog.dismiss()
+            val dialogOpened = locationDialog.show()
+            locationDialogView.button_enter.setOnClickListener {
+                dialogOpened.dismiss()
             }
-            locationDialog.show()
+            locationDialogView.button_cancel.setOnClickListener {
+                dialogOpened.dismiss()
+            }
         }
 
     }

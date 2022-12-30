@@ -23,7 +23,7 @@
         android:layout_alignTop="@id/text_enter_location"
         android:layout_alignStart="@id/text_enter_location"
         android:layout_alignEnd="@id/text_enter_location"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="50dp"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
         android:hint="@string/new_york_america"
@@ -32,7 +32,7 @@
 
     <Button
         android:id="@+id/button_enter"
-        android:layout_width="130dp"
+        android:layout_width="110dp"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/edit_enter_location"
         android:layout_alignStart="@id/edit_enter_location"
@@ -44,7 +44,7 @@
 
     <Button
         android:id="@+id/button_cancel"
-        android:layout_width="130dp"
+        android:layout_width="110dp"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@id/edit_enter_location"
         android:layout_alignTop="@id/edit_enter_location"
