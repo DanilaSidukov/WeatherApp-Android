@@ -1,6 +1,5 @@
 package com.sidukov.weatherapp.data.remote
 
-import android.location.Geocoder
 import androidx.core.text.htmlEncode
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.TimezoneMapper
@@ -22,10 +21,9 @@ import java.util.*
 //WeatherRepository - получает и возвращает данные
 class WeatherRepository(
     private val weatherApi: WeatherAPI,
-    private val geocoder: Geocoder,
     private val geoAPI: GeoAPI,
     private val aqiAPI: AqiAPI,
-    private val locationDao: LocationDao
+    private val locationDao: LocationDao,
 ) {
 
     private lateinit var tempListHours: List<WeatherShort>
@@ -34,10 +32,28 @@ class WeatherRepository(
 
     suspend fun getCurrentDayForecast(city: String): Triple <CurrentWeather, List<WeatherShort>, List<WeatherDescription>> {
 
+        println("City = $city")
+
         val geocodingData = geoAPI.geoData(
-            city = "Yoshkar-Ola, Russia".htmlEncode()
+            city = city.htmlEncode()
+//            city = "Yoshkar-Ola, Russia".htmlEncode()
         )
 
+        println("StaTUS = ${geocodingData.status.code}")
+
+        if (geocodingData.results.isEmpty() || geocodingData.status.code != 200){
+            return Triple(CurrentWeather("Error",
+            Pair(1, 1),
+                0,
+                0,
+                0,
+                0,
+                0f,
+                0,
+                0,
+                0
+                ), emptyList(), emptyList())
+        }
 
         // Это мы создаём объект с данными, которые передадим в API запрос
         val requestBody = TodayForecastRequestBody(
@@ -78,7 +94,15 @@ class WeatherRepository(
         // здесь мы находим текущий час, он совпадает с индексом элемента в пришедшем с серверва списке
         val position: Int = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         // извлекаем влажность из списка, там 24 элемента, по позиции, определённой выше. то есть по индексу position
-        val location = getAddress(weatherTodayData.latitude, weatherTodayData.longitude)
+        val location = geocodingData.results[0].components.village + ", "+ geocodingData.results[0].components.country
+//            getAddress(weatherTodayData.latitude, weatherTodayData.longitude)
+
+        var tempNullString = "null"
+        if (tempNullString in location){
+
+        }
+
+        println("Location = $location")
 
         // все данные о погоде по текущему часу
         val currentWeatherCurrentData =
@@ -147,7 +171,7 @@ class WeatherRepository(
             )
         )
 
-        if (geocodingData.results[0].toString() != ""){
+        if (geocodingData.results[0].toString() != "") {
             locationDao.insertData(
                 EntityLocation(
                     name = location,
@@ -156,7 +180,7 @@ class WeatherRepository(
                     image = getImageByWeatherCode(
                         weatherTodayData.hourly.hourlyWeatherCode[position]
                     ),
-                    checkBoolean = false
+                    checkBoolean = true
                 )
             )
         }
@@ -315,11 +339,6 @@ class WeatherRepository(
         }
     }
 
-    private fun getAddress(latitude: Float, longitude: Float): String {
-        val address = geocoder.getFromLocation(latitude.toDouble(), longitude.toDouble(), 1)
-        return address?.get(0)?.locality + ", " + address?.get(0)?.countryName
-    }
-
     private fun getImageByWeatherCode(code: Int): Int {
         if (code == 0) return R.drawable.ic_sun
         else if (code in 1..3 || code in 45..48) return R.drawable.ic_sky_with_sun_light
@@ -371,3 +390,4 @@ class WeatherRepository(
         return angle
     }
 }
+

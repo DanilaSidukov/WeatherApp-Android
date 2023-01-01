@@ -26,12 +26,11 @@ class LocationViewAdapter(
         return ViewHolder(view)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("ResourceType")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         holder.itemView.setOnClickListener {
-            listener.onWeatherCardClicked()
+            listener.onWeatherCardClicked(list[position].name)
         }
 
         holder.locationName?.text = list[position].name
@@ -68,6 +67,7 @@ class LocationViewAdapter(
         notifyDataSetChanged()
     }
 
+
 //    @RequiresApi(Build.VERSION_CODES.O)
 //    private fun convertToDate(): String {
 //        val formatterDayMonthLocation = DateTimeFormatter.ofPattern("dd-MM")
@@ -79,5 +79,5 @@ class LocationViewAdapter(
 
 @FunctionalInterface
 interface OnWeatherCardClickListener {
-    fun onWeatherCardClicked()
+    fun onWeatherCardClicked(locationName: String)
 }

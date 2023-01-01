@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 
 open class WeatherViewModel(
     private val repository: WeatherRepository,
+    private val cityName: String
 ) : ViewModel() {
 
 
@@ -38,7 +39,7 @@ open class WeatherViewModel(
         }
 
         viewModelScope.launch {
-            val value = repository.getCurrentDayForecast(" ")
+            val value = repository.getCurrentDayForecast(cityName)
 
             _todayStateFlow.emit(value.first)
 
@@ -46,6 +47,8 @@ open class WeatherViewModel(
             _hourlyStateFlow.emit(value.second)
 
             _todayCardViewDescription.emit(value.third)
+
+//            if ( value.first.date)
 
         }
     }

@@ -1,14 +1,8 @@
 package com.sidukov.weatherapp.ui.fragment_weather
 
 import android.annotation.SuppressLint
-import android.graphics.Color
-import android.graphics.ColorFilter
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
-import android.graphics.drawable.Drawable
 import android.location.Geocoder
 import android.os.Bundle
-import android.support.annotation.ColorRes
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,9 +10,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
@@ -35,7 +27,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-class WeatherFragment : Fragment() {
+class WeatherFragment(val city: String) : Fragment() {
 
     private lateinit var dailyWeatherRecyclerView: RecyclerView
 
@@ -87,16 +79,18 @@ class WeatherFragment : Fragment() {
 
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
 
+
         //инициализация vm непосредственно
         weatherViewModel = WeatherViewModel(
             WeatherRepository(
                 APIClient.weatherApiClient,
-                Geocoder(requireContext()),
                 APIClient.geoApiClient,
                 APIClient.aqiApiClient,
                 WeatherApplication.database.daoLocation()
-            )
+            ),
+            city
         )
+
         //запускается Корутина с помощью launch, scope.launch выполняется асинхронно относительно общего порядка выполнения кода
         //В collect мы указываем что делать с теми данными, которые придут. Выполняется collect каждый раз, когда в weatherList появляются новые данные
         dailyWeatherRecyclerView = view.findViewById(R.id.recycler_view_weather)
@@ -203,6 +197,7 @@ class WeatherFragment : Fragment() {
 
         buttonEdit = view.findViewById(R.id.button_edit)
         buttonEdit.setOnClickListener {
+
             val locationFragment = LocationFragment()
             val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
             transaction.replace(R.id.container, locationFragment)
@@ -214,6 +209,3 @@ class WeatherFragment : Fragment() {
 
     }
 }
-
-
-

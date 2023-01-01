@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        openFragmentAppTopBar(WeatherFragment(), R.id.container)
+        openFragmentAppTopBar(WeatherFragment("Yoshkar-Ola, Russia"), R.id.container)
 
     }
     //У активити есть поле supportFragmentManager, оно ислпьзуется для управления фрагментами, beginTransaction() - запускает фрагмент

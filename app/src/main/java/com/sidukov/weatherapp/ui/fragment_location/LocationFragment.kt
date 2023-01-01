@@ -2,34 +2,32 @@ package com.sidukov.weatherapp.ui.fragment_location
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.app.Dialog
-import android.os.Build
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import androidx.annotation.RequiresApi
-import androidx.fragment.app.DialogFragment
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
-import com.sidukov.weatherapp.data.local.LocationDao
 import com.sidukov.weatherapp.data.remote.LocationRepository
+import com.sidukov.weatherapp.data.remote.WeatherRepository
+import com.sidukov.weatherapp.data.remote.api.APIClient
 import com.sidukov.weatherapp.ui.WeatherApplication
-import com.sidukov.weatherapp.ui.common.GridLayoutItemDecoration
+import com.sidukov.weatherapp.ui.common.GridLayoutItemDecorationLocation
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherFragment
+import com.sidukov.weatherapp.ui.fragment_weather.WeatherViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.custom_dialog.view.*
 
 class LocationFragment: Fragment(), OnWeatherCardClickListener {
+
     private val adapterLocation = LocationViewAdapter(emptyList(), this)
-    private lateinit var locationModel: LocationModel
+    private lateinit var locationViewModel: LocationViewModel
     private lateinit var recyclerViewLocation: RecyclerView
 
     private lateinit var buttonOpenDialog: Button
@@ -50,19 +48,22 @@ class LocationFragment: Fragment(), OnWeatherCardClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        locationModel = LocationModel(
+        locationViewModel = LocationViewModel(
             LocationRepository(
-                locationDao = WeatherApplication.database.daoLocation()
+                locationDao = WeatherApplication.database.daoLocation(),
             )
         )
+
         recyclerViewLocation = view.findViewById(R.id.recycler_view_location)
         recyclerViewLocation.layoutManager = GridLayoutManager(requireContext(), 2)
         recyclerViewLocation.adapter = adapterLocation
-        recyclerViewLocation.addItemDecoration(GridLayoutItemDecoration(16))
+        recyclerViewLocation.addItemDecoration(GridLayoutItemDecorationLocation(16))
+
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            locationModel.locationList.collect{
-                adapterLocation.updateListLocation(it)
+            locationViewModel.locationList.collect{
+                if (it.isEmpty()) return@collect
+                adapterLocation.updateListLocation(it.distinct())
             }
         }
 
@@ -76,20 +77,49 @@ class LocationFragment: Fragment(), OnWeatherCardClickListener {
             if (locationDialogView.parent != null){
                 (locationDialogView.parent as ViewGroup).removeView(locationDialogView)
             }
+
+
             val dialogOpened = locationDialog.show()
             locationDialogView.button_enter.setOnClickListener {
-                dialogOpened.dismiss()
+                if (locationDialogView.edit_enter_location.text.toString().isNotEmpty()){
+
+                    val weatherViewModel = WeatherViewModel(
+                        WeatherRepository(
+                            APIClient.weatherApiClient,
+                            APIClient.geoApiClient,
+                            APIClient.aqiApiClient,
+                            WeatherApplication.database.daoLocation()
+                        ),
+                        locationDialogView.edit_enter_location.text.toString()
+                    )
+
+                    viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                        weatherViewModel.todayStateFlow.collect{
+                            if (it.date == "Error"){
+                                Toast.makeText(requireContext(),"Error! Can't provide forecast for this location!", Toast.LENGTH_SHORT).show()
+                            } else {
+                                activity?.supportFragmentManager?.beginTransaction()
+                                    ?.replace(R.id.container, WeatherFragment(locationDialogView.edit_enter_location.text.toString()))
+                                    ?.commit()
+                                locationViewModel.addLocation()
+                                dialogOpened.dismiss()
+                            }
+                        }
+                    }
+
+                } else {
+                    Toast.makeText(requireContext(),"Type: city, country", Toast.LENGTH_SHORT).show()
+                }
             }
             locationDialogView.button_cancel.setOnClickListener {
                 dialogOpened.dismiss()
             }
         }
-
     }
 
-    override fun onWeatherCardClicked() {
+    override fun onWeatherCardClicked(locationName: String) {
         activity?.supportFragmentManager?.beginTransaction()
-            ?.replace(R.id.container, WeatherFragment())
+            ?.replace(R.id.container, WeatherFragment(locationName))
             ?.commit()
     }
 }
