@@ -81,6 +81,9 @@
     <string name="new_york_america">New-York, America</string>
     <string name="enter">Enter</string>
     <string name="cancel">Cancel</string>
+    <string name="remove_this_location">Remove this location?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 
 </resources>

@@ -15,6 +15,9 @@ interface LocationDao {
     @Insert
     suspend fun insertData(locationData: EntityLocation)
 
+    @Query("DELETE FROM entitylocation")
+    suspend fun deleteAll()
+
     @Delete
     suspend fun deleteData(locationData: EntityLocation)
 }

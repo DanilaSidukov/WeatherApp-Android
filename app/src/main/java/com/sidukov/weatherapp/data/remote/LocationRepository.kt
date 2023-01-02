@@ -1,12 +1,17 @@
 package com.sidukov.weatherapp.data.remote
 
-import com.sidukov.weatherapp.R
+import com.sidukov.weatherapp.data.local.EntityLocation
 import com.sidukov.weatherapp.data.local.LocationDao
-import com.sidukov.weatherapp.domain.Location
 
 class LocationRepository(
-    private val locationDao: LocationDao
+    private val locationDao: LocationDao,
+    private val item: EntityLocation
 ) {
 
     suspend fun getLocationData() = locationDao.getAll()
+
+    suspend fun deleteLocationData() = locationDao.deleteData(item)
+
+    suspend fun deleteAllLocation() = locationDao.deleteAll()
+
 }

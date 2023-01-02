@@ -21,5 +21,7 @@ data class Components(
     val region: String,
     val road: String,
     val state: String,
-    val village: String
+    val village: String,
+    val city: String,
+    val town: String
 )

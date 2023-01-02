@@ -12,6 +12,7 @@ import com.sidukov.weatherapp.domain.CurrentWeather
 import com.sidukov.weatherapp.domain.WeatherDescription
 import com.sidukov.weatherapp.domain.WeatherShort
 import com.sidukov.weatherapp.domain.daily_body.DailyForecastRequestBody
+import com.sidukov.weatherapp.domain.geo_api.Components
 import com.sidukov.weatherapp.domain.today_body.TodayForecastRequestBody
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -32,14 +33,10 @@ class WeatherRepository(
 
     suspend fun getCurrentDayForecast(city: String): Triple <CurrentWeather, List<WeatherShort>, List<WeatherDescription>> {
 
-        println("City = $city")
-
         val geocodingData = geoAPI.geoData(
             city = city.htmlEncode()
 //            city = "Yoshkar-Ola, Russia".htmlEncode()
         )
-
-        println("StaTUS = ${geocodingData.status.code}")
 
         if (geocodingData.results.isEmpty() || geocodingData.status.code != 200){
             return Triple(CurrentWeather("Error",
@@ -78,8 +75,6 @@ class WeatherRepository(
             endDate = requestBody.endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         )
 
-        println(aqiData)
-
         // здесь мы передаём данные, которые создали выше, и получаем список элементов
         val weatherTodayData = weatherApi.currentDayForecast(
             latitude = requestBody.latitude,
@@ -91,18 +86,20 @@ class WeatherRepository(
             endDate = requestBody.endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
         )
 
+        fun checkLocationOnNull(componentList: Components): String{
+            var tempString = ""
+            if (componentList.village.isNullOrBlank() && componentList.city.isNullOrBlank()) tempString = geocodingData.results[0].components.town
+            if (componentList.city.isNullOrBlank() && componentList.town.isNullOrBlank()) tempString = geocodingData.results[0].components.village
+            if (componentList.town.isNullOrBlank() && componentList.village.isNullOrBlank()) tempString = geocodingData.results[0].components.city
+            return tempString
+        }
+
         // здесь мы находим текущий час, он совпадает с индексом элемента в пришедшем с серверва списке
         val position: Int = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         // извлекаем влажность из списка, там 24 элемента, по позиции, определённой выше. то есть по индексу position
-        val location = geocodingData.results[0].components.village + ", "+ geocodingData.results[0].components.country
+        val location = checkLocationOnNull(geocodingData.results[0].components) + ", " + geocodingData.results[0].components.country
 //            getAddress(weatherTodayData.latitude, weatherTodayData.longitude)
 
-        var tempNullString = "null"
-        if (tempNullString in location){
-
-        }
-
-        println("Location = $location")
 
         // все данные о погоде по текущему часу
         val currentWeatherCurrentData =
@@ -171,7 +168,7 @@ class WeatherRepository(
             )
         )
 
-        if (geocodingData.results[0].toString() != "") {
+        if (geocodingData.results[0].toString() != "" || geocodingData.status.code != 200) {
             locationDao.insertData(
                 EntityLocation(
                     name = location,

@@ -1,24 +1,23 @@
 package com.sidukov.weatherapp.ui.fragment_location
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.RequiresApi
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.local.EntityLocation
-import com.sidukov.weatherapp.domain.Location
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class LocationViewAdapter(
-    private var list: List<EntityLocation>,
-    private var listener: OnWeatherCardClickListener
-) : RecyclerView.Adapter<LocationViewAdapter.ViewHolder>() {
+    private var listLocation: List<EntityLocation>,
+    private var clickListener: OnWeatherCardClickListener,
+    private var longListener: OnWeatherCardLongClickListener
+) : ListAdapter<EntityLocation, LocationViewAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -30,11 +29,16 @@ class LocationViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         holder.itemView.setOnClickListener {
-            listener.onWeatherCardClicked(list[position].name)
+            clickListener.onWeatherCardClicked(listLocation[position].name)
         }
 
-        holder.locationName?.text = list[position].name
-        if (list[position].checkBoolean) {
+        holder.itemView.setOnLongClickListener {
+            longListener.onWeatherCardLongClickListener(listLocation[position])
+            return@setOnLongClickListener true
+        }
+
+        holder.locationName?.text = listLocation[position].name
+        if (listLocation[position].checkBoolean) {
             holder.location?.text = holder.location?.context?.getString(R.string.location)
             holder.imageCheck?.setImageResource(R.drawable.ic_check)
             holder.imageGps?.setImageResource(R.drawable.ic_gps)
@@ -43,13 +47,13 @@ class LocationViewAdapter(
             holder.imageCheck?.visibility = View.GONE
             holder.imageGps?.visibility = View.GONE
         }
-        holder.currentTemperature?.text = list[position].temperature.toString()
-        holder.currentDate?.text = list[position].date
-        holder.imageWeather?.setImageResource(list[position].image)
+        holder.currentTemperature?.text = listLocation[position].temperature.toString()
+        holder.currentDate?.text = listLocation[position].date
+        holder.imageWeather?.setImageResource(listLocation[position].image)
     }
 
     override fun getItemCount(): Int {
-        return list.size
+        return listLocation.size
     }
 
     class ViewHolder(row: View) : RecyclerView.ViewHolder(row) {
@@ -63,21 +67,44 @@ class LocationViewAdapter(
     }
 
     fun updateListLocation(newList: List<EntityLocation>) {
-        list = newList
+        listLocation = newList
         notifyDataSetChanged()
     }
 
+    override fun submitList(list: MutableList<EntityLocation>?) {
+        super.submitList(list)
+        list?.let { listLocation = it}
+    }
 
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    private fun convertToDate(): String {
-//        val formatterDayMonthLocation = DateTimeFormatter.ofPattern("dd-MM")
-//        val currentDayMonthLocation = LocalDateTime.now().format(formatterDayMonthLocation)
-//        return currentDayMonthLocation.toString()
-//    }
+    class DiffCallback : DiffUtil.ItemCallback<EntityLocation>(){
 
+        override fun areItemsTheSame(oldItem: EntityLocation, newItem: EntityLocation): Boolean {
+            return oldItem.name == newItem.name
+        }
+
+        override fun areContentsTheSame(oldItem: EntityLocation, newItem: EntityLocation): Boolean {
+            return oldItem.name == newItem.name
+        }
+    }
+
+    fun deleteCurrentItem(position: Int) {
+        val currentList = listLocation.toMutableList()
+        println("Position = $position")
+        println("SIZE- ${currentList.size}")
+        currentList.removeAt(position)
+        submitList(currentList)
+        notifyItemRemoved(position)
+    }
 }
 
 @FunctionalInterface
 interface OnWeatherCardClickListener {
     fun onWeatherCardClicked(locationName: String)
 }
+
+@FunctionalInterface
+interface OnWeatherCardLongClickListener {
+    fun onWeatherCardLongClickListener(locationItem: EntityLocation)
+}
+
+
