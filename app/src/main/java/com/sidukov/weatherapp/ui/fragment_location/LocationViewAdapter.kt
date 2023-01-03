@@ -16,7 +16,7 @@ import com.sidukov.weatherapp.data.local.EntityLocation
 class LocationViewAdapter(
     private var listLocation: List<EntityLocation>,
     private var clickListener: OnWeatherCardClickListener,
-    private var longListener: OnWeatherCardLongClickListener
+    private var longListener: OnWeatherCardLongClickListener,
 ) : ListAdapter<EntityLocation, LocationViewAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -66,17 +66,17 @@ class LocationViewAdapter(
         val imageWeather: ImageView? = row.findViewById(R.id.image_weather_location)
     }
 
-    fun updateListLocation(newList: List<EntityLocation>) {
-        listLocation = newList
-        notifyDataSetChanged()
-    }
+//    fun updateListLocation(newList: List<EntityLocation>) {
+//        listLocation = newList
+//        notifyDataSetChanged()
+//    }
 
     override fun submitList(list: MutableList<EntityLocation>?) {
         super.submitList(list)
-        list?.let { listLocation = it}
+        list?.let { listLocation = it }
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<EntityLocation>(){
+    class DiffCallback : DiffUtil.ItemCallback<EntityLocation>() {
 
         override fun areItemsTheSame(oldItem: EntityLocation, newItem: EntityLocation): Boolean {
             return oldItem.name == newItem.name
@@ -87,13 +87,21 @@ class LocationViewAdapter(
         }
     }
 
-    fun deleteCurrentItem(position: Int) {
+    fun deleteCurrentItem(position: EntityLocation) {
         val currentList = listLocation.toMutableList()
-        println("Position = $position")
-        println("SIZE- ${currentList.size}")
-        currentList.removeAt(position)
-        submitList(currentList)
-        notifyItemRemoved(position)
+        if (currentList.size == 1){
+            println("SIZE- ${currentList.size}")
+            currentList.clear()
+            submitList(currentList)
+            notifyItemRemoved(position.id)
+            notifyItemRangeChanged(position.id, listLocation.size)
+        } else {
+            println("SIZE- ${currentList.size}")
+            currentList.remove(position)
+            submitList(currentList)
+            notifyItemRemoved(position.id)
+            notifyItemRangeChanged(position.id, listLocation.size)
+        }
     }
 }
 

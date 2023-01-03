@@ -21,9 +21,12 @@ class LocationViewModel(
     var deleteItem = MutableSharedFlow<Unit>()
 
     init {
+
+    }
+
+    fun getLocationDataBase(){
         viewModelScope.launch {
             _locationList.value = repositoryLocation.getLocationData()
-//            deleteItem.emit(repositoryLocation.deleteAllLocation())
         }
     }
 
@@ -31,6 +34,9 @@ class LocationViewModel(
         viewModelScope.launch {
             deleteItem.emit(
                 repositoryLocation.deleteLocationData()
+            )
+            deleteItem.emit(
+                repositoryLocation.deleteLocationById()
             )
         }
     }

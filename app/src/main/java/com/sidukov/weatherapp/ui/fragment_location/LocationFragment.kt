@@ -63,20 +63,23 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
                 )
             )
         )
+        locationViewModel.getLocationDataBase()
 
         recyclerViewLocation = view.findViewById(R.id.recycler_view_location)
         recyclerViewLocation.layoutManager = GridLayoutManager(requireContext(), 2)
         recyclerViewLocation.adapter = adapterLocation
         recyclerViewLocation.addItemDecoration(GridLayoutItemDecorationLocation(16))
 
+        fun updateLocationAdapter(locationList: List<EntityLocation>) {
+            adapterLocation.submitList(locationList.toMutableList())
+        }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             locationViewModel.locationList.collect {
                 if (it.isEmpty()) return@collect
-                adapterLocation.updateListLocation(it)
+                updateLocationAdapter(it)
             }
         }
-
 
         buttonOpenDialog = view.findViewById(R.id.button_add_location)
 
@@ -89,7 +92,6 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
             if (locationDialogView.parent != null) {
                 (locationDialogView.parent as ViewGroup).removeView(locationDialogView)
             }
-
 
             val dialogOpened = locationDialog.show()
             locationDialogView.button_enter.setOnClickListener {
@@ -121,7 +123,6 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
                             }
                         }
                     }
-
                 } else {
                     Toast.makeText(requireContext(), "Type: city, country", Toast.LENGTH_SHORT)
                         .show()
@@ -132,7 +133,6 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
             }
         }
     }
-
 
     override fun onWeatherCardClicked(locationName: String) {
         activity?.supportFragmentManager?.beginTransaction()
@@ -159,7 +159,7 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
                 )
             )
             locationViewModel.deleteItem()
-            adapterLocation.deleteCurrentItem(locationItem.id)
+            adapterLocation.deleteCurrentItem(locationItem)
             deleteDialogOpen.dismiss()
         }
         locationDeleteDialogView.button_no.setOnClickListener {

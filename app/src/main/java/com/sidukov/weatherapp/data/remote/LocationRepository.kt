@@ -12,6 +12,6 @@ class LocationRepository(
 
     suspend fun deleteLocationData() = locationDao.deleteData(item)
 
-    suspend fun deleteAllLocation() = locationDao.deleteAll()
+    suspend fun deleteLocationById() = locationDao.deleteById(item.id)
 
 }
