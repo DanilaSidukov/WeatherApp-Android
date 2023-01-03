@@ -36,6 +36,7 @@
     <string name="location">location</string>
     <string name="add">+ Add</string>
     <string name="today_s_forecast">today\'s forecast</string>
+    <string name="there_is_no_location">There is no location, click to "+add"</string>
 
 <!-- set weather condition description -->
     <string name="clear">Clear sky, have a good time</string>
@@ -77,6 +78,9 @@
     <string name="very_poor">Very poor</string>
     <string name="highly_poor">Highly poor</string>
     <string name="error_aqi">Error</string>
+
+
+<!-- button words -->
     <string name="enter_location">Enter location :</string>
     <string name="new_york_america">New-York, America</string>
     <string name="enter">Enter</string>
@@ -84,6 +88,7 @@
     <string name="remove_this_location">Remove this location?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+
 
 
 </resources>

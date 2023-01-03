@@ -2,11 +2,14 @@ package com.sidukov.weatherapp.ui.fragment_location
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -32,6 +35,7 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
     private val adapterLocation = LocationViewAdapter(emptyList(), this, this)
     private lateinit var locationViewModel: LocationViewModel
     private lateinit var recyclerViewLocation: RecyclerView
+    private lateinit var textNoLocation: TextView
 
     private lateinit var buttonOpenDialog: Button
 
@@ -49,6 +53,8 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
     @SuppressLint("InflateParams")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        textNoLocation = view.findViewById(R.id.text_no_location)
 
         locationViewModel = LocationViewModel(
             LocationRepository(
@@ -76,13 +82,23 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             locationViewModel.locationList.collect {
-                if (it.isEmpty()) return@collect
-                updateLocationAdapter(it)
+                if (it.isEmpty()) {
+                    textNoLocation.visibility = View.VISIBLE
+                    return@collect
+                } else {
+                    textNoLocation.visibility = View.GONE
+                    updateLocationAdapter(it)
+                }
+
             }
         }
 
-        buttonOpenDialog = view.findViewById(R.id.button_add_location)
+        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("city", Context.MODE_PRIVATE)
+        val edit = sharedPreferences.edit()
 
+        println("CITY LOCATION FRAG SHARED = ${sharedPreferences.getString("city", "")}")
+
+        buttonOpenDialog = view.findViewById(R.id.button_add_location)
         buttonOpenDialog.setOnClickListener {
             locationDialogView = LayoutInflater.from(requireContext())
                 .inflate(R.layout.custom_dialog_enter, null, false)
@@ -114,6 +130,8 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
                                     "Error! Can't provide forecast for this location!",
                                     Toast.LENGTH_SHORT).show()
                             } else {
+                                edit.putString("city", locationDialogView.edit_enter_location.text.toString())
+                                edit.apply()
                                 activity?.supportFragmentManager?.beginTransaction()
                                     ?.replace(R.id.container,
                                         WeatherFragment(locationDialogView.edit_enter_location.text.toString()))
@@ -140,7 +158,11 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
             ?.commit()
     }
 
+    @SuppressLint("CommitPrefEdits")
     override fun onWeatherCardLongClickListener(locationItem: EntityLocation) {
+        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("city", Context.MODE_PRIVATE)
+        val edit = sharedPreferences.edit()
+
         val locationDeleteDialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.custom_dialog_delete, null, false)
         val locationDeleteDialog = AlertDialog.Builder(requireContext())
@@ -158,6 +180,8 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
                     locationItem
                 )
             )
+            edit.clear()
+            edit.apply()
             locationViewModel.deleteItem()
             adapterLocation.deleteCurrentItem(locationItem)
             deleteDialogOpen.dismiss()
