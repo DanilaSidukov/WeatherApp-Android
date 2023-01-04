@@ -33,7 +33,18 @@ class LocationViewAdapter(
         }
 
         holder.itemView.setOnLongClickListener {
-            longListener.onWeatherCardLongClickListener(listLocation[position])
+            println("POSITION = $position")
+            println("list size = ${listLocation.size}")
+            if (listLocation.size <= position) {
+                longListener.onWeatherCardLongClickListener(listLocation[position.minus(1)])
+                notifyItemChanged(position.minus(1))
+                notifyDataSetChanged()
+            }
+            else {
+                longListener.onWeatherCardLongClickListener(listLocation[position])
+                notifyItemChanged(position)
+                notifyDataSetChanged()
+            }
             return@setOnLongClickListener true
         }
 
@@ -65,11 +76,6 @@ class LocationViewAdapter(
         val currentDate: TextView? = row.findViewById(R.id.date_location)
         val imageWeather: ImageView? = row.findViewById(R.id.image_weather_location)
     }
-
-//    fun updateListLocation(newList: List<EntityLocation>) {
-//        listLocation = newList
-//        notifyDataSetChanged()
-//    }
 
     override fun submitList(list: MutableList<EntityLocation>?) {
         super.submitList(list)

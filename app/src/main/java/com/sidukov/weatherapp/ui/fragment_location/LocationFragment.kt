@@ -93,7 +93,8 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
             }
         }
 
-        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("city", Context.MODE_PRIVATE)
+        val sharedPreferences: SharedPreferences =
+            requireContext().getSharedPreferences("city", Context.MODE_PRIVATE)
         val edit = sharedPreferences.edit()
 
         println("CITY LOCATION FRAG SHARED = ${sharedPreferences.getString("city", "")}")
@@ -130,7 +131,8 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
                                     "Error! Can't provide forecast for this location!",
                                     Toast.LENGTH_SHORT).show()
                             } else {
-                                edit.putString("city", locationDialogView.edit_enter_location.text.toString())
+                                edit.putString("city",
+                                    locationDialogView.edit_enter_location.text.toString())
                                 edit.apply()
                                 activity?.supportFragmentManager?.beginTransaction()
                                     ?.replace(R.id.container,
@@ -153,6 +155,10 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
     }
 
     override fun onWeatherCardClicked(locationName: String) {
+        val sharedPreferences: SharedPreferences =
+            requireContext().getSharedPreferences("city", Context.MODE_PRIVATE)
+        val edit = sharedPreferences.edit()
+        edit.putString("city", locationName)
         activity?.supportFragmentManager?.beginTransaction()
             ?.replace(R.id.container, WeatherFragment(locationName))
             ?.commit()
@@ -160,7 +166,8 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
 
     @SuppressLint("CommitPrefEdits")
     override fun onWeatherCardLongClickListener(locationItem: EntityLocation) {
-        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("city", Context.MODE_PRIVATE)
+        val sharedPreferences: SharedPreferences =
+            requireContext().getSharedPreferences("city", Context.MODE_PRIVATE)
         val edit = sharedPreferences.edit()
 
         val locationDeleteDialogView = LayoutInflater.from(requireContext())
@@ -185,6 +192,14 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
             locationViewModel.deleteItem()
             adapterLocation.deleteCurrentItem(locationItem)
             deleteDialogOpen.dismiss()
+            viewLifecycleOwner.lifecycleScope.launch {
+                locationViewModel.locationList.collect {
+                    if (it.isEmpty()) return@collect
+                    else {
+                        adapterLocation.submitList(it.toMutableList())
+                    }
+                }
+            }
         }
         locationDeleteDialogView.button_no.setOnClickListener {
             deleteDialogOpen.dismiss()
