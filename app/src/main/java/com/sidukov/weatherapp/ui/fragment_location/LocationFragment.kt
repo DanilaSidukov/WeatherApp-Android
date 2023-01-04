@@ -13,6 +13,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DiffUtil.DiffResult
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
@@ -29,8 +31,12 @@ import kotlinx.android.synthetic.main.custom_dialog_delete.view.*
 import kotlinx.android.synthetic.main.custom_dialog_enter.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 
 class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLongClickListener {
+
+    private lateinit var diffCallback : LocationViewAdapter.DiffCallback
+
 
     private val adapterLocation = LocationViewAdapter(emptyList(), this, this)
     private lateinit var locationViewModel: LocationViewModel
@@ -80,6 +86,8 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
             adapterLocation.submitList(locationList.toMutableList())
         }
 
+        diffCallback = LocationViewAdapter.DiffCallback()
+
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             locationViewModel.locationList.collect {
                 if (it.isEmpty()) {
@@ -119,7 +127,8 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
                             APIClient.weatherApiClient,
                             APIClient.geoApiClient,
                             APIClient.aqiApiClient,
-                            WeatherApplication.database.daoLocation()
+                            WeatherApplication.database.daoLocation(),
+                            requireContext()
                         ),
                         locationDialogView.edit_enter_location.text.toString()
                     )
@@ -131,9 +140,6 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
                                     "Error! Can't provide forecast for this location!",
                                     Toast.LENGTH_SHORT).show()
                             } else {
-                                edit.putString("city",
-                                    locationDialogView.edit_enter_location.text.toString())
-                                edit.apply()
                                 activity?.supportFragmentManager?.beginTransaction()
                                     ?.replace(R.id.container,
                                         WeatherFragment(locationDialogView.edit_enter_location.text.toString()))
@@ -187,8 +193,12 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
                     locationItem
                 )
             )
-            edit.clear()
-            edit.apply()
+            println("${(sharedPreferences.getString("city", "".capitalize()))}")
+            if (sharedPreferences.getString("city", "".capitalize(Locale.ROOT)).toString() in locationItem.name.lowercase() ||
+                sharedPreferences.getString("city", "".capitalize(Locale.ROOT)).toString() in locationItem.name){
+                edit.clear()
+                edit.apply()
+            }
             locationViewModel.deleteItem()
             adapterLocation.deleteCurrentItem(locationItem)
             deleteDialogOpen.dismiss()

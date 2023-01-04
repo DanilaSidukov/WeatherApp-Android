@@ -1,5 +1,7 @@
 package com.sidukov.weatherapp.data.remote
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.core.text.htmlEncode
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.TimezoneMapper
@@ -25,7 +27,12 @@ class WeatherRepository(
     private val geoAPI: GeoAPI,
     private val aqiAPI: AqiAPI,
     private val locationDao: LocationDao,
+    context: Context
 ) {
+
+    val sharedPreferences: SharedPreferences =
+        context.getSharedPreferences("city", Context.MODE_PRIVATE)
+    val edit = sharedPreferences.edit()
 
     private lateinit var tempListHours: List<WeatherShort>
 
@@ -35,7 +42,6 @@ class WeatherRepository(
 
         val geocodingData = geoAPI.geoData(
             city = city.htmlEncode()
-//            city = "Yoshkar-Ola, Russia".htmlEncode()
         )
 
         if (geocodingData.results.isEmpty() || geocodingData.status.code != 200){
@@ -51,6 +57,11 @@ class WeatherRepository(
                 0
                 ), emptyList(), emptyList())
         }
+
+        edit.clear()
+
+        edit.putString("city", city.htmlEncode())
+        edit.apply()
 
         // Это мы создаём объект с данными, которые передадим в API запрос
         val requestBody = TodayForecastRequestBody(
@@ -182,6 +193,8 @@ class WeatherRepository(
             )
         }
 
+        println("Return1 = 1 time???")
+
         return Triple(currentWeatherCurrentData, weatherShortList, weatherDescription)
     }
 
@@ -220,6 +233,16 @@ class WeatherRepository(
             7 to "SUNDAY"
         )
 
+        val shortDays: Map <Int, String> = mapOf(
+            1 to "MON",
+            2 to "TUE",
+            3 to "WED",
+            4 to "THU",
+            5 to "FRI",
+            6 to "SAT",
+            7 to "SUN"
+        )
+
         var dailyWeatherList: List<WeatherShort> = emptyList()
         val templistValuesDays = days.values
         var beginDayOfWeek = ""
@@ -233,7 +256,7 @@ class WeatherRepository(
         (0..14).map { day ->
             tempListDays = listOf(
                 WeatherShort(
-                    hour = days[indexDaysOfWeek].toString(),
+                    hour = shortDays[indexDaysOfWeek].toString(),
                     image = getImageByWeatherCode(weatherDailyData.daily.weathercode[day]),
                     temperature = getDailyTemperature(
                         weatherDailyData.daily.temperature_max[day],

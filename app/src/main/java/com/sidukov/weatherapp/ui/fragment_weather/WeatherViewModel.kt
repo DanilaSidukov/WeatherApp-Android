@@ -33,21 +33,22 @@ open class WeatherViewModel(
     init {
         viewModelScope.launch {
             val value = repository.getDailyForecast()
-            if (value.second.isNaN()) return@launch
+            if (value.second.isNaN() || value.first.isEmpty()) return@launch
             _dailyStateFlow.tryEmit(value.first)
             _angleStateFlow.tryEmit(value.second)
+
         }
 
         viewModelScope.launch {
             val value = repository.getCurrentDayForecast(cityName)
-            if (value.second.isEmpty()) return@launch
+            if (value.second.isEmpty() || value.third.isEmpty()) return@launch
             _todayStateFlow.emit(value.first)
             _hourlyStateFlow.emit(value.second)
 
             _todayCardViewDescription.emit(value.third)
 
 //            if ( value.first.date)
-
         }
     }
+
 }

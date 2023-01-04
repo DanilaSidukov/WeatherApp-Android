@@ -86,7 +86,8 @@ class WeatherFragment(val city: String) : Fragment() {
                 APIClient.weatherApiClient,
                 APIClient.geoApiClient,
                 APIClient.aqiApiClient,
-                WeatherApplication.database.daoLocation()
+                WeatherApplication.database.daoLocation(),
+                requireContext()
             ),
             city
         )
@@ -161,7 +162,7 @@ class WeatherFragment(val city: String) : Fragment() {
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             weatherViewModel.hourlyStateFlow.collect { uiHourlyState ->
-                if (uiHourlyState.isEmpty()) return@collect
+//                if (uiHourlyState.isEmpty()) return@collect
                 adapterTodayWeather.updateList(uiHourlyState)
             }
         }
@@ -175,7 +176,7 @@ class WeatherFragment(val city: String) : Fragment() {
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             weatherViewModel.angleStateFlow.collect{ uiAngleState ->
-                if (uiAngleState.isNaN()) return@collect
+//                if (uiAngleState.isNaN()) return@collect
                 arcProgressBar.sunGetCondition = uiAngleState
             }
         }

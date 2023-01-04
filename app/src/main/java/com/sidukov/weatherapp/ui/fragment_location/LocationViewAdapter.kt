@@ -33,8 +33,6 @@ class LocationViewAdapter(
         }
 
         holder.itemView.setOnLongClickListener {
-            println("POSITION = $position")
-            println("list size = ${listLocation.size}")
             if (listLocation.size <= position) {
                 longListener.onWeatherCardLongClickListener(listLocation[position.minus(1)])
                 notifyItemChanged(position.minus(1))
@@ -61,6 +59,15 @@ class LocationViewAdapter(
         holder.currentTemperature?.text = listLocation[position].temperature.toString()
         holder.currentDate?.text = listLocation[position].date
         holder.imageWeather?.setImageResource(listLocation[position].image)
+
+//        val diffCallback = DiffCallback()
+//        if (listLocation.size != 1){
+//            diffCallback.areContentsTheSame(listLocation[position],listLocation[position.plus(1)])
+//            diffCallback.areItemsTheSame( listLocation[position], listLocation[position.plus(1)])
+//            val diffResult = DiffUtil.calculateDiff(diffCallback as DiffUtil.Callback)
+//            diffResult.dispatchUpdatesTo(this)
+//        }
+
     }
 
     override fun getItemCount(): Int {
@@ -96,13 +103,11 @@ class LocationViewAdapter(
     fun deleteCurrentItem(position: EntityLocation) {
         val currentList = listLocation.toMutableList()
         if (currentList.size == 1){
-            println("SIZE- ${currentList.size}")
             currentList.clear()
             submitList(currentList)
             notifyItemRemoved(position.id)
             notifyItemRangeChanged(position.id, listLocation.size)
         } else {
-            println("SIZE- ${currentList.size}")
             currentList.remove(position)
             submitList(currentList)
             notifyItemRemoved(position.id)

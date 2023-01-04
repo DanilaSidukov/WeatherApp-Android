@@ -20,10 +20,10 @@ class EmptyDividerItemDecoration : RecyclerView.ItemDecoration() {
                     child.setPadding(16, 0, 15, 0)
                 }
                 parent.childCount - 1 -> {
-                    child.setPadding(25, 0, 25, 0)
+                    child.setPadding(20, 0, 20, 0)
                 }
                 else -> {
-                    child.setPadding(25, 0, 25, 0)
+                    child.setPadding(20, 0, 20, 0)
                 }
             }
         }
