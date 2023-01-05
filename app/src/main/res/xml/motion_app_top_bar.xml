@@ -85,31 +85,30 @@
             motion:layout_constraintTop_toTopOf="parent" />
         <Constraint
             android:id="@+id/text_current_temperature_weather"
-            android:layout_width="130dp"
+            android:layout_width="160dp"
             android:layout_height="91dp"
             android:layout_marginTop="16dp"
             android:scaleX="0.6"
             android:scaleY="1.2"
             motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintHorizontal_bias="0.312"
+            motion:layout_constraintHorizontal_bias="0.352"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toTopOf="parent"/>
         <Constraint
             android:id="@+id/text_location_weather"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="155dp"
+            android:layout_height="50dp"
             android:layout_marginTop="35dp"
-            android:layout_marginEnd="56dp"
+            android:layout_marginEnd="35dp"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
         <Constraint
             android:id="@+id/text_datetime_weather"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="156dp"
-            android:layout_marginTop="12dp"
-            motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintTop_toBottomOf="@id/text_location_weather" />
+            android:layout_marginTop="80dp"
+            motion:layout_constraintEnd_toEndOf="@id/text_location_weather"
+            motion:layout_constraintTop_toTopOf="parent" />
         <Constraint
             android:id="@+id/layout_content"
             android:layout_width="match_parent"

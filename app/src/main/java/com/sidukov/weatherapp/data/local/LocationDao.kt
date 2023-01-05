@@ -3,6 +3,7 @@ package com.sidukov.weatherapp.data.local
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 
@@ -12,11 +13,11 @@ interface LocationDao {
     @Query("SELECT * FROM entitylocation")
     suspend fun getAll(): List<EntityLocation>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertData(locationData: EntityLocation)
 
-    @Query("DELETE FROM entitylocation WHERE id = :id")
-    suspend fun deleteById(id: Int?)
+    @Query("DELETE FROM entitylocation WHERE name = :name")
+    suspend fun deleteById(name: String?)
 
     @Delete
     suspend fun deleteData(locationData: EntityLocation)

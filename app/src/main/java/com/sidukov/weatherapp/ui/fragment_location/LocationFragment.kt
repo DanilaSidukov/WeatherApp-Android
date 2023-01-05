@@ -35,9 +35,6 @@ import java.util.*
 
 class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLongClickListener {
 
-    private lateinit var diffCallback : LocationViewAdapter.DiffCallback
-
-
     private val adapterLocation = LocationViewAdapter(emptyList(), this, this)
     private lateinit var locationViewModel: LocationViewModel
     private lateinit var recyclerViewLocation: RecyclerView
@@ -66,7 +63,6 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
             LocationRepository(
                 locationDao = WeatherApplication.database.daoLocation(),
                 EntityLocation(
-                    0,
                     "",
                     "",
                     0,
@@ -75,6 +71,7 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
                 )
             )
         )
+        println("LIST = $")
         locationViewModel.getLocationDataBase()
 
         recyclerViewLocation = view.findViewById(R.id.recycler_view_location)
@@ -82,14 +79,9 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
         recyclerViewLocation.adapter = adapterLocation
         recyclerViewLocation.addItemDecoration(GridLayoutItemDecorationLocation(16))
 
-        fun updateLocationAdapter(locationList: List<EntityLocation>) {
-            adapterLocation.submitList(locationList.toMutableList())
-        }
-
-        diffCallback = LocationViewAdapter.DiffCallback()
-
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             locationViewModel.locationList.collect {
+                println("LIST = $it")
                 if (it.isEmpty()) {
                     textNoLocation.visibility = View.VISIBLE
                     return@collect
@@ -97,7 +89,6 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
                     textNoLocation.visibility = View.GONE
                     updateLocationAdapter(it)
                 }
-
             }
         }
 
@@ -202,17 +193,13 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
             locationViewModel.deleteItem()
             adapterLocation.deleteCurrentItem(locationItem)
             deleteDialogOpen.dismiss()
-            viewLifecycleOwner.lifecycleScope.launch {
-                locationViewModel.locationList.collect {
-                    if (it.isEmpty()) return@collect
-                    else {
-                        adapterLocation.submitList(it.toMutableList())
-                    }
-                }
-            }
         }
         locationDeleteDialogView.button_no.setOnClickListener {
             deleteDialogOpen.dismiss()
         }
+    }
+
+    private fun updateLocationAdapter(locationList: List<EntityLocation>) {
+        adapterLocation.submitList(locationList.toMutableList())
     }
 }

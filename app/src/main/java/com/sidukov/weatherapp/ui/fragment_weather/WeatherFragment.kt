@@ -139,11 +139,9 @@ class WeatherFragment(val city: String) : Fragment() {
 
         val index: Int = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH")).toInt()
 
-        var flagWeatherList = false
-
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             weatherViewModel.todayStateFlow.collect { uiTodayState ->
-                locationName.text = uiTodayState.date
+                locationName.text = uiTodayState.date?: "Unknown"
                 if (uiTodayState.imageMain.first == uiTodayState.imageMain.second) {
                     currentWeatherImageMain.setImageResource(uiTodayState.imageMain.second)
                     currentWeatherMovingImage.setImageResource(0)

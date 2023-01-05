@@ -28,26 +28,29 @@ class LocationViewAdapter(
     @SuppressLint("ResourceType")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
+        val item = currentList[position]
+
         holder.itemView.setOnClickListener {
-            clickListener.onWeatherCardClicked(listLocation[position].name)
+            item.checkBoolean = true
+            clickListener.onWeatherCardClicked(item.name)
         }
 
         holder.itemView.setOnLongClickListener {
-            if (listLocation.size <= position) {
-                longListener.onWeatherCardLongClickListener(listLocation[position.minus(1)])
+            if (currentList.size <= position) {
+                longListener.onWeatherCardLongClickListener(currentList[position.minus(1)])
                 notifyItemChanged(position.minus(1))
                 notifyDataSetChanged()
             }
             else {
-                longListener.onWeatherCardLongClickListener(listLocation[position])
+                longListener.onWeatherCardLongClickListener(item)
                 notifyItemChanged(position)
                 notifyDataSetChanged()
             }
             return@setOnLongClickListener true
         }
 
-        holder.locationName?.text = listLocation[position].name
-        if (listLocation[position].checkBoolean) {
+        holder.locationName?.text = item.name
+        if (item.checkBoolean) {
             holder.location?.text = holder.location?.context?.getString(R.string.location)
             holder.imageCheck?.setImageResource(R.drawable.ic_check)
             holder.imageGps?.setImageResource(R.drawable.ic_gps)
@@ -56,14 +59,14 @@ class LocationViewAdapter(
             holder.imageCheck?.visibility = View.GONE
             holder.imageGps?.visibility = View.GONE
         }
-        holder.currentTemperature?.text = listLocation[position].temperature.toString()
-        holder.currentDate?.text = listLocation[position].date
-        holder.imageWeather?.setImageResource(listLocation[position].image)
+        holder.currentTemperature?.text = item.temperature.toString()
+        holder.currentDate?.text = item.date
+        holder.imageWeather?.setImageResource(item.image)
 
 //        val diffCallback = DiffCallback()
 //        if (listLocation.size != 1){
-//            diffCallback.areContentsTheSame(listLocation[position],listLocation[position.plus(1)])
-//            diffCallback.areItemsTheSame( listLocation[position], listLocation[position.plus(1)])
+//            diffCallback.areContentsTheSame(listLocation[position], listLocation[position.minus(1)])
+//            diffCallback.areItemsTheSame(listLocation[position], listLocation[position.minus(1)])
 //            val diffResult = DiffUtil.calculateDiff(diffCallback as DiffUtil.Callback)
 //            diffResult.dispatchUpdatesTo(this)
 //        }
@@ -71,7 +74,7 @@ class LocationViewAdapter(
     }
 
     override fun getItemCount(): Int {
-        return listLocation.size
+        return currentList.size
     }
 
     class ViewHolder(row: View) : RecyclerView.ViewHolder(row) {
@@ -89,14 +92,18 @@ class LocationViewAdapter(
         list?.let { listLocation = it }
     }
 
+
     class DiffCallback : DiffUtil.ItemCallback<EntityLocation>() {
 
         override fun areItemsTheSame(oldItem: EntityLocation, newItem: EntityLocation): Boolean {
+
+            println("OLD = $oldItem, \nNEW = $newItem")
+
             return oldItem.name == newItem.name
         }
 
         override fun areContentsTheSame(oldItem: EntityLocation, newItem: EntityLocation): Boolean {
-            return oldItem.name == newItem.name
+            return oldItem == newItem
         }
     }
 
@@ -105,13 +112,9 @@ class LocationViewAdapter(
         if (currentList.size == 1){
             currentList.clear()
             submitList(currentList)
-            notifyItemRemoved(position.id)
-            notifyItemRangeChanged(position.id, listLocation.size)
         } else {
             currentList.remove(position)
             submitList(currentList)
-            notifyItemRemoved(position.id)
-            notifyItemRangeChanged(position.id, listLocation.size)
         }
     }
 }

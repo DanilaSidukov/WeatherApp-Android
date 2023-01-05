@@ -7,8 +7,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class EntityLocation(
-    @PrimaryKey(autoGenerate = true) var id: Int = 0,
-    @ColumnInfo(name = "name") val name: String,
+    @PrimaryKey val name: String,
     @ColumnInfo(name = "date") val date: String,
     @ColumnInfo(name = "temperature") val temperature: Int,
     @ColumnInfo(name = "image") val image: Int,

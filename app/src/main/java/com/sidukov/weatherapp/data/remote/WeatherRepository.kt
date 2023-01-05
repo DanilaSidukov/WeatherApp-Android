@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.text.htmlEncode
 import com.sidukov.weatherapp.R
+import com.sidukov.weatherapp.data.NTuple5
 import com.sidukov.weatherapp.data.TimezoneMapper
 import com.sidukov.weatherapp.data.local.EntityLocation
 import com.sidukov.weatherapp.data.local.LocationDao
@@ -27,7 +28,7 @@ class WeatherRepository(
     private val geoAPI: GeoAPI,
     private val aqiAPI: AqiAPI,
     private val locationDao: LocationDao,
-    context: Context
+    context: Context,
 ) {
 
     val sharedPreferences: SharedPreferences =
@@ -38,33 +39,36 @@ class WeatherRepository(
 
     private lateinit var tempListDays: List<WeatherShort>
 
-    suspend fun getCurrentDayForecast(city: String): Triple <CurrentWeather, List<WeatherShort>, List<WeatherDescription>> {
+    suspend fun getCurrentDayForecast(city: String): NTuple5<CurrentWeather, List<WeatherShort>, List<WeatherDescription>, List<WeatherShort>, Float> {
 
         val geocodingData = geoAPI.geoData(
             city = city.htmlEncode()
         )
 
-        if (geocodingData.results.isEmpty() || geocodingData.status.code != 200){
-            return Triple(CurrentWeather("Error",
-            Pair(1, 1),
-                0,
-                0,
-                0,
-                0,
-                0f,
-                0,
-                0,
-                0
-                ), emptyList(), emptyList())
+        if (geocodingData.results.isEmpty() || geocodingData.status.code != 200) {
+            return NTuple5(
+                CurrentWeather("Error",
+                    Pair(1, 1),
+                    0,
+                    0,
+                    0,
+                    0,
+                    0f,
+                    0,
+                    0,
+                    0
+                ),
+                emptyList(), emptyList(),
+                emptyList(), 0f,
+            )
         }
 
         edit.clear()
-
         edit.putString("city", city.htmlEncode())
         edit.apply()
 
         // Это мы создаём объект с данными, которые передадим в API запрос
-        val requestBody = TodayForecastRequestBody(
+        val requestCurrentDayBody = TodayForecastRequestBody(
             geocodingData.results[0].geometry.latitude,
             geocodingData.results[0].geometry.longitude,
             geocodingData.results[0].components.country_code,
@@ -74,41 +78,47 @@ class WeatherRepository(
             true
         )
 
-        val timeZone =
-            TimezoneMapper.latLngToTimezoneString(requestBody.latitude, requestBody.longitude)
+        val timeZoneCurrent =
+            TimezoneMapper.latLngToTimezoneString(requestCurrentDayBody.latitude,
+                requestCurrentDayBody.longitude)
 
         val aqiData = aqiAPI.getCurrentAQI(
-            latitude = requestBody.latitude,
-            longitude = requestBody.longitude,
+            latitude = requestCurrentDayBody.latitude,
+            longitude = requestCurrentDayBody.longitude,
             hourly = "european_aqi",
-            timezone = timeZone.toString(),
-            startDate = requestBody.startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-            endDate = requestBody.endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            timezone = timeZoneCurrent.toString(),
+            startDate = requestCurrentDayBody.startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+            endDate = requestCurrentDayBody.endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         )
 
         // здесь мы передаём данные, которые создали выше, и получаем список элементов
         val weatherTodayData = weatherApi.currentDayForecast(
-            latitude = requestBody.latitude,
-            longitude = requestBody.longitude,
-            hourly = requestBody.hourly,
-            timezone = timeZone.toString(),
+            latitude = requestCurrentDayBody.latitude,
+            longitude = requestCurrentDayBody.longitude,
+            hourly = requestCurrentDayBody.hourly,
+            timezone = timeZoneCurrent.toString(),
             currentWeather = true,
-            startDate = requestBody.startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-            endDate = requestBody.endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+            startDate = requestCurrentDayBody.startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+            endDate = requestCurrentDayBody.endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
         )
 
-        fun checkLocationOnNull(componentList: Components): String{
-            var tempString = ""
-            if (componentList.village.isNullOrBlank() && componentList.city.isNullOrBlank()) tempString = geocodingData.results[0].components.town
-            if (componentList.city.isNullOrBlank() && componentList.town.isNullOrBlank()) tempString = geocodingData.results[0].components.village
-            if (componentList.town.isNullOrBlank() && componentList.village.isNullOrBlank()) tempString = geocodingData.results[0].components.city
+        fun checkLocationOnNull(componentList: Components): String {
+            var tempString = " "
+            if (componentList.village.isNullOrBlank() && componentList.city.isNullOrBlank()) tempString =
+                geocodingData.results[0].components.town?: "Unknown"
+            if (componentList.city.isNullOrBlank() && componentList.town.isNullOrBlank()) tempString =
+                geocodingData.results[0].components.village?: "Unknown"
+            if (componentList.town.isNullOrBlank() && componentList.village.isNullOrBlank()) tempString =
+                geocodingData.results[0].components.city?: "Unknown"
+            else tempString = "Unknown"
             return tempString
         }
 
         // здесь мы находим текущий час, он совпадает с индексом элемента в пришедшем с серверва списке
         val position: Int = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         // извлекаем влажность из списка, там 24 элемента, по позиции, определённой выше. то есть по индексу position
-        val location = checkLocationOnNull(geocodingData.results[0].components) + ", " + geocodingData.results[0].components.country
+        val location =
+            checkLocationOnNull(geocodingData.results[0].components) + ", " + geocodingData.results[0].components.country
 //            getAddress(weatherTodayData.latitude, weatherTodayData.longitude)
 
 
@@ -173,13 +183,25 @@ class WeatherRepository(
             ),
             WeatherDescription(
                 name = R.string.precipitation,
-                information = weatherTodayData.hourly.precipitation[position].toInt().toString() + " %",
+                information = weatherTodayData.hourly.precipitation[position].toInt()
+                    .toString() + " %",
                 progress = weatherTodayData.hourly.precipitation[position].toInt() * 100,
                 image = R.drawable.ic_sky_rainy_dark
             )
         )
 
-        if (geocodingData.results[0].toString() != "" || geocodingData.status.code != 200) {
+
+        if (geocodingData.results[0].toString() != "" || geocodingData.status.code == 200) {
+            val e = EntityLocation(
+                name = location,
+                date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM")),
+                temperature = currentWeatherCurrentData.temperature,
+                image = getImageByWeatherCode(
+                    weatherTodayData.hourly.hourlyWeatherCode[position]
+                ),
+                checkBoolean = false
+            )
+            println("ENTITY - $e")
             locationDao.insertData(
                 EntityLocation(
                     name = location,
@@ -188,21 +210,12 @@ class WeatherRepository(
                     image = getImageByWeatherCode(
                         weatherTodayData.hourly.hourlyWeatherCode[position]
                     ),
-                    checkBoolean = true
+                    checkBoolean = false
                 )
             )
         }
 
-        println("Return1 = 1 time???")
-
-        return Triple(currentWeatherCurrentData, weatherShortList, weatherDescription)
-    }
-
-    suspend fun getDailyForecast(): Pair<List<WeatherShort>, Float> {
-        val geocodingData = geoAPI.geoData(
-            city = "Yoshkar-Ola, Russia".htmlEncode()
-        )
-        val requestBody = DailyForecastRequestBody(
+        val requestDailyBody = DailyForecastRequestBody(
             latitude = geocodingData.results[0].geometry.latitude,
             longitude = geocodingData.results[0].geometry.longitude,
             timezone = geocodingData.results[0].components.country_code,
@@ -211,16 +224,17 @@ class WeatherRepository(
             daily = "weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset"
         )
 
-        val timeZone =
-            TimezoneMapper.latLngToTimezoneString(requestBody.latitude, requestBody.longitude)
+        val timeZoneDaily =
+            TimezoneMapper.latLngToTimezoneString(requestDailyBody.latitude,
+                requestDailyBody.longitude)
 
         val weatherDailyData = weatherApi.weeklyDailyForecast(
-            latitude = requestBody.latitude,
-            longitude = requestBody.longitude,
-            daily = requestBody.daily,
-            timezone = timeZone.toString(),
-            startDate = requestBody.startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-            endDate = requestBody.endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            latitude = requestDailyBody.latitude,
+            longitude = requestDailyBody.longitude,
+            daily = requestDailyBody.daily,
+            timezone = timeZoneDaily.toString(),
+            startDate = requestDailyBody.startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+            endDate = requestDailyBody.endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         )
 
         val days: Map<Int, String> = mapOf(
@@ -233,7 +247,7 @@ class WeatherRepository(
             7 to "SUNDAY"
         )
 
-        val shortDays: Map <Int, String> = mapOf(
+        val shortDays: Map<Int, String> = mapOf(
             1 to "MON",
             2 to "TUE",
             3 to "WED",
@@ -272,11 +286,25 @@ class WeatherRepository(
             dailyWeatherList = dailyWeatherList.plus(tempListDays)
         }
 
-        return Pair(
+//        return Pair(
+//            dailyWeatherList,
+//            getSweepAngle(weatherDailyData.daily.sunrise[0], weatherDailyData.daily.sunset[0])
+//        )
+
+        println("Return1 = 1 time???")
+
+        return NTuple5(currentWeatherCurrentData,
+            weatherShortList,
+            weatherDescription,
             dailyWeatherList,
-            getSweepAngle(weatherDailyData.daily.sunrise[0], weatherDailyData.daily.sunset[0])
-        )
+            getSweepAngle(weatherDailyData.daily.sunrise[0], weatherDailyData.daily.sunset[0]))
     }
+
+//    suspend fun getDailyForecast(): Pair<List<WeatherShort>, Float> {
+//        val geocodingData = geoAPI.geoData(
+//            city = "Yoshkar-Ola, Russia".htmlEncode()
+//        )
+//    }
 
     private fun getImageByData(code: Int): Pair<Int, Int> {
 
@@ -343,7 +371,7 @@ class WeatherRepository(
         }
     }
 
-    enum class DescriptionAQI(val wc: IntRange, val value: Int){
+    enum class DescriptionAQI(val wc: IntRange, val value: Int) {
         Good(0..20, R.string.good),
         Fair(20..40, R.string.fair),
         Moderate(40..60, R.string.moderate),
@@ -352,9 +380,9 @@ class WeatherRepository(
         HighlyPoor(100..800, R.string.highly_poor),
         Error(IntRange.EMPTY, R.string.error_aqi);
 
-        companion object{
+        companion object {
             fun getDescriptionAQI(num: Int): DescriptionAQI {
-                return values().firstOrNull {num in it.wc} ?: Error
+                return values().firstOrNull { num in it.wc } ?: Error
             }
         }
     }
