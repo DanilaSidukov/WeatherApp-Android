@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="end"
-            android:text="@string/text_location"
+            android:text="Loading..."
             android:textColor="@color/black" />
 
         <ImageView
@@ -49,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="12"
+            android:text=" "
             android:textAppearance="@style/TextAppearance.General_black"
             android:textScaleX="2"
             android:textSize="65sp"
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:paddingBottom="13dp"
-            android:text="6-16"
+            android:text="loading..."
             android:textAppearance="@style/TextAppearance.Description"
             android:textColor="@color/grey" />
 

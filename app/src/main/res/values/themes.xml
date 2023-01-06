@@ -26,5 +26,7 @@
 
         <item name="progressYellow">@color/progress_yellow</item>
         <item name="progressGreen">@color/progress_green</item>
+        
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 </resources>
