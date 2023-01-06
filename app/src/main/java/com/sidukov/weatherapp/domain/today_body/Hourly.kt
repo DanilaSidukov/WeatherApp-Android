@@ -18,5 +18,5 @@ data class Hourly(
     @SerializedName("weathercode")
     val hourlyWeatherCode: List<Int>,
     @SerializedName("precipitation")
-    val precipitation: List <Float>
+    val precipitation: List<Float>,
 )

@@ -137,8 +137,6 @@ class WeatherFragment(val city: String) : Fragment() {
         currentNightTimeDigest = view.findViewById(R.id.text_nightitme_condition_condition_view)
         currentAQI = view.findViewById(R.id.aqi_data_today_digest)
 
-        val index: Int = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH")).toInt()
-
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             weatherViewModel.todayStateFlow.collect { uiTodayState ->
                 locationName.text = uiTodayState.date?: "Unknown"
@@ -197,7 +195,7 @@ class WeatherFragment(val city: String) : Fragment() {
         buttonEdit = view.findViewById(R.id.button_edit)
         buttonEdit.setOnClickListener {
 
-            val locationFragment = LocationFragment()
+            val locationFragment = LocationFragment(locationName.text.toString())
             val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
             transaction.replace(R.id.container, locationFragment)
             transaction.commit()

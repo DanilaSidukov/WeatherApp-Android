@@ -5,7 +5,7 @@ import com.sidukov.weatherapp.data.local.LocationDao
 
 class LocationRepository(
     private val locationDao: LocationDao,
-    private val item: EntityLocation
+    private val item: EntityLocation,
 ) {
 
     suspend fun getLocationData() = locationDao.getAll()

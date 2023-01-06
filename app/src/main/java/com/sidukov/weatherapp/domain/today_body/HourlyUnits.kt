@@ -14,5 +14,5 @@ data class HourlyUnits(
     @SerializedName("relativehumidity_2m")
     val humidity: String,
     @SerializedName("timex")
-    val time: String
+    val time: String,
 )

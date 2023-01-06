@@ -1,9 +1,5 @@
 package com.sidukov.weatherapp.domain
 
-import com.sidukov.weatherapp.data.remote.api.WeatherAPI
-
-//Создаю дата (как бы объект данных), который имеет поля (данные)
-
 data class CurrentWeather(
     val date: String,
     val imageMain: Pair<Int, Int>,
@@ -14,7 +10,7 @@ data class CurrentWeather(
     val precipitation: Float,
     val dayTimeDigest: Int,
     val nightTimeDigest: Int,
-    val currentAQI: Int
+    val currentAQI: Int,
 )
 
 data class WeatherShort(
@@ -22,6 +18,6 @@ data class WeatherShort(
     val image: Int,
     val temperature: Int,
     val sunrise: String,
-    val sunset: String
+    val sunset: String,
 )
 

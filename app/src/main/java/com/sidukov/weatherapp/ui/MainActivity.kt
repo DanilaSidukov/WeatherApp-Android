@@ -14,26 +14,26 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val sharedPreferences: SharedPreferences = this.getSharedPreferences("city", Context.MODE_PRIVATE)
-        val edit = sharedPreferences.edit()
+        val sharedPreferences: SharedPreferences =
+            this.getSharedPreferences("city", Context.MODE_PRIVATE)
 
         if (sharedPreferences.getString("city", "").toString() == "") {
             println("CITY NOW SHARED = ${sharedPreferences.getString("city", "")}")
-            openFragmentLocation(LocationFragment(), R.id.container)
+            openFragmentLocation(LocationFragment(""), R.id.container)
         } else {
             println("CITY NOW SHARED = ${sharedPreferences.getString("city", "")}")
-            openFragmentAppTopBar(WeatherFragment(sharedPreferences.getString("city", "").toString()), R.id.container)
+            openFragmentAppTopBar(WeatherFragment(sharedPreferences.getString("city", "")
+                .toString()), R.id.container)
         }
     }
-    //У активити есть поле supportFragmentManager, оно ислпьзуется для управления фрагментами, beginTransaction() - запускает фрагмент
-    //Аргумент в replace (место для фрагмента(fragment layout), фрагмент который хотим туда поместить)
-    private fun openFragmentAppTopBar(f: Fragment, idHolder: Int){
+
+    private fun openFragmentAppTopBar(f: Fragment, idHolder: Int) {
         supportFragmentManager
             .beginTransaction()
             .replace(idHolder, f).commit()
     }
 
-    private fun openFragmentLocation (f: Fragment, idHolder: Int){
+    private fun openFragmentLocation(f: Fragment, idHolder: Int) {
         supportFragmentManager
             .beginTransaction()
             .replace(idHolder, f).commit()

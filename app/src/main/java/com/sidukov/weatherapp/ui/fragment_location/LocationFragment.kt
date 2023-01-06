@@ -13,8 +13,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.DiffUtil.DiffResult
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
@@ -29,11 +27,10 @@ import com.sidukov.weatherapp.ui.fragment_weather.WeatherViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.custom_dialog_delete.view.*
 import kotlinx.android.synthetic.main.custom_dialog_enter.view.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.*
 
-class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLongClickListener {
+class LocationFragment(val locationName: String) : Fragment(), OnWeatherCardClickListener,
+    OnWeatherCardLongClickListener {
 
     private val adapterLocation = LocationViewAdapter(emptyList(), this, this)
     private lateinit var locationViewModel: LocationViewModel
@@ -87,6 +84,11 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
                     return@collect
                 } else {
                     textNoLocation.visibility = View.GONE
+                    for (entity in it) {
+                        (it.indices).map { index ->
+                            it[index].checkBoolean = locationName == it[index].name
+                        }
+                    }
                     updateLocationAdapter(it)
                 }
             }
@@ -94,7 +96,6 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
 
         val sharedPreferences: SharedPreferences =
             requireContext().getSharedPreferences("city", Context.MODE_PRIVATE)
-        val edit = sharedPreferences.edit()
 
         println("CITY LOCATION FRAG SHARED = ${sharedPreferences.getString("city", "")}")
 
@@ -135,7 +136,6 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
                                     ?.replace(R.id.container,
                                         WeatherFragment(locationDialogView.edit_enter_location.text.toString()))
                                     ?.commit()
-                                locationViewModel.addLocation()
                                 dialogOpened.dismiss()
                             }
                         }
@@ -185,8 +185,11 @@ class LocationFragment : Fragment(), OnWeatherCardClickListener, OnWeatherCardLo
                 )
             )
             println("${(sharedPreferences.getString("city", "".capitalize()))}")
-            if (sharedPreferences.getString("city", "".capitalize(Locale.ROOT)).toString() in locationItem.name.lowercase() ||
-                sharedPreferences.getString("city", "".capitalize(Locale.ROOT)).toString() in locationItem.name){
+            if (sharedPreferences.getString("city", "".capitalize(Locale.ROOT))
+                    .toString() in locationItem.name.lowercase() ||
+                sharedPreferences.getString("city", "".capitalize(Locale.ROOT))
+                    .toString() in locationItem.name
+            ) {
                 edit.clear()
                 edit.apply()
             }

@@ -16,5 +16,5 @@ data class TodayForecastBody(
     @SerializedName("timezone")
     val timezone: String,
     @SerializedName("weathercode")
-    val weatherCode: Int
+    val weatherCode: Int,
 )

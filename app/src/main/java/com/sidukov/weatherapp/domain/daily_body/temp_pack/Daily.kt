@@ -14,5 +14,5 @@ data class Daily(
     @SerializedName("time")
     val dayOfWeek: List<String>,
     @SerializedName("weathercode")
-    val weathercode: List<Int>
+    val weathercode: List<Int>,
 )

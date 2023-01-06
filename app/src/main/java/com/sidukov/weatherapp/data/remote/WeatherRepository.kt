@@ -22,7 +22,6 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-//WeatherRepository - получает и возвращает данные
 class WeatherRepository(
     private val weatherApi: WeatherAPI,
     private val geoAPI: GeoAPI,
@@ -67,7 +66,6 @@ class WeatherRepository(
         edit.putString("city", city.htmlEncode())
         edit.apply()
 
-        // Это мы создаём объект с данными, которые передадим в API запрос
         val requestCurrentDayBody = TodayForecastRequestBody(
             geocodingData.results[0].geometry.latitude,
             geocodingData.results[0].geometry.longitude,
@@ -91,7 +89,6 @@ class WeatherRepository(
             endDate = requestCurrentDayBody.endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         )
 
-        // здесь мы передаём данные, которые создали выше, и получаем список элементов
         val weatherTodayData = weatherApi.currentDayForecast(
             latitude = requestCurrentDayBody.latitude,
             longitude = requestCurrentDayBody.longitude,
@@ -105,24 +102,18 @@ class WeatherRepository(
         fun checkLocationOnNull(componentList: Components): String {
             var tempString = " "
             if (componentList.village.isNullOrBlank() && componentList.city.isNullOrBlank()) tempString =
-                geocodingData.results[0].components.town?: "Unknown"
+                geocodingData.results[0].components.town
             if (componentList.city.isNullOrBlank() && componentList.town.isNullOrBlank()) tempString =
-                geocodingData.results[0].components.village?: "Unknown"
+                geocodingData.results[0].components.village
             if (componentList.town.isNullOrBlank() && componentList.village.isNullOrBlank()) tempString =
-                geocodingData.results[0].components.city?: "Unknown"
-            else tempString = "Unknown"
+                geocodingData.results[0].components.city
+            if (tempString == null) tempString = "Unknown"
             return tempString
         }
 
-        // здесь мы находим текущий час, он совпадает с индексом элемента в пришедшем с серверва списке
         val position: Int = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-        // извлекаем влажность из списка, там 24 элемента, по позиции, определённой выше. то есть по индексу position
         val location =
             checkLocationOnNull(geocodingData.results[0].components) + ", " + geocodingData.results[0].components.country
-//            getAddress(weatherTodayData.latitude, weatherTodayData.longitude)
-
-
-        // все данные о погоде по текущему часу
         val currentWeatherCurrentData =
             CurrentWeather(
                 date = location,
@@ -138,7 +129,6 @@ class WeatherRepository(
                 nightTimeDigest = DescriptionDigest.valueFromRange(weatherTodayData.hourly.hourlyWeatherCode[22]).value,
                 currentAQI = DescriptionAQI.getDescriptionAQI(aqiData.AQIHourly.aqiList[position]).value
             )
-
 
         var weatherShortList: List<WeatherShort> = emptyList()
         var tempString = ""
@@ -160,7 +150,6 @@ class WeatherRepository(
             )
             weatherShortList = weatherShortList.plus(tempListHours)
         }
-
 
         val weatherDescription = listOf(
             WeatherDescription(
@@ -190,18 +179,7 @@ class WeatherRepository(
             )
         )
 
-
         if (geocodingData.results[0].toString() != "" || geocodingData.status.code == 200) {
-            val e = EntityLocation(
-                name = location,
-                date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM")),
-                temperature = currentWeatherCurrentData.temperature,
-                image = getImageByWeatherCode(
-                    weatherTodayData.hourly.hourlyWeatherCode[position]
-                ),
-                checkBoolean = false
-            )
-            println("ENTITY - $e")
             locationDao.insertData(
                 EntityLocation(
                     name = location,
@@ -286,25 +264,12 @@ class WeatherRepository(
             dailyWeatherList = dailyWeatherList.plus(tempListDays)
         }
 
-//        return Pair(
-//            dailyWeatherList,
-//            getSweepAngle(weatherDailyData.daily.sunrise[0], weatherDailyData.daily.sunset[0])
-//        )
-
-        println("Return1 = 1 time???")
-
         return NTuple5(currentWeatherCurrentData,
             weatherShortList,
             weatherDescription,
             dailyWeatherList,
             getSweepAngle(weatherDailyData.daily.sunrise[0], weatherDailyData.daily.sunset[0]))
     }
-
-//    suspend fun getDailyForecast(): Pair<List<WeatherShort>, Float> {
-//        val geocodingData = geoAPI.geoData(
-//            city = "Yoshkar-Ola, Russia".htmlEncode()
-//        )
-//    }
 
     private fun getImageByData(code: Int): Pair<Int, Int> {
 
@@ -400,15 +365,6 @@ class WeatherRepository(
         val temperature = (max + min) / 2
         return temperature.toInt()
     }
-
-//    private fun getHourlyImageByData(code: Int): Int {
-//        if (code == 0) return R.drawable.ic_sun
-//        else if (code in 1..3 || code in 45..48) return R.drawable.ic_sky_with_sun_light
-//        else if (code in 51..67 || code in 80..82) return R.drawable.ic_sky_rainy_light
-//        else if (code == 71) return R.drawable.ic_snowflake
-//        else if (code in 73..77 || code in 85..86) return R.drawable.ic_sky_snow_light
-//        else return R.drawable.ic_sky_rainy_dark
-//    }
 
     private fun convertSunRiseOrSet(sunData: String): String {
         val str = sunData.toCharArray()

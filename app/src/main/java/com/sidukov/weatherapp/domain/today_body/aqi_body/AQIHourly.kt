@@ -6,5 +6,5 @@ data class AQIHourly(
     @SerializedName("european_aqi")
     val aqiList: List<Int>,
     @SerializedName("time")
-    val time: List<String>
+    val time: List<String>,
 )

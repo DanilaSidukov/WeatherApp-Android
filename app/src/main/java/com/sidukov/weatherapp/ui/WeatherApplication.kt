@@ -1,7 +1,6 @@
 package com.sidukov.weatherapp.ui
 
 import android.app.Application
-import androidx.room.Database
 import androidx.room.Room
 import com.sidukov.weatherapp.data.local.DatabaseLocation
 

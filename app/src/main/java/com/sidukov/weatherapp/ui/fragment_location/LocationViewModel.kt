@@ -11,26 +11,20 @@ import kotlinx.coroutines.launch
 
 class LocationViewModel(
     private val repositoryLocation: LocationRepository,
-): ViewModel(){
+) : ViewModel() {
 
     private var _locationList = MutableStateFlow<List<EntityLocation>>(mutableListOf())
     val locationList = _locationList.asSharedFlow()
 
-    var canBeAdded = MutableSharedFlow<Boolean>()
-
     var deleteItem = MutableSharedFlow<Unit>()
 
-    init {
-
-    }
-
-    fun getLocationDataBase(){
+    fun getLocationDataBase() {
         viewModelScope.launch {
             _locationList.value = repositoryLocation.getLocationData()
         }
     }
 
-    fun deleteItem(){
+    fun deleteItem() {
         viewModelScope.launch {
             deleteItem.emit(
                 repositoryLocation.deleteLocationData()
@@ -40,11 +34,4 @@ class LocationViewModel(
             )
         }
     }
-
-    fun addLocation() {
-//        if (_locationList.value)
-//        canBeAdded = true
-//        canBeAdded = false
-    }
-
 }

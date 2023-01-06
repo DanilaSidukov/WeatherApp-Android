@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -40,8 +39,7 @@ class LocationViewAdapter(
                 longListener.onWeatherCardLongClickListener(currentList[position.minus(1)])
                 notifyItemChanged(position.minus(1))
                 notifyDataSetChanged()
-            }
-            else {
+            } else {
                 longListener.onWeatherCardLongClickListener(item)
                 notifyItemChanged(position)
                 notifyDataSetChanged()
@@ -62,14 +60,6 @@ class LocationViewAdapter(
         holder.currentTemperature?.text = item.temperature.toString()
         holder.currentDate?.text = item.date
         holder.imageWeather?.setImageResource(item.image)
-
-//        val diffCallback = DiffCallback()
-//        if (listLocation.size != 1){
-//            diffCallback.areContentsTheSame(listLocation[position], listLocation[position.minus(1)])
-//            diffCallback.areItemsTheSame(listLocation[position], listLocation[position.minus(1)])
-//            val diffResult = DiffUtil.calculateDiff(diffCallback as DiffUtil.Callback)
-//            diffResult.dispatchUpdatesTo(this)
-//        }
 
     }
 
@@ -92,7 +82,6 @@ class LocationViewAdapter(
         list?.let { listLocation = it }
     }
 
-
     class DiffCallback : DiffUtil.ItemCallback<EntityLocation>() {
 
         override fun areItemsTheSame(oldItem: EntityLocation, newItem: EntityLocation): Boolean {
@@ -109,7 +98,7 @@ class LocationViewAdapter(
 
     fun deleteCurrentItem(position: EntityLocation) {
         val currentList = listLocation.toMutableList()
-        if (currentList.size == 1){
+        if (currentList.size == 1) {
             currentList.clear()
             submitList(currentList)
         } else {

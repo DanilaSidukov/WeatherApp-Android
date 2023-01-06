@@ -14,5 +14,5 @@ data class DailyUnits(
     @SerializedName("time")
     val time: String,
     @SerializedName("weathercode")
-    val weathercode: String
+    val weathercode: String,
 )

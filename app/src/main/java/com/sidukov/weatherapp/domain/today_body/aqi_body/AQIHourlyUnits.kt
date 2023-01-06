@@ -6,5 +6,5 @@ data class AQIHourlyUnits(
     @SerializedName("european_aqi")
     val europeanAqi: String,
     @SerializedName("time")
-    val time: String
+    val time: String,
 )

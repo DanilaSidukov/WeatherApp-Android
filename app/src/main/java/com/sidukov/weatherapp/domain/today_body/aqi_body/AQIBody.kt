@@ -18,5 +18,5 @@ data class AQIBody(
     @SerializedName("timezone_abbreviation")
     val timezone_abbreviation: String,
     @SerializedName("utc_offset_seconds")
-    val utc_offset_seconds: Int
+    val utc_offset_seconds: Int,
 )

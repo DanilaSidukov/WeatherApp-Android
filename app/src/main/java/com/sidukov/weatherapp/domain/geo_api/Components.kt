@@ -23,5 +23,5 @@ data class Components(
     val state: String,
     val village: String,
     val city: String,
-    val town: String
+    val town: String,
 )

@@ -13,6 +13,6 @@ interface AqiAPI {
         @Query("hourly", encoded = true) hourly: String = "european_aqi",
         @Query("timezone") timezone: String,
         @Query("start_date") startDate: String,
-        @Query("end_date") endDate: String
+        @Query("end_date") endDate: String,
     ): AQIBody
 }

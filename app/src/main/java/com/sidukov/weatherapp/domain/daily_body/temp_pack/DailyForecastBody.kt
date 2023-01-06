@@ -9,5 +9,5 @@ data class DailyForecastBody(
     val longitude: Float,
     val timezone: String,
     val timezone_abbreviation: String,
-    val utc_offset_seconds: Int
+    val utc_offset_seconds: Int,
 )
