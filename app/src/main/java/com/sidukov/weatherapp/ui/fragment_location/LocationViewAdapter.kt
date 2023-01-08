@@ -14,8 +14,7 @@ import com.sidukov.weatherapp.data.local.EntityLocation
 
 class LocationViewAdapter(
     private var listLocation: List<EntityLocation>,
-    private var clickListener: OnWeatherCardClickListener,
-    private var longListener: OnWeatherCardLongClickListener,
+    private var listener: OnWeatherCardClickListener,
 ) : ListAdapter<EntityLocation, LocationViewAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,16 +30,16 @@ class LocationViewAdapter(
 
         holder.itemView.setOnClickListener {
             item.checkBoolean = true
-            clickListener.onWeatherCardClicked(item.name)
+            listener.onWeatherCardClicked(item.name)
         }
 
         holder.itemView.setOnLongClickListener {
             if (currentList.size <= position) {
-                longListener.onWeatherCardLongClickListener(currentList[position.minus(1)])
+                listener.onWeatherCardLongClickListener(currentList[position.minus(1)])
                 notifyItemChanged(position.minus(1))
                 notifyDataSetChanged()
             } else {
-                longListener.onWeatherCardLongClickListener(item)
+                listener.onWeatherCardLongClickListener(item)
                 notifyItemChanged(position)
                 notifyDataSetChanged()
             }
@@ -108,14 +107,8 @@ class LocationViewAdapter(
     }
 }
 
-@FunctionalInterface
 interface OnWeatherCardClickListener {
     fun onWeatherCardClicked(locationName: String)
-}
-
-@FunctionalInterface
-interface OnWeatherCardLongClickListener {
     fun onWeatherCardLongClickListener(locationItem: EntityLocation)
 }
-
 

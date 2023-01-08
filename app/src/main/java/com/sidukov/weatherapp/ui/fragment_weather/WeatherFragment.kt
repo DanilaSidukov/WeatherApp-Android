@@ -1,7 +1,6 @@
 package com.sidukov.weatherapp.ui.fragment_weather
 
 import android.annotation.SuppressLint
-import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +10,6 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +17,7 @@ import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.remote.WeatherRepository
 import com.sidukov.weatherapp.data.remote.api.APIClient
 import com.sidukov.weatherapp.ui.WeatherApplication
+import com.sidukov.weatherapp.ui.common.BaseFragment
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecoration
 import com.sidukov.weatherapp.ui.fragment_location.LocationFragment
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
@@ -27,7 +25,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-class WeatherFragment(val city: String) : Fragment() {
+class WeatherFragment(val city: String) : BaseFragment(R.layout.fragment_weather) {
 
     private lateinit var dailyWeatherRecyclerView: RecyclerView
 
@@ -118,11 +116,6 @@ class WeatherFragment(val city: String) : Fragment() {
             OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL
         )
 
-        OverScrollDecoratorHelper.setUpStaticOverScroll(
-            cardViewRecyclerView,
-            OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL,
-        )
-
         locationName = view.findViewById(R.id.text_location_weather)
         currentWeatherImageMain = view.findViewById(R.id.image_main)
         currentWeatherMovingImage = view.findViewById(R.id.image_secondary)
@@ -195,10 +188,12 @@ class WeatherFragment(val city: String) : Fragment() {
         buttonEdit = view.findViewById(R.id.button_edit)
         buttonEdit.setOnClickListener {
 
-            val locationFragment = LocationFragment(locationName.text.toString())
-            val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
-            transaction.replace(R.id.container, locationFragment)
-            transaction.commit()
+//            val locationFragment = LocationFragment(locationName.text.toString(), )
+//            fragmentReplacer.replace(this.pagePosition, locationFragment)
+
+//            val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
+//            transaction.replace(R.id.container, locationFragment)
+//            transaction.commit()
         }
 
         currentDate = view.findViewById(R.id.text_datetime_weather)

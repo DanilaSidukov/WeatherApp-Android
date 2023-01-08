@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +19,10 @@ import com.sidukov.weatherapp.data.local.EntityLocation
 import com.sidukov.weatherapp.data.remote.LocationRepository
 import com.sidukov.weatherapp.data.remote.WeatherRepository
 import com.sidukov.weatherapp.data.remote.api.APIClient
+import com.sidukov.weatherapp.ui.MainActivity
+import com.sidukov.weatherapp.ui.OnWeatherCardListener
 import com.sidukov.weatherapp.ui.WeatherApplication
+import com.sidukov.weatherapp.ui.common.BaseFragment
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecorationLocation
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherFragment
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherViewModel
@@ -29,10 +31,10 @@ import kotlinx.android.synthetic.main.custom_dialog_delete.view.*
 import kotlinx.android.synthetic.main.custom_dialog_enter.view.*
 import java.util.*
 
-class LocationFragment(val locationName: String) : Fragment(), OnWeatherCardClickListener,
-    OnWeatherCardLongClickListener {
+class LocationFragment(val locationName: String, val listener: OnWeatherCardListener) : BaseFragment(R.layout.fragment_location),
+    OnWeatherCardClickListener {
 
-    private val adapterLocation = LocationViewAdapter(emptyList(), this, this)
+    private val adapterLocation = LocationViewAdapter(emptyList(), this)
     private lateinit var locationViewModel: LocationViewModel
     private lateinit var recyclerViewLocation: RecyclerView
     private lateinit var textNoLocation: TextView
@@ -53,6 +55,9 @@ class LocationFragment(val locationName: String) : Fragment(), OnWeatherCardClic
     @SuppressLint("InflateParams")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val sharedPreferences: SharedPreferences =
+            requireContext().getSharedPreferences("city", Context.MODE_PRIVATE)
 
         textNoLocation = view.findViewById(R.id.text_no_location)
 
@@ -94,8 +99,7 @@ class LocationFragment(val locationName: String) : Fragment(), OnWeatherCardClic
             }
         }
 
-        val sharedPreferences: SharedPreferences =
-            requireContext().getSharedPreferences("city", Context.MODE_PRIVATE)
+
 
         println("CITY LOCATION FRAG SHARED = ${sharedPreferences.getString("city", "")}")
 
@@ -109,6 +113,8 @@ class LocationFragment(val locationName: String) : Fragment(), OnWeatherCardClic
             if (locationDialogView.parent != null) {
                 (locationDialogView.parent as ViewGroup).removeView(locationDialogView)
             }
+
+            val position = this.pagePosition
 
             val dialogOpened = locationDialog.show()
             locationDialogView.button_enter.setOnClickListener {
@@ -132,13 +138,17 @@ class LocationFragment(val locationName: String) : Fragment(), OnWeatherCardClic
                                     "Error! Can't provide forecast for this location!",
                                     Toast.LENGTH_SHORT).show()
                             } else {
-                                activity?.supportFragmentManager?.beginTransaction()
-                                    ?.replace(R.id.container,
-                                        WeatherFragment(locationDialogView.edit_enter_location.text.toString()))
-                                    ?.commit()
+                                fragmentReplacer.replace(position + 1,
+                                    WeatherFragment(locationDialogView.edit_enter_location.text.toString()))
+                                listener.onWeatherCardClicked()
+//                                activity?.supportFragmentManager?.beginTransaction()
+//                                    ?.replace(R.id.container,
+//                                        WeatherFragment(locationDialogView.edit_enter_location.text.toString()))
+//                                    ?.commit()
                                 dialogOpened.dismiss()
                             }
                         }
+                        adapterLocation.notifyDataSetChanged()
                     }
                 } else {
                     Toast.makeText(requireContext(), "Type: city, country", Toast.LENGTH_SHORT)
@@ -156,9 +166,11 @@ class LocationFragment(val locationName: String) : Fragment(), OnWeatherCardClic
             requireContext().getSharedPreferences("city", Context.MODE_PRIVATE)
         val edit = sharedPreferences.edit()
         edit.putString("city", locationName)
-        activity?.supportFragmentManager?.beginTransaction()
-            ?.replace(R.id.container, WeatherFragment(locationName))
-            ?.commit()
+        fragmentReplacer.replace(this.pagePosition + 1, WeatherFragment(locationName))
+        listener.onWeatherCardClicked()
+//        activity?.supportFragmentManager?.beginTransaction()
+//            ?.replace(R.id.view_pager_2, WeatherFragment(locationName))
+//            ?.commit()
     }
 
     @SuppressLint("CommitPrefEdits")
