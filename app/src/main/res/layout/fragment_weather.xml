@@ -411,22 +411,6 @@
 
                 </androidx.recyclerview.widget.RecyclerView>
 
-                <Button
-                    android:id="@+id/button_edit"
-                    style="@style/ButtonEdit"
-                    android:background="@drawable/round_button"
-                    android:letterSpacing="0.1"
-                    android:text="@string/edit"
-                    android:textColor="@color/black"
-                    app:layout_constraintTop_toBottomOf="@id/precipitation_card_view" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="28dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/button_edit" />
-
             </LinearLayout>
 
         </com.sidukov.weatherapp.ui.fragment_weather.CustomScrollView>

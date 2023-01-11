@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="TextAppearance"/>
+    <style name="TextAppearance" />
 
     <style name="TextAppearance.General_black">
         <item name="android:fontFamily">@font/staatliches_regular</item>
@@ -29,7 +29,7 @@
         <item name="color">@color/grey</item>
         <item name="android:textSize">14sp</item>
     </style>
-    
+
     <style name="ButtonEdit">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -67,6 +67,10 @@
     <style name="dialog_animation">
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light">
+        <item name="android:navigationBarColor">#80FFFFFF</item>
     </style>
 
 </resources>

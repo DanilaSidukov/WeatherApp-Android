@@ -44,7 +44,6 @@ open class WeatherViewModel(
             _dailyStateFlow.tryEmit(value.fourth)
             _angleStateFlow.tryEmit(value.fifth)
 
-//            if ( value.first.date)
         }
     }
 

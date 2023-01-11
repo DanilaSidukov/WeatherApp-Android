@@ -29,7 +29,6 @@ class WeatherFragment(val city: String) : BaseFragment(R.layout.fragment_weather
 
     private lateinit var dailyWeatherRecyclerView: RecyclerView
 
-    //adapter привязывается к RecyclerView, он содержит в себе инфу об элементах в списке RecyclerView
     private val adapterDailyWeather = DailyWeatherAdapter(emptyList())
     private val adapterTodayWeather = DailyWeatherAdapter(emptyList())
     private val adapterMiniCardView = WeatherDescriptionCardAdapter(emptyList())
@@ -51,16 +50,9 @@ class WeatherFragment(val city: String) : BaseFragment(R.layout.fragment_weather
     private lateinit var currentDayTimeDigest: TextView
     private lateinit var currentNightTimeDigest: TextView
     private lateinit var currentAQI: TextView
-    private lateinit var actualProgress: ProgressBar
 
-    private lateinit var buttonEdit: Button
-
-    //Объявляю о том, что будет vm
     private lateinit var weatherViewModel: WeatherViewModel
     private lateinit var animation: HeaderImageAnimation
-
-    //Создётся менеджер Корутины (scope), CoroutineScope возвращает Корутину, Dispatchers.Main - область, в которой будет работать Корутина
-    //Main обозначает, что будет выполняться это в главном потоке (где рисуются элементы, запускаются анимации..)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,7 +62,6 @@ class WeatherFragment(val city: String) : BaseFragment(R.layout.fragment_weather
         return inflater.inflate(R.layout.fragment_weather, container, false)
     }
 
-    //Вызывается после создания фрагмента (View)
     @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -78,7 +69,6 @@ class WeatherFragment(val city: String) : BaseFragment(R.layout.fragment_weather
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
 
 
-        //инициализация vm непосредственно
         weatherViewModel = WeatherViewModel(
             WeatherRepository(
                 APIClient.weatherApiClient,
@@ -90,8 +80,6 @@ class WeatherFragment(val city: String) : BaseFragment(R.layout.fragment_weather
             city
         )
 
-        //запускается Корутина с помощью launch, scope.launch выполняется асинхронно относительно общего порядка выполнения кода
-        //В collect мы указываем что делать с теми данными, которые придут. Выполняется collect каждый раз, когда в weatherList появляются новые данные
         dailyWeatherRecyclerView = view.findViewById(R.id.recycler_view_weather)
         dailyWeatherRecyclerView.adapter = adapterDailyWeather
         dailyWeatherRecyclerView.addItemDecoration(EmptyDividerItemDecoration())
@@ -183,17 +171,6 @@ class WeatherFragment(val city: String) : BaseFragment(R.layout.fragment_weather
                 animation = HeaderImageAnimation(animatedImage)
             }
             animation.marginFlow = animatedImage.width
-        }
-
-        buttonEdit = view.findViewById(R.id.button_edit)
-        buttonEdit.setOnClickListener {
-
-//            val locationFragment = LocationFragment(locationName.text.toString(), )
-//            fragmentReplacer.replace(this.pagePosition, locationFragment)
-
-//            val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
-//            transaction.replace(R.id.container, locationFragment)
-//            transaction.commit()
         }
 
         currentDate = view.findViewById(R.id.text_datetime_weather)

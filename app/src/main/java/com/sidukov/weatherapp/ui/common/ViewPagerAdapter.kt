@@ -9,7 +9,7 @@ import com.sidukov.weatherapp.ui.OnWeatherCardListener
 import com.sidukov.weatherapp.ui.fragment_location.LocationFragment
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherFragment
 
-class ViewPagerAdapter(container: FragmentActivity, private val listener: OnWeatherCardListener) : FragmentStateAdapter(container), FragmentReplacer {
+class ViewPagerAdapter(container: FragmentActivity, private val listener: OnWeatherCardListener, private val city: String) : FragmentStateAdapter(container), FragmentReplacer {
 
     companion object {
         private const val PAGE_COUNT = 2
@@ -20,7 +20,10 @@ class ViewPagerAdapter(container: FragmentActivity, private val listener: OnWeat
     override fun getItemCount() = PAGE_COUNT
 
     override fun createFragment(position: Int): Fragment {
-        return mapOfFragment[position] ?: replaceDef(position, false)
+
+        println("Create Fragment = $city")
+
+        return mapOfFragment[position] ?: replaceDef(position,city,false)
     }
 
     override fun containsItem(itemId: Long): Boolean {
@@ -34,28 +37,30 @@ class ViewPagerAdapter(container: FragmentActivity, private val listener: OnWeat
         return isContains
     }
 
-    override fun replace(position: Int, newFragment: BaseFragment, isNotify: Boolean) {
+
+    override fun replace(position: Int, newFragment: BaseFragment,location: String, isNotify: Boolean) {
 
         newFragment.setPageInfo(
             pagePosition = position,
-            fragmentReplacer = this
+            fragmentReplacer = this,
+            location = location
         )
-
+        println("replace = $location")
         mapOfFragment[position] = newFragment
         if (isNotify) notifyItemChanged(position)
     }
 
-    override fun replaceDef(position: Int, isNotify: Boolean): BaseFragment {
+    override fun replaceDef(position: Int,location: String, isNotify: Boolean): BaseFragment {
         val fragment = when (position) {
-            0 -> LocationFragment("Moscow", listener)
-            1 -> WeatherFragment("Moscow")
+            0 -> LocationFragment(location, listener)
+            1 -> WeatherFragment(location)
             else -> throw IllegalStateException()
         }
-        replace(position, fragment, isNotify)
+        println("replaceDef = $location")
+        replace(position, fragment, location, isNotify)
         return fragment
     }
 
     override fun getItemId(position: Int) =
         mapOfFragment[position]?.pageId ?: super.getItemId(position)
-
 }

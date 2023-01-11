@@ -63,7 +63,8 @@ class WeatherRepository(
         }
 
         edit.clear()
-        edit.putString("city", city.htmlEncode())
+        edit.putString("city", city)
+        println("PUT = ${edit.putString("city", city.htmlEncode())}")
         edit.apply()
 
         val requestCurrentDayBody = TodayForecastRequestBody(
@@ -114,6 +115,9 @@ class WeatherRepository(
         val position: Int = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         val location =
             checkLocationOnNull(geocodingData.results[0].components) + ", " + geocodingData.results[0].components.country
+
+        edit.putString("city", location)
+
         val currentWeatherCurrentData =
             CurrentWeather(
                 date = location,

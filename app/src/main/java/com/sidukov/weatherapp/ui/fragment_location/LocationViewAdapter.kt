@@ -15,6 +15,7 @@ import com.sidukov.weatherapp.data.local.EntityLocation
 class LocationViewAdapter(
     private var listLocation: List<EntityLocation>,
     private var listener: OnWeatherCardClickListener,
+    private val city: String
 ) : ListAdapter<EntityLocation, LocationViewAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,30 +28,31 @@ class LocationViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val item = currentList[position]
-
+        if (item.name == city) item.checkBoolean = true
         holder.itemView.setOnClickListener {
             item.checkBoolean = true
             listener.onWeatherCardClicked(item.name)
+            currentList.indices.forEach{
+                if (currentList[it] != item) currentList[it].checkBoolean = false
+                println("AFTER $it - ${currentList[it].checkBoolean}")
+            }
+            notifyItemChanged(position)
         }
 
         holder.itemView.setOnLongClickListener {
-            if (currentList.size <= position) {
-                listener.onWeatherCardLongClickListener(currentList[position.minus(1)])
-                notifyItemChanged(position.minus(1))
-                notifyDataSetChanged()
-            } else {
-                listener.onWeatherCardLongClickListener(item)
-                notifyItemChanged(position)
-                notifyDataSetChanged()
-            }
+            listener.onWeatherCardLongClickListener(item)
             return@setOnLongClickListener true
         }
 
         holder.locationName?.text = item.name
+
+        println("Boolean")
         if (item.checkBoolean) {
-            holder.location?.text = holder.location?.context?.getString(R.string.location)
-            holder.imageCheck?.setImageResource(R.drawable.ic_check)
-            holder.imageGps?.setImageResource(R.drawable.ic_gps)
+            if (holder.location == null){
+                holder.location?.text = holder.location?.context?.getString(R.string.location)
+                holder.imageCheck?.setImageResource(R.drawable.ic_check)
+                holder.imageGps?.setImageResource(R.drawable.ic_gps)
+            }
         } else {
             holder.location?.visibility = View.GONE
             holder.imageCheck?.visibility = View.GONE
@@ -59,7 +61,6 @@ class LocationViewAdapter(
         holder.currentTemperature?.text = item.temperature.toString()
         holder.currentDate?.text = item.date
         holder.imageWeather?.setImageResource(item.image)
-
     }
 
     override fun getItemCount(): Int {
@@ -74,19 +75,18 @@ class LocationViewAdapter(
         val currentTemperature: TextView? = row.findViewById(R.id.current_temperature_location)
         val currentDate: TextView? = row.findViewById(R.id.date_location)
         val imageWeather: ImageView? = row.findViewById(R.id.image_weather_location)
+
+
     }
 
     override fun submitList(list: MutableList<EntityLocation>?) {
-        super.submitList(list)
         list?.let { listLocation = it }
+        super.submitList(list)
     }
 
     class DiffCallback : DiffUtil.ItemCallback<EntityLocation>() {
 
         override fun areItemsTheSame(oldItem: EntityLocation, newItem: EntityLocation): Boolean {
-
-            println("OLD = $oldItem, \nNEW = $newItem")
-
             return oldItem.name == newItem.name
         }
 
