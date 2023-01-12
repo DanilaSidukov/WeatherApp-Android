@@ -145,9 +145,16 @@ class LocationFragment(locationName: String, val listener: OnWeatherCardListener
         }
     }
 
-    override fun onWeatherCardClicked(locationName: String) {
-        fragmentReplacer.replace(this.pagePosition + 1, WeatherFragment(locationName), locationName)
+    override fun onWeatherCardClicked(locationEntity: EntityLocation) {
+        fragmentReplacer.replace(this.pagePosition + 1, WeatherFragment(locationEntity.name), locationEntity.name)
         listener.onWeatherCardClicked()
+        locationViewModel = LocationViewModel(
+            LocationRepository(
+                locationDao = WeatherApplication.database.daoLocation(),
+                locationEntity
+            )
+        )
+        locationViewModel.getLocationDataBase()
     }
 
     @SuppressLint("CommitPrefEdits")

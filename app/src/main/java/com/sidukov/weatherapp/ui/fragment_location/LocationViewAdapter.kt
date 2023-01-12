@@ -27,40 +27,25 @@ class LocationViewAdapter(
     @SuppressLint("ResourceType")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val item = currentList[position]
-        if (item.name == city) item.checkBoolean = true
+        var item = currentList[position]
+
         holder.itemView.setOnClickListener {
+            listener.onWeatherCardClicked(item)
             item.checkBoolean = true
-            listener.onWeatherCardClicked(item.name)
-            currentList.indices.forEach{
-                if (currentList[it] != item) currentList[it].checkBoolean = false
-                println("AFTER $it - ${currentList[it].checkBoolean}")
-            }
-            notifyItemChanged(position)
+            submitList(currentList)
         }
 
         holder.itemView.setOnLongClickListener {
             listener.onWeatherCardLongClickListener(item)
+            submitList(currentList)
             return@setOnLongClickListener true
         }
 
         holder.locationName?.text = item.name
-
-        println("Boolean")
-        if (item.checkBoolean) {
-            if (holder.location == null){
-                holder.location?.text = holder.location?.context?.getString(R.string.location)
-                holder.imageCheck?.setImageResource(R.drawable.ic_check)
-                holder.imageGps?.setImageResource(R.drawable.ic_gps)
-            }
-        } else {
-            holder.location?.visibility = View.GONE
-            holder.imageCheck?.visibility = View.GONE
-            holder.imageGps?.visibility = View.GONE
-        }
         holder.currentTemperature?.text = item.temperature.toString()
         holder.currentDate?.text = item.date
         holder.imageWeather?.setImageResource(item.image)
+        submitList(currentList)
     }
 
     override fun getItemCount(): Int {
@@ -69,9 +54,6 @@ class LocationViewAdapter(
 
     class ViewHolder(row: View) : RecyclerView.ViewHolder(row) {
         val locationName: TextView? = row.findViewById(R.id.text_location_name)
-        val location: TextView? = row.findViewById(R.id.text_location)
-        val imageCheck: ImageView? = row.findViewById(R.id.image_check)
-        val imageGps: ImageView? = row.findViewById(R.id.image_gps)
         val currentTemperature: TextView? = row.findViewById(R.id.current_temperature_location)
         val currentDate: TextView? = row.findViewById(R.id.date_location)
         val imageWeather: ImageView? = row.findViewById(R.id.image_weather_location)
@@ -108,7 +90,7 @@ class LocationViewAdapter(
 }
 
 interface OnWeatherCardClickListener {
-    fun onWeatherCardClicked(locationName: String)
+    fun onWeatherCardClicked(locationEntity: EntityLocation)
     fun onWeatherCardLongClickListener(locationItem: EntityLocation)
 }
 

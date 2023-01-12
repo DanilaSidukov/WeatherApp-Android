@@ -8,11 +8,12 @@ import androidx.viewpager2.widget.ViewPager2
 import com.sidukov.weatherapp.ui.OnWeatherCardListener
 import com.sidukov.weatherapp.ui.fragment_location.LocationFragment
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherFragment
+import kotlinx.coroutines.currentCoroutineContext
 
-class ViewPagerAdapter(container: FragmentActivity, private val listener: OnWeatherCardListener, private val city: String) : FragmentStateAdapter(container), FragmentReplacer {
+class ViewPagerAdapter(container: FragmentActivity, private val listener: OnWeatherCardListener, private var city: String) : FragmentStateAdapter(container), FragmentReplacer {
 
     companion object {
-        private const val PAGE_COUNT = 2
+        private var PAGE_COUNT = 1
     }
 
     private val mapOfFragment = ArrayMap<Int, BaseFragment>()
@@ -22,8 +23,17 @@ class ViewPagerAdapter(container: FragmentActivity, private val listener: OnWeat
     override fun createFragment(position: Int): Fragment {
 
         println("Create Fragment = $city")
+        if (city != " ") {
+            PAGE_COUNT = 2
+            itemCount
+            println("item count = $itemCount")
+            return mapOfFragment[position] ?: replaceDef(position,city,false)
+        } else {
+            PAGE_COUNT = 1
+            itemCount
+            return mapOfFragment[position] ?: replaceDef(position, city, false)
+        }
 
-        return mapOfFragment[position] ?: replaceDef(position,city,false)
     }
 
     override fun containsItem(itemId: Long): Boolean {
@@ -40,6 +50,7 @@ class ViewPagerAdapter(container: FragmentActivity, private val listener: OnWeat
 
     override fun replace(position: Int, newFragment: BaseFragment,location: String, isNotify: Boolean) {
 
+        city = location
         newFragment.setPageInfo(
             pagePosition = position,
             fragmentReplacer = this,
@@ -51,6 +62,7 @@ class ViewPagerAdapter(container: FragmentActivity, private val listener: OnWeat
     }
 
     override fun replaceDef(position: Int,location: String, isNotify: Boolean): BaseFragment {
+        city = location
         val fragment = when (position) {
             0 -> LocationFragment(location, listener)
             1 -> WeatherFragment(location)

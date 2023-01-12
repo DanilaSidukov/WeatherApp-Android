@@ -37,13 +37,6 @@ class MainActivity : AppCompatActivity(), OnWeatherCardListener {
 
         LocationFragment(sharedPreferences.getString("city", " ").toString(), this)
 
-//        if (sharedPreferences.getString("city", "").toString() == "") {
-//            println("CITY NOW SHARED = ${sharedPreferences.getString("city", "")}")
-//        } else {
-//            println("CITY NOW SHARED = ${sharedPreferences.getString("city", "")}")
-//        }
-
-
     }
 
     override fun onWeatherCardClicked() {

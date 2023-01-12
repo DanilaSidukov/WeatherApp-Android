@@ -29,9 +29,7 @@ class LocationViewModel(
             deleteItem.emit(
                 repositoryLocation.deleteLocationData()
             )
-            deleteItem.emit(
-                repositoryLocation.deleteLocationById()
-            )
+            _locationList.value = repositoryLocation.getLocationData()
         }
     }
 }

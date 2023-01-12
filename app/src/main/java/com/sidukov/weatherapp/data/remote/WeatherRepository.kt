@@ -64,7 +64,6 @@ class WeatherRepository(
 
         edit.clear()
         edit.putString("city", city)
-        println("PUT = ${edit.putString("city", city.htmlEncode())}")
         edit.apply()
 
         val requestCurrentDayBody = TodayForecastRequestBody(

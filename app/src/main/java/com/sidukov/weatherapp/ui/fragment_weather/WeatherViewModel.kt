@@ -33,8 +33,6 @@ open class WeatherViewModel(
     init {
         viewModelScope.launch {
 
-            println("QUERY !! ! ! !")
-
             val value = repository.getCurrentDayForecast(cityName)
             if (value.second.isEmpty() || value.third.isEmpty()) return@launch
             _todayStateFlow.emit(value.first)
