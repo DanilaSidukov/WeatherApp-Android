@@ -142,7 +142,7 @@
                         android:layout_marginTop="46dp"
                         android:fontFamily="@font/staatliches_regular"
                         android:paddingBottom="16dp"
-                        android:text="It won't rain for the next two hours, so you don't have to worry about going outside"
+                        android:text="Loading . . .  please wait"
                         android:textColor="@color/color_weather_condition"
                         android:textSize="12sp" />
 

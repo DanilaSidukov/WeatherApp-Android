@@ -1,15 +1,19 @@
 package com.sidukov.weatherapp.ui.fragment_weather
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -62,12 +66,23 @@ class WeatherFragment(val city: String) : BaseFragment(R.layout.fragment_weather
         return inflater.inflate(R.layout.fragment_weather, container, false)
     }
 
-    @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
+    @SuppressLint("ClickableViewAccessibility", "SetTextI18n", "ResourceAsColor")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
 
+        if (LocalDateTime.now().hour in 22..23 || LocalDateTime.now().hour in 0..6) {
+            val fragmentWeather: LinearLayout = view.findViewById(R.id.weather_fragment)
+            val motionFragmentWeather: MotionLayout = view.findViewById(R.id.motion_appTopBar)
+            fragmentWeather.rootView.setBackgroundColor(Color.parseColor("#808080"))
+            motionFragmentWeather.backgroundTintList = ColorStateList(states, intArrayOf(motionFragmentWeather.context.getColorFromAttr(R.attr.nightTimeItemBackground), 0))
+        } else {
+            val fragmentWeather: LinearLayout = view.findViewById(R.id.weather_fragment)
+            val motionFragmentWeather: MotionLayout = view.findViewById(R.id.motion_appTopBar)
+            fragmentWeather.rootView.setBackgroundColor(Color.parseColor("#F6F6F6"))
+            motionFragmentWeather.backgroundTintList = ColorStateList(states, intArrayOf(motionFragmentWeather.context.getColorFromAttr(R.attr.screenBackground), 0))
+        }
 
         weatherViewModel = WeatherViewModel(
             WeatherRepository(
@@ -177,4 +192,11 @@ class WeatherFragment(val city: String) : BaseFragment(R.layout.fragment_weather
         currentDate.text = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM"))
 
     }
+
+    private val states = arrayOf(
+        intArrayOf(android.R.attr.state_enabled),
+        intArrayOf(-android.R.attr.state_enabled),
+        intArrayOf(-android.R.attr.state_checked),
+        intArrayOf(android.R.attr.state_pressed)
+    )
 }

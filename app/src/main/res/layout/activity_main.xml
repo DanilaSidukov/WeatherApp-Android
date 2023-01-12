@@ -10,17 +10,9 @@
     android:background="@color/general_background"
     tools:context=".ui.MainActivity">
 
-
-
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/view_pager_2"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/container">
-        </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

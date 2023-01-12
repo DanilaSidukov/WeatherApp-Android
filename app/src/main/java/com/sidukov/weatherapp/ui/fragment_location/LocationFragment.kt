@@ -30,7 +30,7 @@ import kotlinx.android.synthetic.main.custom_dialog_delete.view.*
 import kotlinx.android.synthetic.main.custom_dialog_add.view.*
 import java.util.*
 
-class LocationFragment(locationName: String, val listener: OnWeatherCardListener) : BaseFragment(R.layout.fragment_location),
+class LocationFragment(locationName: String, private val listener: OnWeatherCardListener, private var entityListLocation: List<EntityLocation>) : BaseFragment(R.layout.fragment_location),
     OnWeatherCardClickListener {
 
     private val adapterLocation = LocationViewAdapter(emptyList(), this, locationName)
@@ -51,9 +51,12 @@ class LocationFragment(locationName: String, val listener: OnWeatherCardListener
         return inflater.inflate(R.layout.fragment_location, container, false)
     }
 
+
     @SuppressLint("InflateParams")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        updateLocationAdapter(entityListLocation)
 
         textNoLocation = view.findViewById(R.id.text_no_location)
 
@@ -65,7 +68,6 @@ class LocationFragment(locationName: String, val listener: OnWeatherCardListener
                     "",
                     0,
                     0,
-                    false,
                 )
             )
         )
@@ -85,6 +87,7 @@ class LocationFragment(locationName: String, val listener: OnWeatherCardListener
                 } else {
                     textNoLocation.visibility = View.GONE
                     updateLocationAdapter(it)
+                    entityListLocation = it
                 }
             }
         }
@@ -124,7 +127,7 @@ class LocationFragment(locationName: String, val listener: OnWeatherCardListener
                                     "Error! Can't provide forecast for this location!",
                                     Toast.LENGTH_SHORT).show()
                             } else {
-                                fragmentReplacer.replace(position, LocationFragment(locationDialogString,listener),locationDialogString)
+                                fragmentReplacer.replace(position, LocationFragment(locationDialogString,listener, entityListLocation),locationDialogString)
                                 fragmentReplacer.replace(position + 1,
                                     WeatherFragment(locationDialogString),
                                     locationDialogView.edit_enter_location.text.toString())

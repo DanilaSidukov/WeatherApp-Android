@@ -10,6 +10,5 @@ data class EntityLocation(
     @ColumnInfo(name = "date") val date: String,
     @ColumnInfo(name = "temperature") val temperature: Int,
     @ColumnInfo(name = "image") val image: Int,
-    @ColumnInfo(name = "checkBoolean") var checkBoolean: Boolean,
 )
 

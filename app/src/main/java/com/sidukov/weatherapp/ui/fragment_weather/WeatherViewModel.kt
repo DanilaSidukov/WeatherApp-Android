@@ -2,12 +2,15 @@ package com.sidukov.weatherapp.ui.fragment_weather
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sidukov.weatherapp.data.local.EntityLocation
 import com.sidukov.weatherapp.data.remote.WeatherRepository
 import com.sidukov.weatherapp.domain.CurrentWeather
 import com.sidukov.weatherapp.domain.WeatherDescription
 import com.sidukov.weatherapp.domain.WeatherShort
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 open class WeatherViewModel(
     private val repository: WeatherRepository,
@@ -30,6 +33,11 @@ open class WeatherViewModel(
     private val _todayCardViewDescription = MutableStateFlow<List<WeatherDescription>>(emptyList())
     var todayCardViewDescription = _todayCardViewDescription.asStateFlow()
 
+    private val _listToLocationFragment = MutableSharedFlow<EntityLocation>()
+    var listToLocationFragment = _listToLocationFragment.asSharedFlow()
+
+    private val index = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH")).toInt()
+
     init {
         viewModelScope.launch {
 
@@ -42,6 +50,13 @@ open class WeatherViewModel(
             _dailyStateFlow.tryEmit(value.fourth)
             _angleStateFlow.tryEmit(value.fifth)
 
+            val entityLocation = EntityLocation(
+                name = value.first.date,
+                date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM")),
+                temperature = value.first.temperature,
+                image = value.second[index].image
+            )
+            _listToLocationFragment.emit(entityLocation)
         }
     }
 

@@ -190,8 +190,7 @@ class WeatherRepository(
                     temperature = currentWeatherCurrentData.temperature,
                     image = getImageByWeatherCode(
                         weatherTodayData.hourly.hourlyWeatherCode[position]
-                    ),
-                    checkBoolean = false
+                    )
                 )
             )
         }

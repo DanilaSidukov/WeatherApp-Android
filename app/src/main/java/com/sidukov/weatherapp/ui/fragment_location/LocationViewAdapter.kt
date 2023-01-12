@@ -31,7 +31,6 @@ class LocationViewAdapter(
 
         holder.itemView.setOnClickListener {
             listener.onWeatherCardClicked(item)
-            item.checkBoolean = true
             submitList(currentList)
         }
 

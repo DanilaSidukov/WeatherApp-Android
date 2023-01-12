@@ -19,4 +19,8 @@
     <attr name="progressYellow" format="color" />
     <attr name="progressGreen" format="color" />
 
+    <attr name="nightTimeBackground" format="color" />
+
+    <attr name="nightTimeItemBackground" format="color" />
+
 </resources>
