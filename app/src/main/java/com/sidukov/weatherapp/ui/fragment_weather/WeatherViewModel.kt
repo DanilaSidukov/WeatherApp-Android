@@ -2,7 +2,7 @@ package com.sidukov.weatherapp.ui.fragment_weather
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sidukov.weatherapp.data.local.EntityLocation
+import com.sidukov.weatherapp.data.local.db.EntityLocation
 import com.sidukov.weatherapp.data.remote.WeatherRepository
 import com.sidukov.weatherapp.domain.CurrentWeather
 import com.sidukov.weatherapp.domain.WeatherDescription

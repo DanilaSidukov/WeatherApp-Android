@@ -1,4 +1,4 @@
-package com.sidukov.weatherapp.data.local
+package com.sidukov.weatherapp.data.local.db
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

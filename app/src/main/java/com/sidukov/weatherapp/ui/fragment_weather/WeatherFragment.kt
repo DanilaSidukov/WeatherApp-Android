@@ -73,15 +73,17 @@ class WeatherFragment(val city: String) : BaseFragment(R.layout.fragment_weather
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
 
         if (LocalDateTime.now().hour in 22..23 || LocalDateTime.now().hour in 0..6) {
-            val fragmentWeather: LinearLayout = view.findViewById(R.id.weather_fragment)
-            val motionFragmentWeather: MotionLayout = view.findViewById(R.id.motion_appTopBar)
-            fragmentWeather.rootView.setBackgroundColor(Color.parseColor("#808080"))
-            motionFragmentWeather.backgroundTintList = ColorStateList(states, intArrayOf(motionFragmentWeather.context.getColorFromAttr(R.attr.nightTimeItemBackground), 0))
+//            val fragmentWeather: LinearLayout = view.findViewById(R.id.weather_fragment)
+//            val motionFragmentWeather: MotionLayout = view.findViewById(R.id.motion_appTopBar)
+//            fragmentWeather.rootView.setBackgroundColor(Color.parseColor("#808080"))
+//            motionFragmentWeather.backgroundTintList = context?.let { ColorStateList.valueOf(it.getColorFromAttr(R.attr.nightTimeItemBackground))}
+//        //(states, intArrayOf(motionFragmentWeather.context.getColorFromAttr(R.attr.nightTimeItemBackground), 0))
         } else {
-            val fragmentWeather: LinearLayout = view.findViewById(R.id.weather_fragment)
-            val motionFragmentWeather: MotionLayout = view.findViewById(R.id.motion_appTopBar)
-            fragmentWeather.rootView.setBackgroundColor(Color.parseColor("#F6F6F6"))
-            motionFragmentWeather.backgroundTintList = ColorStateList(states, intArrayOf(motionFragmentWeather.context.getColorFromAttr(R.attr.screenBackground), 0))
+//            val fragmentWeather: LinearLayout = view.findViewById(R.id.weather_fragment)
+//            val motionFragmentWeather: MotionLayout = view.findViewById(R.id.motion_appTopBar)
+//            fragmentWeather.rootView.setBackgroundColor(Color.parseColor("#F6F6F6"))
+//            motionFragmentWeather.backgroundTintList = ColorStateList.valueOf(R.color.general_background)
+//        // (states, intArrayOf(motionFragmentWeather.context.getColorFromAttr(R.attr.screenBackground), 0))
         }
 
         weatherViewModel = WeatherViewModel(

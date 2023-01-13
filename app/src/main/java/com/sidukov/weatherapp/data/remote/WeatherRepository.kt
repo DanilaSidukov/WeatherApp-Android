@@ -6,8 +6,8 @@ import androidx.core.text.htmlEncode
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.NTuple5
 import com.sidukov.weatherapp.data.TimezoneMapper
-import com.sidukov.weatherapp.data.local.EntityLocation
-import com.sidukov.weatherapp.data.local.LocationDao
+import com.sidukov.weatherapp.data.local.db.EntityLocation
+import com.sidukov.weatherapp.data.local.db.LocationDao
 import com.sidukov.weatherapp.data.remote.api.AqiAPI
 import com.sidukov.weatherapp.data.remote.api.GeoAPI
 import com.sidukov.weatherapp.data.remote.api.WeatherAPI

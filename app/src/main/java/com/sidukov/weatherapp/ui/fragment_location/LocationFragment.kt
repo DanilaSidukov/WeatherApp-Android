@@ -15,7 +15,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
-import com.sidukov.weatherapp.data.local.EntityLocation
+import com.sidukov.weatherapp.data.local.db.EntityLocation
+import com.sidukov.weatherapp.data.local.settings.Settings
 import com.sidukov.weatherapp.data.remote.LocationRepository
 import com.sidukov.weatherapp.data.remote.WeatherRepository
 import com.sidukov.weatherapp.data.remote.api.APIClient
@@ -28,13 +29,10 @@ import com.sidukov.weatherapp.ui.fragment_weather.WeatherViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.custom_dialog_delete.view.*
 import kotlinx.android.synthetic.main.custom_dialog_add.view.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
-class LocationFragment(locationName: String, private val listener: OnWeatherCardListener, private var entityListLocation: List<EntityLocation>) : BaseFragment(R.layout.fragment_location),
+class LocationFragment(locationName: String, private val listener: OnWeatherCardListener) : BaseFragment(R.layout.fragment_location),
     OnWeatherCardClickListener {
 
     private val adapterLocation = LocationViewAdapter(emptyList(), this, locationName)
@@ -46,9 +44,6 @@ class LocationFragment(locationName: String, private val listener: OnWeatherCard
 
     private lateinit var locationDialogView: View
     private lateinit var locationDialog: AlertDialog.Builder
-
-    private lateinit var locationFragmentEntity: EntityLocation
-    private lateinit var weatherViewModel: WeatherViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,13 +68,19 @@ class LocationFragment(locationName: String, private val listener: OnWeatherCard
                     "",
                     0,
                     0,
-                )
+                ),
+                Settings(requireContext())
+            ),
+            WeatherRepository(
+                APIClient.weatherApiClient,
+                APIClient.geoApiClient,
+                APIClient.aqiApiClient,
+                WeatherApplication.database.daoLocation(),
+                requireContext()
             )
         )
-        locationViewModel.getLocationDataBase()
 
-        var flag = false
-        var locationFragmentEntityList: List<EntityLocation>
+        var locationFragmentEntityList: List<EntityLocation> = listOf()
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             locationViewModel.locationList.collect { listEntity ->
                 if (listEntity.isEmpty()) {
@@ -87,32 +88,31 @@ class LocationFragment(locationName: String, private val listener: OnWeatherCard
                     return@collect
                 } else {
                     textNoLocation.visibility = View.GONE
-                    println("LIST = $listEntity")
-                    entityListLocation = listEntity
                     locationFragmentEntityList = listEntity
-                    entityListLocation.forEach { list ->
-                        weatherViewModel = WeatherViewModel(
-                            WeatherRepository(
-                                APIClient.weatherApiClient,
-                                APIClient.geoApiClient,
-                                APIClient.aqiApiClient,
-                                WeatherApplication.database.daoLocation(),
-                                requireContext()
-                            ),list.name
-                        )
-                        lifecycleScope.launch {
-                            weatherViewModel.listToLocationFragment.collect{
-                                println("collecting from main - $it")
-                                locationFragmentEntity = it
-                                locationFragmentEntityList = locationFragmentEntityList.plus(locationFragmentEntity)
-                                if (!flag) {
-                                    locationViewModel.getLocationDataBase()
-                                    flag = true
-                                }
-                            }
-                        }
-                    }
-                    updateLocationAdapter(locationFragmentEntityList)
+
+//                    listEntity.forEach { list ->
+//                        weatherViewModel = WeatherViewModel(
+//                            WeatherRepository(
+//                                APIClient.weatherApiClient,
+//                                APIClient.geoApiClient,
+//                                APIClient.aqiApiClient,
+//                                WeatherApplication.database.daoLocation(),
+//                                requireContext()
+//                            ),list.name
+//                        )
+//                        lifecycleScope.launch {
+//                            weatherViewModel.listToLocationFragment.collect{
+//                                println("collecting from main - $it")
+//                                locationFragmentEntity = it
+//                                locationFragmentEntityList = listEntity.plus(locationFragmentEntity)
+//                                if (!flag) {
+//                                    locationViewModel.getLocationDataBase()
+//                                    flag = true
+//                                }
+//                            }
+//                        }
+//                    }
+                    updateLocationAdapter(listEntity)
                 }
             }
         }
@@ -158,7 +158,7 @@ class LocationFragment(locationName: String, private val listener: OnWeatherCard
                                     "Error! Can't provide forecast for this location!",
                                     Toast.LENGTH_SHORT).show()
                             } else {
-                                fragmentReplacer.replace(position, LocationFragment(locationDialogString,listener, entityListLocation),locationDialogString)
+                                fragmentReplacer.replace(position, LocationFragment(locationDialogString,listener),locationDialogString)
                                 fragmentReplacer.replace(position + 1,
                                     WeatherFragment(locationDialogString),
                                     locationDialogView.edit_enter_location.text.toString())
@@ -185,7 +185,15 @@ class LocationFragment(locationName: String, private val listener: OnWeatherCard
         locationViewModel = LocationViewModel(
             LocationRepository(
                 locationDao = WeatherApplication.database.daoLocation(),
-                locationEntity
+                locationEntity,
+                Settings(requireContext())
+            ),
+            WeatherRepository(
+                APIClient.weatherApiClient,
+                APIClient.geoApiClient,
+                APIClient.aqiApiClient,
+                WeatherApplication.database.daoLocation(),
+                requireContext()
             )
         )
         locationViewModel.getLocationDataBase()
@@ -211,7 +219,15 @@ class LocationFragment(locationName: String, private val listener: OnWeatherCard
             locationViewModel = LocationViewModel(
                 LocationRepository(
                     locationDao = WeatherApplication.database.daoLocation(),
-                    locationItem
+                    locationItem,
+                    Settings(requireContext())
+                ),
+                WeatherRepository(
+                    APIClient.weatherApiClient,
+                    APIClient.geoApiClient,
+                    APIClient.aqiApiClient,
+                    WeatherApplication.database.daoLocation(),
+                    requireContext()
                 )
             )
             edit.clear()

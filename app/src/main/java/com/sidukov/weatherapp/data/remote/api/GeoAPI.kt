@@ -9,7 +9,7 @@ interface GeoAPI {
     @GET("geocode/v1/json")
     suspend fun geoData(
         @Query("q") city: String,
-        @Query("key") key: String = "7b87359d24314f0b9b902a41e41371bf",
+        @Query("key") key: String = "2dd6c604847a4c3fbb31b84af26cc11b",
         @Query("pretty") pretty: Int = 1,
         @Query("no_annotations") no_annotations: Int = 1,
     ): GeocodingData

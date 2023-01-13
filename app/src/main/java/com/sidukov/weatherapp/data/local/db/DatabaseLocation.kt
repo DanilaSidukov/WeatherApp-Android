@@ -1,4 +1,4 @@
-package com.sidukov.weatherapp.data.local
+package com.sidukov.weatherapp.data.local.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

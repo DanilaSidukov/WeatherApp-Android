@@ -15,7 +15,7 @@
     <color name="grey_3">#BFDFDF</color>
     <color name="progress_yellow">#E5CE55</color>
     <color name="progress_green">#A6E555</color>
-    <color name="night_time_background">#808080</color>
+    <color name="night_time_background">#ABABAB</color>
     <color name="night_time_item_background">#ABABAB</color>
 
 </resources>

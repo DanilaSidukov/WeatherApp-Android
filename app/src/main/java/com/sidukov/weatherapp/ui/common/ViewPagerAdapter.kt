@@ -4,18 +4,15 @@ import android.util.ArrayMap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
-import com.sidukov.weatherapp.data.local.EntityLocation
+import com.sidukov.weatherapp.data.local.db.EntityLocation
 import com.sidukov.weatherapp.ui.OnWeatherCardListener
 import com.sidukov.weatherapp.ui.fragment_location.LocationFragment
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherFragment
-import kotlinx.coroutines.currentCoroutineContext
 
 class ViewPagerAdapter(
     container: FragmentActivity,
     private val listener: OnWeatherCardListener,
-    private var city: String,
-    private val listEntity: List<EntityLocation>,
+    private var city: String
 ) : FragmentStateAdapter(container), FragmentReplacer {
 
     companion object {
@@ -75,7 +72,7 @@ class ViewPagerAdapter(
     override fun replaceDef(position: Int, location: String, isNotify: Boolean): BaseFragment {
         city = location
         val fragment = when (position) {
-            0 -> LocationFragment(location, listener, listEntity)
+            0 -> LocationFragment(location, listener)
             1 -> WeatherFragment(location)
             else -> throw IllegalStateException()
         }
