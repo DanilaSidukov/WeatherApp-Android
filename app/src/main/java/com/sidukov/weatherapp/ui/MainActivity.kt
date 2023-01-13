@@ -15,6 +15,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.NTuple5
@@ -28,11 +29,13 @@ import com.sidukov.weatherapp.domain.WeatherDescription
 import com.sidukov.weatherapp.domain.WeatherShort
 import com.sidukov.weatherapp.ui.common.ViewPagerAdapter
 import com.sidukov.weatherapp.ui.fragment_location.LocationFragment
+import com.sidukov.weatherapp.ui.fragment_location.LocationViewAdapter
 import com.sidukov.weatherapp.ui.fragment_location.LocationViewModel
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherFragment
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), OnWeatherCardListener {
 
@@ -40,56 +43,18 @@ class MainActivity : AppCompatActivity(), OnWeatherCardListener {
     private lateinit var weatherViewModel: WeatherViewModel
     private lateinit var entityLocationList: List<EntityLocation>
     private lateinit var locationFragmentEntity: EntityLocation
+    private lateinit var locationRecyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        entityLocationList = emptyList()
-
-        locationViewModel = LocationViewModel(
-            LocationRepository(
-                WeatherApplication.database.daoLocation(),
-                EntityLocation(
-                    "",
-                    "",
-                    0,
-                    0,
-                )
-            )
-        )
-        locationViewModel.getLocationDataBase()
-        lifecycleScope.launchWhenStarted {
-            locationViewModel.locationList.collect{
-                if (entityLocationList.isEmpty()) return@collect
-                entityLocationList = it
-            }
-        }
-
         var locationFragmentEntityList : List<EntityLocation> = emptyList()
-        entityLocationList.forEach { list ->
-            weatherViewModel = WeatherViewModel(
-                WeatherRepository(
-                    APIClient.weatherApiClient,
-                    APIClient.geoApiClient,
-                    APIClient.aqiApiClient,
-                    WeatherApplication.database.daoLocation(),
-                    this
-                ),list.name
-            )
-            lifecycleScope.launchWhenStarted {
-                weatherViewModel.listToLocationFragment.collect{
-                    locationFragmentEntity = it
-                    locationFragmentEntityList = locationFragmentEntityList.plus(locationFragmentEntity)
-                }
-            }
-        }
 
         val sharedPreferences: SharedPreferences =
             this.getSharedPreferences("city", Context.MODE_PRIVATE)
         println("SHARED TO MAIN - ${sharedPreferences.getString("city", " ")}")
-
         view_pager_2.adapter = ViewPagerAdapter(this, this, (sharedPreferences.getString("city", " ")).toString(), locationFragmentEntityList)
 
         LocationFragment(sharedPreferences.getString("city", " ").toString(), this, locationFragmentEntityList)

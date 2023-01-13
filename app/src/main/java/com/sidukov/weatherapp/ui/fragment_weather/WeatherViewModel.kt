@@ -52,10 +52,11 @@ open class WeatherViewModel(
 
             val entityLocation = EntityLocation(
                 name = value.first.date,
-                date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM")),
+                date =  LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM")),
                 temperature = value.first.temperature,
                 image = value.second[index].image
             )
+            println("entity in view model = $entityLocation")
             _listToLocationFragment.emit(entityLocation)
         }
     }

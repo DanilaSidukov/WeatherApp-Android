@@ -28,6 +28,10 @@ import com.sidukov.weatherapp.ui.fragment_weather.WeatherViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.custom_dialog_delete.view.*
 import kotlinx.android.synthetic.main.custom_dialog_add.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class LocationFragment(locationName: String, private val listener: OnWeatherCardListener, private var entityListLocation: List<EntityLocation>) : BaseFragment(R.layout.fragment_location),
@@ -43,6 +47,9 @@ class LocationFragment(locationName: String, private val listener: OnWeatherCard
     private lateinit var locationDialogView: View
     private lateinit var locationDialog: AlertDialog.Builder
 
+    private lateinit var locationFragmentEntity: EntityLocation
+    private lateinit var weatherViewModel: WeatherViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -55,8 +62,6 @@ class LocationFragment(locationName: String, private val listener: OnWeatherCard
     @SuppressLint("InflateParams")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        updateLocationAdapter(entityListLocation)
 
         textNoLocation = view.findViewById(R.id.text_no_location)
 
@@ -73,24 +78,50 @@ class LocationFragment(locationName: String, private val listener: OnWeatherCard
         )
         locationViewModel.getLocationDataBase()
 
-        recyclerViewLocation = view.findViewById(R.id.recycler_view_location)
-        recyclerViewLocation.layoutManager = GridLayoutManager(requireContext(), 2)
-        recyclerViewLocation.adapter = adapterLocation
-        recyclerViewLocation.addItemDecoration(GridLayoutItemDecorationLocation(16))
-
+        var flag = false
+        var locationFragmentEntityList: List<EntityLocation>
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            locationViewModel.locationList.collect {
-                println("LIST = $it")
-                if (it.isEmpty()) {
+            locationViewModel.locationList.collect { listEntity ->
+                if (listEntity.isEmpty()) {
                     textNoLocation.visibility = View.VISIBLE
                     return@collect
                 } else {
                     textNoLocation.visibility = View.GONE
-                    updateLocationAdapter(it)
-                    entityListLocation = it
+                    println("LIST = $listEntity")
+                    entityListLocation = listEntity
+                    locationFragmentEntityList = listEntity
+                    entityListLocation.forEach { list ->
+                        weatherViewModel = WeatherViewModel(
+                            WeatherRepository(
+                                APIClient.weatherApiClient,
+                                APIClient.geoApiClient,
+                                APIClient.aqiApiClient,
+                                WeatherApplication.database.daoLocation(),
+                                requireContext()
+                            ),list.name
+                        )
+                        lifecycleScope.launch {
+                            weatherViewModel.listToLocationFragment.collect{
+                                println("collecting from main - $it")
+                                locationFragmentEntity = it
+                                locationFragmentEntityList = locationFragmentEntityList.plus(locationFragmentEntity)
+                                if (!flag) {
+                                    locationViewModel.getLocationDataBase()
+                                    flag = true
+                                }
+                            }
+                        }
+                    }
+                    updateLocationAdapter(locationFragmentEntityList)
                 }
             }
         }
+
+
+        recyclerViewLocation = view.findViewById(R.id.recycler_view_location)
+        recyclerViewLocation.layoutManager = GridLayoutManager(requireContext(), 2)
+        recyclerViewLocation.adapter = adapterLocation
+        recyclerViewLocation.addItemDecoration(GridLayoutItemDecorationLocation(16))
 
         buttonOpenDialog = view.findViewById(R.id.button_add_location)
         buttonOpenDialog.setOnClickListener {
