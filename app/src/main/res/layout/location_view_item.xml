@@ -9,6 +9,7 @@
     android:layout_marginBottom="10dp">
     
     <RelativeLayout
+        android:background="?attr/cardViewBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -20,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/TextAppearance.General_black"
-            android:textColor="@color/black"
+            android:textColor="?attr/textColorBlack"
             android:textSize="17sp"
             android:text="New york"
             android:layout_marginTop="16dp"
@@ -34,7 +35,7 @@
             android:layout_alignStart="@id/text_location_name"
             android:layout_marginTop="78dp"
             style="@style/TextAppearance.General_black"
-            android:textColor="@color/black"
+            android:textColor="?attr/textColorBlack"
             android:textSize="28sp"
             android:text="12" />
 
@@ -47,7 +48,7 @@
             android:layout_marginTop="35dp"
             android:layout_marginStart="0dp"
             style="@style/TextAppearance.General_grey"
-            android:textColor="@color/grey"
+            android:textColor="?attr/textColorGrey"
             android:text="6-16"
             android:paddingBottom="16dp"/>
 

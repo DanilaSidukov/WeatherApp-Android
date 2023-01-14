@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.remote.WeatherRepository
 import com.sidukov.weatherapp.data.remote.api.APIClient
+import com.sidukov.weatherapp.ui.OnDayNightStateChanged
 import com.sidukov.weatherapp.ui.WeatherApplication
 import com.sidukov.weatherapp.ui.common.BaseFragment
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecoration
@@ -29,7 +31,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-class WeatherFragment(val city: String) : BaseFragment(R.layout.fragment_weather) {
+class WeatherFragment(val city: String) : BaseFragment(R.layout.fragment_weather),
+    OnDayNightStateChanged {
 
     private lateinit var dailyWeatherRecyclerView: RecyclerView
 
@@ -85,6 +88,9 @@ class WeatherFragment(val city: String) : BaseFragment(R.layout.fragment_weather
 //            motionFragmentWeather.backgroundTintList = ColorStateList.valueOf(R.color.general_background)
 //        // (states, intArrayOf(motionFragmentWeather.context.getColorFromAttr(R.attr.screenBackground), 0))
         }
+
+        if (LocalDateTime.now().hour in 22.. 23 || LocalDateTime.now().hour in 0..6) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         weatherViewModel = WeatherViewModel(
             WeatherRepository(
@@ -195,10 +201,17 @@ class WeatherFragment(val city: String) : BaseFragment(R.layout.fragment_weather
 
     }
 
-    private val states = arrayOf(
-        intArrayOf(android.R.attr.state_enabled),
-        intArrayOf(-android.R.attr.state_enabled),
-        intArrayOf(-android.R.attr.state_checked),
-        intArrayOf(android.R.attr.state_pressed)
-    )
+//    private val states = arrayOf(
+//        intArrayOf(android.R.attr.state_enabled),
+//        intArrayOf(-android.R.attr.state_enabled),
+//        intArrayOf(-android.R.attr.state_checked),
+//        intArrayOf(android.R.attr.state_pressed)
+//    )
+
+    override fun onDayNightApplied(state: Int) {
+        if (state == OnDayNightStateChanged.DAY) AppCompatDelegate.setDefaultNightMode(
+            AppCompatDelegate.MODE_NIGHT_NO)
+        else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+    }
+
 }

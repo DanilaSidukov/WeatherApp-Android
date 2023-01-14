@@ -9,6 +9,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?attr/cardViewBackground"
         android:orientation="vertical">
 
         <TextView
@@ -20,7 +21,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="24dp"
             android:text="@string/air_quality"
-            android:textColor="@color/grey" />
+            android:textColor="?attr/textColorGrey2" />
 
         <TextView
             android:id="@+id/item_condition_card_view"
@@ -33,7 +34,7 @@
             android:layout_marginTop="25dp"
             android:paddingBottom="22dp"
             android:text="@string/good_temp"
-            android:textColor="@color/black"
+            android:textColor="?attr/textColorBlack2"
             android:textSize="17sp" />
 
         <ProgressBar
@@ -43,11 +44,11 @@
             android:layout_height="60dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:progressBackgroundTint="@color/white"
-            android:indeterminateTintMode="src_in"
             android:layout_marginTop="23dp"
             android:layout_marginEnd="15dp"
+            android:indeterminateTintMode="src_in"
             android:max="100"
+            android:progressBackgroundTint="@color/white"
             android:progressDrawable="@drawable/custom_progress_bar_air_quality" />
 
         <ImageView

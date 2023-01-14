@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +21,7 @@ import com.sidukov.weatherapp.data.local.settings.Settings
 import com.sidukov.weatherapp.data.remote.LocationRepository
 import com.sidukov.weatherapp.data.remote.WeatherRepository
 import com.sidukov.weatherapp.data.remote.api.APIClient
+import com.sidukov.weatherapp.ui.OnDayNightStateChanged
 import com.sidukov.weatherapp.ui.OnWeatherCardListener
 import com.sidukov.weatherapp.ui.WeatherApplication
 import com.sidukov.weatherapp.ui.common.BaseFragment
@@ -33,7 +35,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 class LocationFragment(locationName: String, private val listener: OnWeatherCardListener) : BaseFragment(R.layout.fragment_location),
-    OnWeatherCardClickListener {
+    OnWeatherCardClickListener, OnDayNightStateChanged {
 
     private val adapterLocation = LocationViewAdapter(emptyList(), this, locationName)
     private lateinit var locationViewModel: LocationViewModel
@@ -243,5 +245,11 @@ class LocationFragment(locationName: String, private val listener: OnWeatherCard
 
     private fun updateLocationAdapter(locationList: List<EntityLocation>) {
         adapterLocation.submitList(locationList.toMutableList())
+    }
+
+    override fun onDayNightApplied(state: Int) {
+        if (state == OnDayNightStateChanged.DAY) AppCompatDelegate.setDefaultNightMode(
+            AppCompatDelegate.MODE_NIGHT_NO)
+        else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
     }
 }

@@ -4,7 +4,7 @@
     android:id="@+id/location_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/general_background">
+    android:background="?attr/screenBackground">
 
     <TextView
         android:id="@+id/text_no_location"
@@ -15,6 +15,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:text="@string/there_is_no_location"
+        android:textColor="?attr/textColorBlack"
         app:layout_constraintVertical_bias="0.5"
         android:gravity="center" />
 

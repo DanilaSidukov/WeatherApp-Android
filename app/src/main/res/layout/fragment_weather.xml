@@ -5,7 +5,7 @@
     android:id="@+id/weather_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/general_background"
+    android:background="?attr/screenBackground"
     android:orientation="vertical">
 
     <androidx.constraintlayout.motion.widget.MotionLayout
@@ -25,15 +25,15 @@
             android:layout_gravity="center_horizontal"
             android:gravity="end"
             android:text="Loading..."
-            android:textColor="@color/black" />
+            android:textColor="?attr/textColorBlack" />
 
         <ImageView
-            app:layout_constraintTop_toBottomOf="@id/text_location_weather"
             android:id="@+id/image_main"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_location_weather"
             app:srcCompat="@drawable/ic_sun" />
 
         <ImageView
@@ -45,12 +45,13 @@
 
         <TextView
             android:id="@+id/text_current_temperature_weather"
-            android:gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:gravity="center"
             android:text=" "
             android:textAppearance="@style/TextAppearance.General_black"
+            android:textColor="?attr/textColorBlack"
             android:textScaleX="2"
             android:textSize="65sp"
             app:layout_constraintStart_toStartOf="parent" />
@@ -63,7 +64,7 @@
             android:paddingBottom="13dp"
             android:text="loading..."
             android:textAppearance="@style/TextAppearance.Description"
-            android:textColor="@color/grey" />
+            android:textColor="?attr/textColorGrey2" />
 
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
@@ -83,14 +84,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?attr/screenBackground"
                 android:descendantFocusability="blocksDescendants"
                 android:orientation="vertical">
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/card_view_today_forecast"
+                    style="@style/CardViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/CardViewStyle"
                     app:cardCornerRadius="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -99,21 +101,23 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:background="?attr/cardViewBackground"
                         android:orientation="vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.General_black"
+                            android:layout_margin="16dp"
                             android:text="@string/today_s_forecast"
-                            android:layout_margin="16dp" />
+                            android:textAppearance="@style/TextAppearance.General_black"
+                            android:textColor="?attr/textColorBlack" />
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/today_weather_recycler_view"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:orientation="horizontal"
                             android:layout_marginBottom="16dp"
+                            android:orientation="horizontal"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
                     </LinearLayout>
 
@@ -122,6 +126,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@id/card_view_weather_conditions"
                     style="@style/CardViewStyle"
+                    android:backgroundTint="?attr/cardViewBackground"
                     app:cardCornerRadius="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -132,7 +137,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/text_weather_conditions"
-                        android:textColor="@color/color_weather_condition" />
+                        android:textColor="?attr/textColorBlackWeak" />
 
                     <TextView
                         android:id="@+id/weather_conditions_description"
@@ -143,7 +148,7 @@
                         android:fontFamily="@font/staatliches_regular"
                         android:paddingBottom="16dp"
                         android:text="Loading . . .  please wait"
-                        android:textColor="@color/color_weather_condition"
+                        android:textColor="?attr/textColorBlack"
                         android:textSize="12sp" />
 
                 </androidx.cardview.widget.CardView>
@@ -159,6 +164,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:background="?attr/cardViewBackground"
                         android:orientation="vertical">
 
                         <TextView
@@ -168,7 +174,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="start"
                             android:text="@string/daily_weather"
-                            android:textColor="@color/grey" />
+                            android:textColor="?attr/textColorGrey2" />
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recycler_view_weather"
@@ -188,15 +194,16 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/card_view_today_digest"
                     style="@style/CardViewStyle"
-                    app:cardCornerRadius="8dp"
                     android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/card_view_daily_weather">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:background="?attr/cardViewBackground">
 
                         <TextView
                             style="@style/TextAppearance.General_grey"
@@ -204,6 +211,7 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="16dp"
                             android:text="@string/today_s_digest"
+                            android:textColor="?attr/textColorGrey"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -217,7 +225,7 @@
                             android:layout_marginTop="85dp"
                             android:layout_marginRight="298dp"
                             android:text="11:33"
-                            android:textColor="@color/black"
+                            android:textColor="?attr/textColorBlack"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
@@ -229,7 +237,7 @@
                             android:layout_marginLeft="0dp"
                             android:layout_marginTop="2dp"
                             android:text="@string/sunrise"
-                            android:textColor="@color/grey"
+                            android:textColor="?attr/textColorGrey"
                             android:textSize="10sp"
                             app:layout_constraintEnd_toEndOf="@id/text_sunrise_time"
                             app:layout_constraintStart_toStartOf="@id/text_sunrise_time"
@@ -243,7 +251,7 @@
                             android:layout_marginTop="85dp"
                             android:layout_marginRight="16dp"
                             android:text="19:15"
-                            android:textColor="@color/black"
+                            android:textColor="?attr/textColorBlack"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
@@ -255,23 +263,23 @@
                             android:layout_marginLeft="0dp"
                             android:layout_marginTop="2dp"
                             android:text="@string/sunset"
-                            android:textColor="@color/grey"
+                            android:textColor="?attr/textColorGrey"
                             android:textSize="10sp"
                             app:layout_constraintEnd_toEndOf="@id/text_sunset_time"
                             app:layout_constraintStart_toStartOf="@id/text_sunset_time"
                             app:layout_constraintTop_toBottomOf="@id/text_sunset_time" />
 
-                        <com.sidukov.weatherapp.ui.fragment_weather.ArcProgressBar
-                            android:id="@+id/arc_progress_bar"
-                            android:layout_width="wrap_content"
-                            android:layout_height="0dp"
-                            android:layout_marginLeft="15dp"
-                            android:layout_marginTop="20dp"
-                            android:layout_marginRight="15dp"
-                            app:layout_constraintBottom_toTopOf="@id/text_sunrise_time"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                                <com.sidukov.weatherapp.ui.fragment_weather.ArcProgressBar
+                                    android:id="@+id/arc_progress_bar"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="0dp"
+                                    android:layout_marginLeft="15dp"
+                                    android:layout_marginTop="20dp"
+                                    android:layout_marginRight="15dp"
+                                    app:layout_constraintBottom_toTopOf="@id/text_sunrise_time"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
                             android:id="@+id/text_daytime_condition_view"
@@ -281,7 +289,7 @@
                             android:layout_marginStart="16dp"
                             android:layout_marginTop="140dp"
                             android:text="@string/daytime"
-                            android:textColor="@color/grey"
+                            android:textColor="?attr/textColorGrey"
                             android:textSize="13sp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -293,6 +301,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="sunny and cloudy"
+                            android:textColor="?attr/textColorBlack"
                             app:layout_constraintStart_toStartOf="@id/text_daytime_condition_view"
                             app:layout_constraintTop_toBottomOf="@id/text_daytime_condition_view" />
 
@@ -304,7 +313,7 @@
                             android:layout_marginStart="150dp"
                             android:layout_marginTop="140dp"
                             android:text="@string/night_time"
-                            android:textColor="@color/grey"
+                            android:textColor="?attr/textColorGrey"
                             android:textSize="13sp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -316,6 +325,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="sunny and cloudy"
+                            android:textColor="?attr/textColorBlack"
                             app:layout_constraintStart_toStartOf="@id/text_nighttime_condition_view"
                             app:layout_constraintTop_toBottomOf="@id/text_nighttime_condition_view" />
 
@@ -327,7 +337,7 @@
                             android:layout_marginTop="199dp"
                             android:fontFamily="@font/staatliches_regular"
                             android:text="@string/humidity"
-                            android:textColor="@color/grey"
+                            android:textColor="?attr/textColorGrey"
                             android:textSize="13sp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -341,7 +351,7 @@
                             android:layout_marginTop="4dp"
                             android:paddingBottom="16dp"
                             android:text="43%"
-                            android:textColor="@color/black"
+                            android:textColor="?attr/textColorBlack"
                             android:textSize="13sp"
                             app:layout_constraintStart_toStartOf="@id/text_humidity_condition_view"
                             app:layout_constraintTop_toBottomOf="@id/text_humidity_condition_view" />
@@ -354,7 +364,7 @@
                             android:layout_marginStart="75dp"
                             android:layout_marginTop="199dp"
                             android:text="@string/air_quality"
-                            android:textColor="@color/grey"
+                            android:textColor="?attr/textColorGrey"
                             android:textSize="13sp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -367,7 +377,7 @@
                             android:layout_marginTop="4dp"
                             android:paddingBottom="16dp"
                             android:text="good"
-                            android:textColor="@color/black"
+                            android:textColor="?attr/textColorBlack"
                             android:textSize="13sp"
                             app:layout_constraintStart_toStartOf="@id/text_air_quality_condition_view"
                             app:layout_constraintTop_toBottomOf="@id/text_air_quality_condition_view" />
@@ -380,7 +390,7 @@
                             android:layout_marginStart="150dp"
                             android:layout_marginTop="199dp"
                             android:text="@string/chance_of_precipitation"
-                            android:textColor="@color/grey"
+                            android:textColor="?attr/textColorGrey"
                             android:textSize="13sp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -394,7 +404,7 @@
                             android:layout_marginTop="4dp"
                             android:paddingBottom="16dp"
                             android:text="13%"
-                            android:textColor="@color/black"
+                            android:textColor="?attr/textColorBlack"
                             android:textSize="13sp"
                             app:layout_constraintStart_toStartOf="@id/text_chance_of_precipitation_condition_view"
                             app:layout_constraintTop_toBottomOf="@id/text_chance_of_precipitation_condition_view" />

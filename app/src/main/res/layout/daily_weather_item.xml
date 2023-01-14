@@ -14,7 +14,7 @@
         android:fontFamily="@font/staatliches_regular"
         android:gravity="center"
         tools:text="Monday"
-        android:textColor="?attr/descriptionGreyTextColor"
+        android:textColor="?attr/textColorGrey"
         android:textSize="15sp" />
 
     <ImageView
@@ -36,7 +36,7 @@
         android:fontFamily="@font/staatliches_regular"
         android:gravity="center"
         tools:text="20"
-        android:textColor="@color/black"
+        android:textColor="?attr/textColorBlack"
         android:textSize="18sp" />
 
 </LinearLayout>

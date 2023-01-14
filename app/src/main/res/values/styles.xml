@@ -61,7 +61,7 @@
         <item name="android:layout_marginTop">16dp</item>
         <item name="android:layout_marginStart">16dp</item>
         <item name="android:layout_marginEnd">16dp</item>
-        <item name="background">@color/white</item>
+        <item name="background">?attr/cardViewBackground</item>
     </style>
 
     <style name="dialog_animation">
@@ -71,6 +71,8 @@
 
     <style name="AppTheme" parent="Theme.MaterialComponents.Light">
         <item name="android:navigationBarColor">#80FFFFFF</item>
+        <item name="colorPrimary">@color/general_background</item>
+        <item name="colorPrimaryDark">@color/general_background_night</item>
     </style>
 
 
