@@ -15,6 +15,7 @@
     <attr name="textColorGrey" format="reference" />
     <attr name="textColorGrey2" format="reference" />
     <attr name="textColorBlackWeak" format="reference" />
+    <attr name="buttonColor" format="reference" />
 
     <attr name="backgroundTrackColor" format="color"/>
     <attr name="progressTrackColor" format="color" />
