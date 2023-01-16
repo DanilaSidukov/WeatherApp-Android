@@ -15,7 +15,6 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <item name="android:colorEdgeEffect">@color/general_background</item>
 
         <item name="screenBackground">@color/general_background</item>
         <item name="cardViewBackground">@color/white</item>
@@ -36,9 +35,10 @@
         <item name="progressYellow">@color/progress_yellow</item>
         <item name="progressGreen">@color/progress_green</item>
 
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
-
+        <item name="android:navigationBarColor">@color/white_transparent</item>
 
     </style>
 </resources>

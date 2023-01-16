@@ -1,28 +1,33 @@
 package com.sidukov.weatherapp.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.View
+import android.view.WindowInsets
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
-import androidx.recyclerview.widget.RecyclerView
+import androidx.core.view.WindowInsetsCompat
 import com.sidukov.weatherapp.R
-import com.sidukov.weatherapp.data.local.db.EntityLocation
 import com.sidukov.weatherapp.ui.common.ViewPagerAdapter
 import com.sidukov.weatherapp.ui.fragment_location.LocationFragment
-import com.sidukov.weatherapp.ui.fragment_location.LocationViewModel
-import com.sidukov.weatherapp.ui.fragment_weather.WeatherViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import java.time.LocalDateTime
 
 class MainActivity : AppCompatActivity(), OnWeatherCardListener {
 
+    @SuppressLint("ResourceAsColor", "RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowInsetsCompat.Type.systemBars()
 
         val sharedPreferences: SharedPreferences =
             this.getSharedPreferences("city", Context.MODE_PRIVATE)

@@ -8,10 +8,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
+import android.view.WindowInsets
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.graphics.Insets
+import androidx.core.view.*
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,10 +36,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.custom_dialog_delete.view.*
 import kotlinx.android.synthetic.main.custom_dialog_add.view.*
 import kotlinx.coroutines.launch
+import androidx.core.view.WindowInsetsCompat.Type.navigationBars
 import java.util.*
 
 class LocationFragment(locationName: String, private val listener: OnWeatherCardListener) : BaseFragment(R.layout.fragment_location),
-    OnWeatherCardClickListener, OnDayNightStateChanged {
+    OnWeatherCardClickListener, OnDayNightStateChanged{
 
     private val adapterLocation = LocationViewAdapter(emptyList(), this, locationName)
     private lateinit var locationViewModel: LocationViewModel
@@ -91,29 +96,6 @@ class LocationFragment(locationName: String, private val listener: OnWeatherCard
                 } else {
                     textNoLocation.visibility = View.GONE
                     locationFragmentEntityList = listEntity
-
-//                    listEntity.forEach { list ->
-//                        weatherViewModel = WeatherViewModel(
-//                            WeatherRepository(
-//                                APIClient.weatherApiClient,
-//                                APIClient.geoApiClient,
-//                                APIClient.aqiApiClient,
-//                                WeatherApplication.database.daoLocation(),
-//                                requireContext()
-//                            ),list.name
-//                        )
-//                        lifecycleScope.launch {
-//                            weatherViewModel.listToLocationFragment.collect{
-//                                println("collecting from main - $it")
-//                                locationFragmentEntity = it
-//                                locationFragmentEntityList = listEntity.plus(locationFragmentEntity)
-//                                if (!flag) {
-//                                    locationViewModel.getLocationDataBase()
-//                                    flag = true
-//                                }
-//                            }
-//                        }
-//                    }
                     updateLocationAdapter(listEntity)
                 }
             }
@@ -126,6 +108,13 @@ class LocationFragment(locationName: String, private val listener: OnWeatherCard
         recyclerViewLocation.addItemDecoration(GridLayoutItemDecorationLocation(16))
 
         buttonOpenDialog = view.findViewById(R.id.button_add_location)
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            buttonOpenDialog.updateLayoutParams<MarginLayoutParams> {
+                bottomMargin += insets.bottom
+            }
+            WindowInsetsCompat.CONSUMED
+        }
         buttonOpenDialog.setOnClickListener {
             locationDialogView = LayoutInflater.from(requireContext())
                 .inflate(R.layout.custom_dialog_add, null, false)
@@ -252,4 +241,5 @@ class LocationFragment(locationName: String, private val listener: OnWeatherCard
             AppCompatDelegate.MODE_NIGHT_NO)
         else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
     }
+
 }

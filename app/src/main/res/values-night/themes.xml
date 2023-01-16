@@ -13,8 +13,8 @@
         <item name="android:windowFullscreen">true</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:colorEdgeEffect">@null</item>
         <!-- Customize your theme here. -->
-        <item name="enableEdgeToEdge">true</item>
 
         <item name="screenBackground">@color/general_background_night</item>
         <item name="cardViewBackground">@color/item_background_night</item>
@@ -35,7 +35,10 @@
         <item name="progressYellow">@color/progress_yellow</item>
         <item name="progressGreen">@color/progress_green</item>
 
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:navigationBarColor">@color/white_transparent</item>
+
     </style>
 </resources>
