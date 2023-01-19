@@ -5,7 +5,8 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-
+import androidx.room.Update
+import dagger.Provides
 
 @Dao
 interface LocationDao {
@@ -21,4 +22,5 @@ interface LocationDao {
 
     @Delete
     suspend fun deleteData(locationData: EntityLocation)
+
 }

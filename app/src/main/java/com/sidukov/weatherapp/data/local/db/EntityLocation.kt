@@ -11,4 +11,3 @@ data class EntityLocation(
     @ColumnInfo(name = "temperature") val temperature: Int,
     @ColumnInfo(name = "image") val image: Int,
 )
-

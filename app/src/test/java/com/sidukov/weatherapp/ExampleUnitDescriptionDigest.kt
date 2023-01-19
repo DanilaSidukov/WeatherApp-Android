@@ -1,14 +1,8 @@
 package com.sidukov.weatherapp
 
-import com.sidukov.weatherapp.data.remote.api.APIClient
 import org.junit.Test
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.format.TextStyle
 import java.util.*
 
 /**

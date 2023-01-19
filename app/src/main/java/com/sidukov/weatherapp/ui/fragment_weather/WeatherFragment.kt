@@ -8,22 +8,36 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
+import com.sidukov.weatherapp.data.local.db.LocationDao
+import com.sidukov.weatherapp.data.local.settings.Settings
 import com.sidukov.weatherapp.data.remote.WeatherRepository
-import com.sidukov.weatherapp.data.remote.api.APIClient
+import com.sidukov.weatherapp.data.remote.api.AqiAPI
+import com.sidukov.weatherapp.data.remote.api.GeoAPI
+import com.sidukov.weatherapp.data.remote.api.WeatherAPI
+import com.sidukov.weatherapp.di.ViewModelFactory
+import com.sidukov.weatherapp.di.WeatherAppComponent
+import com.sidukov.weatherapp.di.injectViewModel
+import com.sidukov.weatherapp.ui.MainViewModel
 import com.sidukov.weatherapp.ui.OnDayNightStateChanged
 import com.sidukov.weatherapp.ui.WeatherApplication
 import com.sidukov.weatherapp.ui.common.BaseFragment
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecoration
+import com.sidukov.weatherapp.ui.fragment_location.LocationViewModel
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
+import java.lang.annotation.Inherited
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
 
-class WeatherFragment(val city: String) : BaseFragment(R.layout.fragment_weather),
+class WeatherFragment() : BaseFragment(R.layout.fragment_weather),
     OnDayNightStateChanged {
 
     private lateinit var dailyWeatherRecyclerView: RecyclerView
@@ -50,7 +64,11 @@ class WeatherFragment(val city: String) : BaseFragment(R.layout.fragment_weather
     private lateinit var currentNightTimeDigest: TextView
     private lateinit var currentAQI: TextView
 
-    private lateinit var weatherViewModel: WeatherViewModel
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var weatherViewModel: WeatherViewModel
+
     private lateinit var animation: HeaderImageAnimation
 
     override fun onCreateView(
@@ -67,33 +85,15 @@ class WeatherFragment(val city: String) : BaseFragment(R.layout.fragment_weather
 
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        if (LocalDateTime.now().hour in 22..23 || LocalDateTime.now().hour in 0..6) {
-//            val fragmentWeather: LinearLayout = view.findViewById(R.id.weather_fragment)
-//            val motionFragmentWeather: MotionLayout = view.findViewById(R.id.motion_appTopBar)
-//            fragmentWeather.rootView.setBackgroundColor(Color.parseColor("#808080"))
-//            motionFragmentWeather.backgroundTintList = context?.let { ColorStateList.valueOf(it.getColorFromAttr(R.attr.nightTimeItemBackground))}
-//        //(states, intArrayOf(motionFragmentWeather.context.getColorFromAttr(R.attr.nightTimeItemBackground), 0))
-        } else {
-//            val fragmentWeather: LinearLayout = view.findViewById(R.id.weather_fragment)
-//            val motionFragmentWeather: MotionLayout = view.findViewById(R.id.motion_appTopBar)
-//            fragmentWeather.rootView.setBackgroundColor(Color.parseColor("#F6F6F6"))
-//            motionFragmentWeather.backgroundTintList = ColorStateList.valueOf(R.color.general_background)
-//        // (states, intArrayOf(motionFragmentWeather.context.getColorFromAttr(R.attr.screenBackground), 0))
-        }
+        WeatherApplication.appComponent.inject(this)
+
+        weatherViewModel = injectViewModel(viewModelFactory)
 
         if (LocalDateTime.now().hour in 22.. 23 || LocalDateTime.now().hour in 0..6) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-        weatherViewModel = WeatherViewModel(
-            WeatherRepository(
-                APIClient.weatherApiClient,
-                APIClient.geoApiClient,
-                APIClient.aqiApiClient,
-                WeatherApplication.database.daoLocation(),
-                requireContext()
-            ),
-            city
-        )
+        println("saved - ${weatherViewModel.locationRepository.settings.savedLocation?: " "}")
+        weatherViewModel.setCity(weatherViewModel.locationRepository.settings.savedLocation?: " ")
 
         dailyWeatherRecyclerView = view.findViewById(R.id.recycler_view_weather)
         dailyWeatherRecyclerView.adapter = adapterDailyWeather

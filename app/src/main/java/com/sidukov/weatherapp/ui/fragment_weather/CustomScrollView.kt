@@ -14,9 +14,6 @@ import android.widget.EdgeEffect
 import androidx.core.widget.NestedScrollView
 import com.sidukov.weatherapp.R
 
-// этот класс не является фрагментом, поэтому не нужно в названии оставлять слово Fragment
-// можно назвать NestedOverscrollView, потому что она расширяет nestedscrollview и добавляет
-// эффект прокручивания
 @SuppressLint("ResourceAsColor")
 class CustomScrollView: NestedScrollView {
     var maxOverscrollDistance: Int = 350
@@ -45,8 +42,7 @@ class CustomScrollView: NestedScrollView {
     private var pullUpAnimator: ValueAnimator = ValueAnimator()
 
     init {
-        overScrollMode = OVER_SCROLL_ALWAYS
-        // XpEdgeEffect.setColor(this@CustomScrollView, R.color.white_transparent)
+        overScrollMode = OVER_SCROLL_NEVER
     }
 
     constructor(context: Context) : super(context)

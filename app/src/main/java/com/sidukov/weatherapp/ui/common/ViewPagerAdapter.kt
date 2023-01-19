@@ -3,17 +3,24 @@ package com.sidukov.weatherapp.ui.common
 import android.util.ArrayMap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.sidukov.weatherapp.data.local.db.EntityLocation
-import com.sidukov.weatherapp.ui.OnWeatherCardListener
+import com.sidukov.weatherapp.data.local.settings.Settings
+import com.sidukov.weatherapp.di.ViewModelFactory
+import com.sidukov.weatherapp.di.injectViewModel
+import com.sidukov.weatherapp.ui.MainViewModel
 import com.sidukov.weatherapp.ui.fragment_location.LocationFragment
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherFragment
+import javax.inject.Inject
 
 class ViewPagerAdapter(
     container: FragmentActivity,
-    private val listener: OnWeatherCardListener,
-    private var city: String
+    private val city: String
 ) : FragmentStateAdapter(container), FragmentReplacer {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    lateinit var mainViewModel: MainViewModel
 
     companion object {
         private var PAGE_COUNT = 1
@@ -30,11 +37,11 @@ class ViewPagerAdapter(
             PAGE_COUNT = 2
             itemCount
             println("item count = $itemCount")
-            return mapOfFragment[position] ?: replaceDef(position, city, false)
+            return mapOfFragment[position] ?: replaceDef(position,false)
         } else {
             PAGE_COUNT = 1
             itemCount
-            return mapOfFragment[position] ?: replaceDef(position, city, false)
+            return mapOfFragment[position] ?: replaceDef(position,false)
         }
 
     }
@@ -54,33 +61,28 @@ class ViewPagerAdapter(
     override fun replace(
         position: Int,
         newFragment: BaseFragment,
-        location: String,
         isNotify: Boolean,
     ) {
 
-        city = location
         newFragment.setPageInfo(
             pagePosition = position,
             fragmentReplacer = this,
-            location = location
         )
-        println("replace = $location")
         mapOfFragment[position] = newFragment
         if (isNotify) notifyItemChanged(position)
     }
 
-    override fun replaceDef(position: Int, location: String, isNotify: Boolean): BaseFragment {
-        city = location
+    override fun replaceDef(position: Int, isNotify: Boolean): BaseFragment {
         val fragment = when (position) {
-            0 -> LocationFragment(location, listener)
-            1 -> WeatherFragment(location)
+            0 -> LocationFragment()
+            1 -> WeatherFragment()
             else -> throw IllegalStateException()
         }
-        println("replaceDef = $location")
-        replace(position, fragment, location, isNotify)
+        replace(position, fragment, isNotify)
         return fragment
     }
 
     override fun getItemId(position: Int) =
         mapOfFragment[position]?.pageId ?: super.getItemId(position)
+
 }

@@ -15,18 +15,20 @@ import com.sidukov.weatherapp.domain.CurrentWeather
 import com.sidukov.weatherapp.domain.WeatherDescription
 import com.sidukov.weatherapp.domain.WeatherShort
 import com.sidukov.weatherapp.domain.daily_body.DailyForecastRequestBody
-import com.sidukov.weatherapp.domain.geo_api.Components
+import com.sidukov.weatherapp.domain.geo_api.Address
 import com.sidukov.weatherapp.domain.today_body.TodayForecastRequestBody
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
+import javax.inject.Inject
 
-class WeatherRepository(
-    private val weatherApi: WeatherAPI,
-    private val geoAPI: GeoAPI,
-    private val aqiAPI: AqiAPI,
-    private val locationDao: LocationDao,
+
+class WeatherRepository @Inject constructor (
+    val weatherApi: WeatherAPI,
+    val geoAPI: GeoAPI,
+    val aqiAPI: AqiAPI,
+    val locationDao: LocationDao,
     context: Context,
 ) {
 
@@ -44,7 +46,7 @@ class WeatherRepository(
             city = city.htmlEncode()
         )
 
-        if (geocodingData.results.isEmpty() || geocodingData.status.code != 200) {
+        if (geocodingData.results.isEmpty()) {
             return NTuple5(
                 CurrentWeather("Error",
                     Pair(1, 1),
@@ -67,9 +69,9 @@ class WeatherRepository(
         edit.apply()
 
         val requestCurrentDayBody = TodayForecastRequestBody(
-            geocodingData.results[0].geometry.latitude,
-            geocodingData.results[0].geometry.longitude,
-            geocodingData.results[0].components.country_code,
+            geocodingData.results[0].position.latitude,
+            geocodingData.results[0].position.longitude,
+            geocodingData.results[0].address.countryCode,
             LocalDateTime.now(),
             LocalDateTime.now(),
             hourly = "temperature_2m,relativehumidity_2m,precipitation,rain,snowfall,weathercode,cloudcover_mid",
@@ -99,21 +101,28 @@ class WeatherRepository(
             endDate = requestCurrentDayBody.endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
         )
 
-        fun checkLocationOnNull(componentList: Components): String {
+        fun checkLocationOnNull(componentList: Address): String {
             var tempString = " "
-            if (componentList.village.isNullOrBlank() && componentList.city.isNullOrBlank()) tempString =
-                geocodingData.results[0].components.town
-            if (componentList.city.isNullOrBlank() && componentList.town.isNullOrBlank()) tempString =
-                geocodingData.results[0].components.village
-            if (componentList.town.isNullOrBlank() && componentList.village.isNullOrBlank()) tempString =
-                geocodingData.results[0].components.city
-            if (tempString == null) tempString = "Unknown"
-            return tempString
+            if (componentList.town.isNullOrBlank() || componentList.town == " ") tempString = componentList.city
+            else tempString = componentList.town
+            if (componentList.tertiaryDistrict.isNullOrBlank() && componentList.city.isNullOrBlank()
+                ||componentList.tertiaryDistrict.isNullOrBlank() || componentList.city.isNullOrBlank()) tempString =
+                geocodingData.results[0].address.town
+            if (componentList.city.isNullOrBlank() && componentList.town.isNullOrBlank()
+                || componentList.city.isNullOrBlank() || componentList.town.isNullOrBlank()) tempString =
+                geocodingData.results[0].address.tertiaryDistrict
+            if (componentList.town.isNullOrBlank() && componentList.tertiaryDistrict.isNullOrBlank()
+                || componentList.town.isNullOrBlank() || componentList.tertiaryDistrict.isNullOrBlank()) tempString =
+                geocodingData.results[0].address.city
+            if (tempString == null || tempString == " ") tempString = "Unknown"
+            if (componentList.country == "Rossiya") componentList.country = "Russia"
+            return "$tempString, ${componentList.country}"
         }
 
         val position: Int = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         val location =
-            checkLocationOnNull(geocodingData.results[0].components) + ", " + geocodingData.results[0].components.country
+            checkLocationOnNull(geocodingData.results[0].address)
+//        + ", " + geocodingData.results[0].address.country
 
         edit.putString("city", location)
 
@@ -182,7 +191,7 @@ class WeatherRepository(
             )
         )
 
-        if (geocodingData.results[0].toString() != "" || geocodingData.status.code == 200) {
+        if (geocodingData.results[0].toString() != "") {
             locationDao.insertData(
                 EntityLocation(
                     name = location,
@@ -196,9 +205,9 @@ class WeatherRepository(
         }
 
         val requestDailyBody = DailyForecastRequestBody(
-            latitude = geocodingData.results[0].geometry.latitude,
-            longitude = geocodingData.results[0].geometry.longitude,
-            timezone = geocodingData.results[0].components.country_code,
+            latitude = geocodingData.results[0].position.latitude,
+            longitude = geocodingData.results[0].position.longitude,
+            timezone = geocodingData.results[0].address.countryCode,
             startDate = LocalDateTime.now(),
             endDate = LocalDateTime.now().plusWeeks(2),
             daily = "weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset"

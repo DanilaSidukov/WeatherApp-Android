@@ -14,10 +14,10 @@ class Settings(context: Context) {
     private var sharedPreferences: SharedPreferences =
         context.getSharedPreferences(SETTINGS_NAME, Context.MODE_PRIVATE)
 
-    var savedLocation: String
-        get() = sharedPreferences.getString(FIELD_CITY, " ") ?: " "
+    var savedLocation: String?
+        get() = sharedPreferences.getString(FIELD_CITY, null)
         set(value) = sharedPreferences.edit {
-            putString(FIELD_CITY, value)
+            putString(FIELD_CITY, value?: " ")
         }
 
 }

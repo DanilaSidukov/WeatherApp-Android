@@ -3,6 +3,7 @@ package com.sidukov.weatherapp.ui.fragment_weather
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sidukov.weatherapp.data.local.db.EntityLocation
+import com.sidukov.weatherapp.data.remote.LocationRepository
 import com.sidukov.weatherapp.data.remote.WeatherRepository
 import com.sidukov.weatherapp.domain.CurrentWeather
 import com.sidukov.weatherapp.domain.WeatherDescription
@@ -11,10 +12,11 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
-open class WeatherViewModel(
-    private val repository: WeatherRepository,
-    private val cityName: String
+open class WeatherViewModel @Inject constructor(
+    val weatherRepository: WeatherRepository,
+    val locationRepository: LocationRepository
 ) : ViewModel() {
 
 
@@ -38,10 +40,12 @@ open class WeatherViewModel(
 
     private val index = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH")).toInt()
 
+    private var location = " "
+
     init {
         viewModelScope.launch {
 
-            val value = repository.getCurrentDayForecast(cityName)
+            val value = weatherRepository.getCurrentDayForecast(getCity())
             if (value.second.isEmpty() || value.third.isEmpty()) return@launch
             _todayStateFlow.emit(value.first)
             _hourlyStateFlow.emit(value.second)
@@ -50,15 +54,24 @@ open class WeatherViewModel(
             _dailyStateFlow.tryEmit(value.fourth)
             _angleStateFlow.tryEmit(value.fifth)
 
-            val entityLocation = EntityLocation(
-                name = value.first.date,
-                date =  LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM")),
-                temperature = value.first.temperature,
-                image = value.second[index].image
-            )
-            println("entity in view model = $entityLocation")
-            _listToLocationFragment.emit(entityLocation)
+//            val entityLocation = EntityLocation(
+//                name = value.first.date,
+//                date =  LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM")),
+//                temperature = value.first.temperature,
+//                image = value.second[index].image
+//            )
+//            println("entity in view model = $entityLocation")
+//            _listToLocationFragment.emit(entityLocation)
         }
+    }
+
+    fun setCity(cityName: String){
+        if (cityName.isEmpty() || cityName.isNullOrBlank()) location = " "
+        else location = cityName
+    }
+
+    fun getCity(): String{
+        return location
     }
 
 }

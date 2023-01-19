@@ -1,16 +1,18 @@
 package com.sidukov.weatherapp.data.remote.api
 
+import com.sidukov.weatherapp.di.Geo
 import com.sidukov.weatherapp.domain.geo_api.GeocodingData
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
+
 
 interface GeoAPI {
 
-    @GET("geocode/v1/json")
+    @GET("search/2/geocode/{city}.json")
     suspend fun geoData(
-        @Query("q") city: String,
-        @Query("key") key: String = "2dd6c604847a4c3fbb31b84af26cc11b",
-        @Query("pretty") pretty: Int = 1,
-        @Query("no_annotations") no_annotations: Int = 1,
+        @Path("city") city: String,
+        @Query("view") view: String = "Unified",
+        @Query("key") key: String = "sHOgdqa34WjcDtweEdBGyhe9FA4WzL1i"
     ): GeocodingData
 }

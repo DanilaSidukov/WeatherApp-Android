@@ -1,26 +1,25 @@
 package com.sidukov.weatherapp.ui
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
-import android.view.View
-import android.view.WindowInsets
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.graphics.Insets
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import com.sidukov.weatherapp.R
+import com.sidukov.weatherapp.di.injectViewModel
 import com.sidukov.weatherapp.ui.common.ViewPagerAdapter
-import com.sidukov.weatherapp.ui.fragment_location.LocationFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import java.time.LocalDateTime
+import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), OnWeatherCardListener {
+class MainActivity : AppCompatActivity(), OnWeatherCardClicked {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var mainViewModel: MainViewModel
 
     @SuppressLint("ResourceAsColor", "RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,16 +28,14 @@ class MainActivity : AppCompatActivity(), OnWeatherCardListener {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         WindowInsetsCompat.Type.systemBars()
 
-        val sharedPreferences: SharedPreferences =
-            this.getSharedPreferences("city", Context.MODE_PRIVATE)
-        println("SHARED TO MAIN - ${sharedPreferences.getString("city", " ")}")
-        view_pager_2.adapter = ViewPagerAdapter(this, this, (sharedPreferences.getString("city", " ")).toString())
+        WeatherApplication.appComponent.inject(this)
 
-        LocationFragment(sharedPreferences.getString("city", " ").toString(), this)
+        mainViewModel = injectViewModel(viewModelFactory)
+        val sharedCity = mainViewModel.locationRepository.settings.savedLocation?: " "
+        view_pager_2.adapter = ViewPagerAdapter(this, sharedCity!!)
 
         val nightModeFlags: Int
-
-        if (LocalDateTime.now().hour in 22.. 23 || LocalDateTime.now().hour in 0..6){
+        if (LocalDateTime.now().hour in 22..23 || LocalDateTime.now().hour in 0..6) {
             println("Here night")
             nightModeFlags = Configuration.UI_MODE_NIGHT_YES
         } else {
@@ -52,11 +49,12 @@ class MainActivity : AppCompatActivity(), OnWeatherCardListener {
     }
 
     override fun onWeatherCardClicked() {
-         view_pager_2.setCurrentItem(1, true)
+        view_pager_2.setCurrentItem(1, true)
     }
 
-    private fun applyDayNight(state: Int){
-        if (state == OnDayNightStateChanged.DAY) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+    private fun applyDayNight(state: Int) {
+        if (state == OnDayNightStateChanged.DAY) AppCompatDelegate.setDefaultNightMode(
+            AppCompatDelegate.MODE_NIGHT_NO)
         else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
         supportFragmentManager.fragments.forEach {
@@ -66,7 +64,7 @@ class MainActivity : AppCompatActivity(), OnWeatherCardListener {
 
 }
 
-interface OnWeatherCardListener {
+interface OnWeatherCardClicked{
     fun onWeatherCardClicked()
 }
 

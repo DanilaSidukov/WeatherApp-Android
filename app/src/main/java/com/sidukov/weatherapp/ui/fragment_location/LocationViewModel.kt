@@ -10,10 +10,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
-class LocationViewModel(
-    private val repositoryLocation: LocationRepository,
-    private val weatherRepository: WeatherRepository,
+open class LocationViewModel @Inject constructor(
+    val repositoryLocation: LocationRepository,
+    val weatherRepository: WeatherRepository,
 ) : ViewModel() {
 
     private var _locationList = MutableStateFlow<List<EntityLocation>>(emptyList())
@@ -50,11 +51,11 @@ class LocationViewModel(
         }
     }
 
-
-    fun deleteItem() {
+    fun deleteItem(locationItem: EntityLocation) {
         viewModelScope.launch {
-            repositoryLocation.deleteLocationData()
+            repositoryLocation.deleteLocationById(locationItem.name)
             _locationList.value = repositoryLocation.getLocationData()
+            println("list delete = ${_locationList.value}")
         }
     }
 

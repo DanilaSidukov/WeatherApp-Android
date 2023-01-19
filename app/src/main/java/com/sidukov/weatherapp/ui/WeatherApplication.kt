@@ -1,22 +1,33 @@
 package com.sidukov.weatherapp.ui
 
 import android.app.Application
-import androidx.room.Room
-import com.sidukov.weatherapp.data.local.db.DatabaseLocation
+import com.sidukov.weatherapp.di.*
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasAndroidInjector
+import javax.inject.Inject
 
-class WeatherApplication : Application() {
+class WeatherApplication : Application(), HasAndroidInjector {
+
+    @Inject
+    lateinit var androidInjector: DispatchingAndroidInjector<Any>
+    var instance: WeatherApplication? = null
+
+    override fun androidInjector(): AndroidInjector<Any> = androidInjector
 
     companion object {
-        lateinit var database: DatabaseLocation
+        lateinit var appComponent: WeatherAppComponent
     }
 
     override fun onCreate() {
         super.onCreate()
-        database = Room.databaseBuilder(
-            applicationContext,
-            DatabaseLocation::class.java,
-            "location-list"
-        ).build()
+        instance = this
+        appComponent = DaggerWeatherAppComponent.builder()
+            .appModule(AppModule(this))
+            .repositoryModule(RepositoryModule())
+            .apiModule(ApiModule())
+            .storageModule(StorageModule())
+            .build()
     }
 
 }

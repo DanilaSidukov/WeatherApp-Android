@@ -14,8 +14,7 @@ import com.sidukov.weatherapp.data.local.db.EntityLocation
 
 class LocationViewAdapter(
     private var listLocation: List<EntityLocation>,
-    private var listener: OnWeatherCardClickListener,
-    private val city: String
+    private var listener: OnWeatherCardClickListener
 ) : ListAdapter<EntityLocation, LocationViewAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -78,13 +77,13 @@ class LocationViewAdapter(
 
     fun deleteCurrentItem(position: EntityLocation) {
         val currentList = listLocation.toMutableList()
+        println("current list = $currentList")
         if (currentList.size == 1) {
             currentList.clear()
-            submitList(currentList)
         } else {
             currentList.remove(position)
-            submitList(currentList)
         }
+        submitList(currentList)
     }
 }
 

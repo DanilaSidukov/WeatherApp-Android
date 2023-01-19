@@ -13,8 +13,6 @@ abstract class BaseFragment(private val layoutId: Int): Fragment() {
     val pageId = Random.nextLong(2021, 2021*3)
     var pagePosition = -1
     protected lateinit var fragmentReplacer: FragmentReplacer
-    protected lateinit var location: String
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,10 +22,9 @@ abstract class BaseFragment(private val layoutId: Int): Fragment() {
         return inflater.inflate(layoutId, container, false)
     }
 
-    fun setPageInfo(pagePosition: Int, fragmentReplacer: FragmentReplacer, location: String){
+    fun setPageInfo(pagePosition: Int, fragmentReplacer: FragmentReplacer){
         this.pagePosition = pagePosition
         this.fragmentReplacer = fragmentReplacer
-        this.location = location
     }
 
 }
