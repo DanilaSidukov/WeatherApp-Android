@@ -12,7 +12,6 @@ import javax.inject.Singleton
 @Module
 class ApiModule {
 
-
     @Singleton
     @Provides
     fun provideWeatherApi(): WeatherAPI = Retrofit.Builder()

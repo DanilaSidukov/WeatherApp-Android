@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.sidukov.weatherapp.data.local.db.EntityLocation
 import com.sidukov.weatherapp.data.remote.LocationRepository
 import com.sidukov.weatherapp.data.remote.WeatherRepository
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -20,8 +22,24 @@ open class LocationViewModel @Inject constructor(
     private var _locationList = MutableStateFlow<List<EntityLocation>>(emptyList())
     val locationList = _locationList.asStateFlow()
 
+    private val _cityStatus = MutableSharedFlow<Boolean>()
+    var cityStatus = _cityStatus.asSharedFlow()
+
     init {
         getLocationDataBase()
+    }
+
+
+    fun requestLocation(city: String) {
+        viewModelScope.launch {
+            val response = weatherRepository.getCurrentDayForecast(city)
+            if (response.first.date == "Error") {
+                _cityStatus.emit(false)
+            } else {
+                repositoryLocation.settings.savedLocation = response.first.date
+                _cityStatus.emit(true)
+            }
+        }
     }
 
     fun getLocationDataBase() {
@@ -55,7 +73,6 @@ open class LocationViewModel @Inject constructor(
         viewModelScope.launch {
             repositoryLocation.deleteLocationById(locationItem.name)
             _locationList.value = repositoryLocation.getLocationData()
-            println("list delete = ${_locationList.value}")
         }
     }
 

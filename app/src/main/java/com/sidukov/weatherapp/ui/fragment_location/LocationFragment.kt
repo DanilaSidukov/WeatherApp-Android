@@ -27,6 +27,7 @@ import com.sidukov.weatherapp.ui.fragment_weather.WeatherViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.custom_dialog_delete.view.*
 import kotlinx.android.synthetic.main.custom_dialog_add.view.*
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
@@ -39,7 +40,6 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
     lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var weatherViewModel: WeatherViewModel
     lateinit var locationViewModel: LocationViewModel
-    lateinit var mainViewModel: MainViewModel
 
     private lateinit var recyclerViewLocation: RecyclerView
     private lateinit var textNoLocation: TextView
@@ -47,7 +47,7 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
     private lateinit var buttonOpenDialog: Button
 
     private lateinit var locationDialogView: View
-    private lateinit var locationDialog: AlertDialog.Builder
+    private lateinit var locationDialog: AlertDialog
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -83,7 +83,6 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
             }
         }
 
-
         recyclerViewLocation = view.findViewById(R.id.recycler_view_location)
         recyclerViewLocation.layoutManager = GridLayoutManager(requireContext(), 2)
         recyclerViewLocation.adapter = adapterLocation
@@ -100,52 +99,49 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
         buttonOpenDialog.setOnClickListener {
             locationDialogView = LayoutInflater.from(requireContext())
                 .inflate(R.layout.custom_dialog_add, null, false)
-            locationDialog = AlertDialog.Builder(requireContext())
+            val dialog = AlertDialog.Builder(requireContext())
                 .setView(locationDialogView)
 
             if (locationDialogView.parent != null) {
                 (locationDialogView.parent as ViewGroup).removeView(locationDialogView)
             }
 
-            val position = this.pagePosition
-
-            val dialogOpened = locationDialog.show()
+            locationDialog = dialog.show()
             locationDialogView.button_enter.setOnClickListener {
                 val locationDialogString = locationDialogView.edit_enter_location.text.toString()
                 if (locationDialogString.isNotEmpty()) {
-                    viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                        weatherViewModel.todayStateFlow.collect {
-                            if (it.date == "Error") {
-                                Toast.makeText(requireContext(),
-                                    "Error! Can't provide forecast for this location!",
-                                    Toast.LENGTH_SHORT).show()
-                            } else {
-                                fragmentReplacer.replace(position, LocationFragment())
-                                mainViewModel.locationRepository.settings.savedLocation = locationDialogString
-                                weatherViewModel.setCity(locationDialogString)
-                                println("HERE")
-                                (activity as MainActivity).onWeatherCardClicked()
-                                fragmentReplacer.replace(position + 1,
-                                    WeatherFragment())
-                                dialogOpened.dismiss()
-                            }
-                        }
-                    }
-
+                    locationViewModel.requestLocation(locationDialogString)
                 } else {
                     Toast.makeText(requireContext(), "Type: city, country", Toast.LENGTH_SHORT)
                         .show()
                 }
             }
             locationDialogView.button_cancel.setOnClickListener {
-                dialogOpened.dismiss()
+                locationDialog.dismiss()
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            locationViewModel.cityStatus.collect {
+                val position = this@LocationFragment.pagePosition
+                if (!it) {
+                    Toast.makeText(requireContext(),
+                        "Error! Can't provide forecast for this location!",
+                        Toast.LENGTH_SHORT).show()
+                } else {
+                    (activity as? MainActivity)?.onWeatherCardClicked()
+                    fragmentReplacer.replace(position, LocationFragment())
+                    fragmentReplacer.replace(position + 1,
+                        WeatherFragment())
+                    if (locationDialog.isShowing) locationDialog.dismiss()
+                }
             }
         }
     }
 
     override fun onWeatherCardClicked(locationEntity: EntityLocation) {
+        locationViewModel.repositoryLocation.settings.savedLocation = locationEntity.name
         fragmentReplacer.replace(this.pagePosition + 1, WeatherFragment())
-
         (activity as? MainActivity)?.onWeatherCardClicked()
     }
 

@@ -40,12 +40,10 @@ open class WeatherViewModel @Inject constructor(
 
     private val index = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH")).toInt()
 
-    private var location = " "
-
     init {
         viewModelScope.launch {
 
-            val value = weatherRepository.getCurrentDayForecast(getCity())
+            val value = weatherRepository.getCurrentDayForecast(locationRepository.settings.savedLocation ?: " ")
             if (value.second.isEmpty() || value.third.isEmpty()) return@launch
             _todayStateFlow.emit(value.first)
             _hourlyStateFlow.emit(value.second)
@@ -54,24 +52,7 @@ open class WeatherViewModel @Inject constructor(
             _dailyStateFlow.tryEmit(value.fourth)
             _angleStateFlow.tryEmit(value.fifth)
 
-//            val entityLocation = EntityLocation(
-//                name = value.first.date,
-//                date =  LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM")),
-//                temperature = value.first.temperature,
-//                image = value.second[index].image
-//            )
-//            println("entity in view model = $entityLocation")
-//            _listToLocationFragment.emit(entityLocation)
         }
-    }
-
-    fun setCity(cityName: String){
-        if (cityName.isEmpty() || cityName.isNullOrBlank()) location = " "
-        else location = cityName
-    }
-
-    fun getCity(): String{
-        return location
     }
 
 }

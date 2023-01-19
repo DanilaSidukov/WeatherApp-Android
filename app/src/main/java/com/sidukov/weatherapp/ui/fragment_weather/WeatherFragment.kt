@@ -92,9 +92,6 @@ class WeatherFragment() : BaseFragment(R.layout.fragment_weather),
         if (LocalDateTime.now().hour in 22.. 23 || LocalDateTime.now().hour in 0..6) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-        println("saved - ${weatherViewModel.locationRepository.settings.savedLocation?: " "}")
-        weatherViewModel.setCity(weatherViewModel.locationRepository.settings.savedLocation?: " ")
-
         dailyWeatherRecyclerView = view.findViewById(R.id.recycler_view_weather)
         dailyWeatherRecyclerView.adapter = adapterDailyWeather
         dailyWeatherRecyclerView.addItemDecoration(EmptyDividerItemDecoration())
@@ -192,13 +189,6 @@ class WeatherFragment() : BaseFragment(R.layout.fragment_weather),
         currentDate.text = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM"))
 
     }
-
-//    private val states = arrayOf(
-//        intArrayOf(android.R.attr.state_enabled),
-//        intArrayOf(-android.R.attr.state_enabled),
-//        intArrayOf(-android.R.attr.state_checked),
-//        intArrayOf(android.R.attr.state_pressed)
-//    )
 
     override fun onDayNightApplied(state: Int) {
         if (state == OnDayNightStateChanged.DAY) AppCompatDelegate.setDefaultNightMode(

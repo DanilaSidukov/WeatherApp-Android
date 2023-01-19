@@ -29,6 +29,7 @@
         <item name="textColorBlackWeak">@color/black</item>
         <item name="buttonColor">@color/item_background_night</item>
         <item name="android:overScrollMode">never</item>
+        <item name="buttonDialogColor">@color/button_dialog_color_night</item>
 
         <item name="ArcProgressBar_style">@style/ArcProgressBar</item>
 

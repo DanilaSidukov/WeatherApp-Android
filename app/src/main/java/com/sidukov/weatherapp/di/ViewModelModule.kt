@@ -35,10 +35,6 @@ inline fun <reified T : ViewModel> AppCompatActivity.injectViewModel(factory: Vi
     return ViewModelProvider(this, factory)[T::class.java]
 }
 
-inline fun <reified T : ViewModel> FragmentActivity.injectViewModel(factory: ViewModelProvider.Factory): T {
-    return ViewModelProvider(this, factory)[T::class.java]
-}
-
 @Module
 abstract class ViewModelModule {
 

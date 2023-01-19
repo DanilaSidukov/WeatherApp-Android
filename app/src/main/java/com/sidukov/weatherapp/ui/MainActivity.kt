@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager2.widget.ViewPager2
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.di.injectViewModel
 import com.sidukov.weatherapp.ui.common.ViewPagerAdapter
@@ -31,15 +32,16 @@ class MainActivity : AppCompatActivity(), OnWeatherCardClicked {
         WeatherApplication.appComponent.inject(this)
 
         mainViewModel = injectViewModel(viewModelFactory)
-        val sharedCity = mainViewModel.locationRepository.settings.savedLocation?: " "
-        view_pager_2.adapter = ViewPagerAdapter(this, sharedCity!!)
+        var sharedCity = mainViewModel.locationRepository.settings.savedLocation
+        if (sharedCity.isNullOrBlank() || sharedCity.isEmpty()) sharedCity = " "
+        view_pager_2.adapter = ViewPagerAdapter(this)
+
+        if (sharedCity == " ") view_pager_2.isUserInputEnabled = false
 
         val nightModeFlags: Int
         if (LocalDateTime.now().hour in 22..23 || LocalDateTime.now().hour in 0..6) {
-            println("Here night")
             nightModeFlags = Configuration.UI_MODE_NIGHT_YES
         } else {
-            println("Here day")
             nightModeFlags = Configuration.UI_MODE_NIGHT_NO
         }
 
@@ -49,6 +51,7 @@ class MainActivity : AppCompatActivity(), OnWeatherCardClicked {
     }
 
     override fun onWeatherCardClicked() {
+        view_pager_2.isUserInputEnabled = true
         view_pager_2.setCurrentItem(1, true)
     }
 
@@ -61,7 +64,6 @@ class MainActivity : AppCompatActivity(), OnWeatherCardClicked {
             if (it is OnDayNightStateChanged) it.onDayNightApplied(state)
         }
     }
-
 }
 
 interface OnWeatherCardClicked{

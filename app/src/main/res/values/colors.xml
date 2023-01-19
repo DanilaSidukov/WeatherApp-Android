@@ -11,10 +11,12 @@
     <color name="progress_yellow">#E5CE55</color>
     <color name="progress_green">#A6E555</color>
     <color name="white_transparent">#00FFFFFF</color>
+    <color name="button_dialog_color">#0F000000</color>
 
 <!-- night theme -->
     <color name="general_background_night">#142639</color>
     <color name="white_night">#E2E2E2</color>
     <color name="item_background_night">#336C99</color>
+    <color name="button_dialog_color_night">#336C99</color>
 
 </resources>

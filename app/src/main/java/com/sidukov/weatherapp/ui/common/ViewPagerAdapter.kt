@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.sidukov.weatherapp.data.local.settings.Settings
 import com.sidukov.weatherapp.di.ViewModelFactory
 import com.sidukov.weatherapp.di.injectViewModel
@@ -14,16 +15,14 @@ import com.sidukov.weatherapp.ui.fragment_weather.WeatherFragment
 import javax.inject.Inject
 
 class ViewPagerAdapter(
-    container: FragmentActivity,
-    private val city: String
+    container: FragmentActivity
 ) : FragmentStateAdapter(container), FragmentReplacer {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    lateinit var mainViewModel: MainViewModel
 
     companion object {
-        private var PAGE_COUNT = 1
+        private var PAGE_COUNT = 2
     }
 
     private val mapOfFragment = ArrayMap<Int, BaseFragment>()
@@ -32,18 +31,7 @@ class ViewPagerAdapter(
 
     override fun createFragment(position: Int): Fragment {
 
-        println("Create Fragment = $city")
-        if (city != " ") {
-            PAGE_COUNT = 2
-            itemCount
-            println("item count = $itemCount")
-            return mapOfFragment[position] ?: replaceDef(position,false)
-        } else {
-            PAGE_COUNT = 1
-            itemCount
-            return mapOfFragment[position] ?: replaceDef(position,false)
-        }
-
+        return mapOfFragment[position] ?: replaceDef(position,false)
     }
 
     override fun containsItem(itemId: Long): Boolean {
@@ -84,5 +72,4 @@ class ViewPagerAdapter(
 
     override fun getItemId(position: Int) =
         mapOfFragment[position]?.pageId ?: super.getItemId(position)
-
 }

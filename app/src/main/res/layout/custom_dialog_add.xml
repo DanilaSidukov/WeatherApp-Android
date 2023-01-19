@@ -3,58 +3,62 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
+    android:background="?attr/screenBackground"
     android:padding="20dp">
 
     <TextView
         android:id="@+id/text_enter_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:text="@string/enter_location"
+        android:gravity="center"
         android:letterSpacing="0.1"
+        android:text="@string/enter_location"
         android:textAppearance="@style/TextAppearance.General_grey"
-        android:gravity="center"/>
+        android:textColor="?attr/textColorBlack" />
 
     <EditText
         android:id="@+id/edit_enter_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/text_enter_location"
         android:layout_alignStart="@id/text_enter_location"
+        android:layout_alignTop="@id/text_enter_location"
         android:layout_alignEnd="@id/text_enter_location"
-        android:layout_marginTop="50dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginTop="50dp"
         android:layout_marginRight="10dp"
+        android:gravity="center"
         android:hint="@string/new_york_america"
-        android:textSize="15sp"
-        android:gravity="center" />
+        android:textColor="?attr/textColorBlack"
+        android:textSize="15sp" />
 
     <Button
         android:id="@+id/button_enter"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/edit_enter_location"
         android:layout_alignStart="@id/edit_enter_location"
+        android:layout_alignTop="@id/edit_enter_location"
         android:layout_marginTop="70dp"
-        android:text="@string/enter"
         android:background="@drawable/round_button"
         android:letterSpacing="0.1"
-        android:textAppearance="@style/TextAppearance.General_black"/>
+        android:text="@string/enter"
+        android:textAppearance="@style/TextAppearance.General_black"
+        android:textColor="?attr/textColorBlack" />
 
     <Button
         android:id="@+id/button_cancel"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@id/edit_enter_location"
         android:layout_alignTop="@id/edit_enter_location"
+        android:layout_alignEnd="@id/edit_enter_location"
         android:layout_marginTop="70dp"
+        android:background="@drawable/round_button"
+        android:letterSpacing="0.1"
         android:text="@string/cancel"
         android:textAppearance="@style/TextAppearance.General_black"
-        android:background="@drawable/round_button"
-        android:letterSpacing="0.1" />
+        android:textColor="?attr/textColorBlack" />
 
 
 </RelativeLayout>

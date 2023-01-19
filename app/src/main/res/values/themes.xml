@@ -29,6 +29,7 @@
         <item name="textColorBlackWeak">@color/color_weather_condition</item>
         <item name="buttonColor">@color/white</item>
         <item name="android:overScrollMode">never</item>
+        <item name="buttonDialogColor">@color/button_dialog_color</item>
 
         <item name="ArcProgressBar_style">@style/ArcProgressBar</item>
 

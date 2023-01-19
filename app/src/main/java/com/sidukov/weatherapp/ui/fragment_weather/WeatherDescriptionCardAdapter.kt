@@ -31,8 +31,6 @@ class WeatherDescriptionCardAdapter(private var list: List<WeatherDescription>) 
 
     @SuppressLint("ResourceAsColor")
     override fun onBindViewHolder(holder: MiniCardViewHolder, position: Int) {
-        // вот здесь можно извлекать из данных значения с помощью контекста, например:
-        // holder.name.context.getString(...)
         holder.name.text = holder.name.context.getString(list[position].name)
         holder.information.text = list[position].information
 

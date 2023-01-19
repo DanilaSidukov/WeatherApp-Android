@@ -77,7 +77,6 @@ class LocationViewAdapter(
 
     fun deleteCurrentItem(position: EntityLocation) {
         val currentList = listLocation.toMutableList()
-        println("current list = $currentList")
         if (currentList.size == 1) {
             currentList.clear()
         } else {
