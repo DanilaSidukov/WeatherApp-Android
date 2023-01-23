@@ -19,5 +19,7 @@ class Settings(context: Context) {
         set(value) = sharedPreferences.edit {
             putString(FIELD_CITY, value?: " ")
         }
-
+    fun deleteValue(){
+        sharedPreferences.edit().clear().apply()
+    }
 }

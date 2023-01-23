@@ -236,7 +236,17 @@ class WeatherRepository @Inject constructor (
             7 to "SUNDAY"
         )
 
-        val shortDays: Map<Int, String> = mapOf(
+        val shortDays: Map<Int, String> = if (Locale.getDefault().getDisplayLanguage() == "русский"){
+            mapOf(
+                1 to "ПН",
+                2 to "ВТ",
+                3 to "СР",
+                4 to "ЧТ",
+                5 to "ПТ",
+                6 to "СБ",
+                7 to "ВС"
+            )
+        } else mapOf(
             1 to "MON",
             2 to "TUE",
             3 to "WED",
@@ -245,6 +255,7 @@ class WeatherRepository @Inject constructor (
             6 to "SAT",
             7 to "SUN"
         )
+
 
         var dailyWeatherList: List<WeatherShort> = emptyList()
         val templistValuesDays = days.values

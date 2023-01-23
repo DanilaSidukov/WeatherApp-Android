@@ -33,7 +33,7 @@
 
     <Button
         android:id="@+id/button_add_location"
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         style="@style/ButtonEdit"
         android:backgroundTint="?attr/buttonColor"

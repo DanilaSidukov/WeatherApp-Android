@@ -310,7 +310,7 @@
                             style="@style/TextAppearance.General_grey"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="150dp"
+                            android:layout_marginStart="180dp"
                             android:layout_marginTop="140dp"
                             android:text="@string/night_time"
                             android:textColor="?attr/textColorGrey"
@@ -347,21 +347,23 @@
                             style="@style/TextAppearance.General_grey"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            app:layout_constraintHorizontal_bias="0"
                             android:layout_marginLeft="0dp"
-                            android:layout_marginTop="4dp"
+                            android:layout_marginTop="0dp"
                             android:paddingBottom="16dp"
                             android:text="43%"
                             android:textColor="?attr/textColorBlack"
                             android:textSize="13sp"
                             app:layout_constraintStart_toStartOf="@id/text_humidity_condition_view"
-                            app:layout_constraintTop_toBottomOf="@id/text_humidity_condition_view" />
+                            app:layout_constraintTop_toTopOf="@id/aqi_data_today_digest"
+                            app:layout_constraintEnd_toStartOf="@id/aqi_data_today_digest" />
 
                         <TextView
                             android:id="@+id/text_air_quality_condition_view"
                             style="@style/TextAppearance.General_grey"
-                            android:layout_width="wrap_content"
+                            android:layout_width="65dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="75dp"
+                            android:layout_marginStart="105dp"
                             android:layout_marginTop="199dp"
                             android:text="@string/air_quality"
                             android:textColor="?attr/textColorGrey"
@@ -374,20 +376,21 @@
                             style="@style/TextAppearance.General_black"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
+                            android:layout_marginTop="5dp"
                             android:paddingBottom="16dp"
                             android:text="good"
                             android:textColor="?attr/textColorBlack"
                             android:textSize="13sp"
                             app:layout_constraintStart_toStartOf="@id/text_air_quality_condition_view"
-                            app:layout_constraintTop_toBottomOf="@id/text_air_quality_condition_view" />
+                            app:layout_constraintTop_toBottomOf="@id/text_air_quality_condition_view"
+                            app:layout_constraintHorizontal_bias="0"/>
 
                         <TextView
                             android:id="@+id/text_chance_of_precipitation_condition_view"
                             style="@style/TextAppearance.General_grey"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="150dp"
+                            android:layout_marginStart="180dp"
                             android:layout_marginTop="199dp"
                             android:text="@string/chance_of_precipitation"
                             android:textColor="?attr/textColorGrey"
@@ -401,13 +404,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="0dp"
-                            android:layout_marginTop="4dp"
+                            android:layout_marginTop="0dp"
                             android:paddingBottom="16dp"
                             android:text="13%"
                             android:textColor="?attr/textColorBlack"
                             android:textSize="13sp"
                             app:layout_constraintStart_toStartOf="@id/text_chance_of_precipitation_condition_view"
-                            app:layout_constraintTop_toBottomOf="@id/text_chance_of_precipitation_condition_view" />
+                            app:layout_constraintTop_toTopOf="@id/aqi_data_today_digest" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -92,7 +92,7 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             buttonOpenDialog.updateLayoutParams<MarginLayoutParams> {
-                bottomMargin += insets.bottom
+                bottomMargin = insets.bottom + 40
             }
             WindowInsetsCompat.CONSUMED
         }
@@ -160,6 +160,7 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
 
         val deleteDialogOpen = locationDeleteDialog.show()
         locationDeleteDialogView.button_yes.setOnClickListener {
+            locationViewModel.repositoryLocation.settings.deleteValue()
             locationViewModel.deleteItem(locationItem)
             adapterLocation.deleteCurrentItem(locationItem)
             deleteDialogOpen.dismiss()
