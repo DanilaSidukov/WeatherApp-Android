@@ -136,7 +136,7 @@ class WeatherRepository @Inject constructor (
                 humidity = weatherTodayData.hourly.humidity[position].toInt(),
                 description = DescriptionToday.valueFromRange(weatherTodayData.currentWeather.weathercode).value,
                 currentWeatherCode = weatherTodayData.hourly.hourlyWeatherCode[0],
-                precipitation = weatherTodayData.hourly.precipitation[position],
+                precipitation = weatherTodayData.hourly.precipitation[position] * 10,
                 dayTimeDigest = DescriptionDigest.valueFromRange(weatherTodayData.hourly.hourlyWeatherCode[13]).value,
                 nightTimeDigest = DescriptionDigest.valueFromRange(weatherTodayData.hourly.hourlyWeatherCode[22]).value,
                 currentAQI = DescriptionAQI.getDescriptionAQI(aqiData.AQIHourly.aqiList[position]).value
@@ -184,9 +184,8 @@ class WeatherRepository @Inject constructor (
             ),
             WeatherDescription(
                 name = R.string.precipitation,
-                information = weatherTodayData.hourly.precipitation[position].toInt()
-                    .toString() + " %",
-                progress = weatherTodayData.hourly.precipitation[position].toInt() * 100,
+                information = (weatherTodayData.hourly.precipitation[position] * 10).toInt().toString() + " %",
+                progress = (weatherTodayData.hourly.precipitation[position]* 10).toInt(),
                 image = R.drawable.ic_sky_rainy_dark
             )
         )
