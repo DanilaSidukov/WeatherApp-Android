@@ -30,7 +30,6 @@ class ViewPagerAdapter(
     override fun getItemCount() = PAGE_COUNT
 
     override fun createFragment(position: Int): Fragment {
-
         return mapOfFragment[position] ?: replaceDef(position,false)
     }
 

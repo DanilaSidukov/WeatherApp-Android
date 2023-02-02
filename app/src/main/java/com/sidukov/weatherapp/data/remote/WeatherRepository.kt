@@ -73,7 +73,7 @@ class WeatherRepository @Inject constructor (
             geocodingData.results[0].position.longitude,
             geocodingData.results[0].address.countryCode,
             LocalDateTime.now(),
-            LocalDateTime.now(),
+            LocalDateTime.now().plusDays(1),
             hourly = "temperature_2m,relativehumidity_2m,precipitation,rain,snowfall,weathercode,cloudcover_mid",
             true
         )
@@ -144,11 +144,15 @@ class WeatherRepository @Inject constructor (
 
         var weatherShortList: List<WeatherShort> = emptyList()
         var tempString = ""
-
-        (0..23).map { hour ->
-            tempString = if (hour < 10) {
-                "0$hour"
-            } else "$hour"
+        val index = LocalDateTime.now().hour
+        var hourIndex = LocalDateTime.now().hour
+        (index..index + 23).map { hour ->
+            tempString = if (hourIndex < 10) {
+                "0$hourIndex"
+            } else if (hourIndex > 23) {
+                hourIndex = 0
+                "0$hourIndex"
+            } else "$hourIndex"
             tempListHours = listOf(
                 WeatherShort(
                     hour = tempString,
@@ -160,6 +164,7 @@ class WeatherRepository @Inject constructor (
                     " "
                 )
             )
+            hourIndex += 1
             weatherShortList = weatherShortList.plus(tempListHours)
         }
 
