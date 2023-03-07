@@ -2,7 +2,9 @@ package com.sidukov.weatherapp.ui.fragment_location
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.Fragment
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +14,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.*
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.local.db.EntityLocation
 import com.sidukov.weatherapp.di.injectViewModel
@@ -40,6 +44,8 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
     lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var weatherViewModel: WeatherViewModel
     lateinit var locationViewModel: LocationViewModel
+
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private lateinit var recyclerViewLocation: RecyclerView
     private lateinit var textNoLocation: TextView
@@ -66,6 +72,26 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
 
         weatherViewModel = injectViewModel(viewModelFactory)
         locationViewModel = injectViewModel(viewModelFactory)
+
+        swipeRefreshLayout = view.findViewById(R.id.location_fragment)
+        swipeRefreshLayout.setOnRefreshListener {
+            val handler = Handler()
+            handler.postDelayed(
+                Runnable {
+                    run {
+                        if (locationViewModel.isNetworkConnected()) {
+                            fragmentReplacer.replace(this.pagePosition, LocationFragment())
+                            swipeRefreshLayout.isRefreshing = false
+                        }
+                        else {
+                            swipeRefreshLayout.isRefreshing = false
+                            Toast.makeText(requireContext(), "Network error, please check your internet connection", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }, 2000L
+            )
+
+        }
 
         textNoLocation = view.findViewById(R.id.text_no_location)
 
