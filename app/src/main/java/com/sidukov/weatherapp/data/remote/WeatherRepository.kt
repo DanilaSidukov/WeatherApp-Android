@@ -122,7 +122,6 @@ class WeatherRepository @Inject constructor (
         val position: Int = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         val location =
             checkLocationOnNull(geocodingData.results[0].address)
-//        + ", " + geocodingData.results[0].address.country
 
         edit.putString("city", location)
 

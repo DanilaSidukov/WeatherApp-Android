@@ -15,14 +15,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
-import com.sidukov.weatherapp.data.local.db.LocationDao
-import com.sidukov.weatherapp.data.local.settings.Settings
-import com.sidukov.weatherapp.data.remote.WeatherRepository
-import com.sidukov.weatherapp.data.remote.api.AqiAPI
-import com.sidukov.weatherapp.data.remote.api.GeoAPI
-import com.sidukov.weatherapp.data.remote.api.WeatherAPI
-import com.sidukov.weatherapp.di.ViewModelFactory
-import com.sidukov.weatherapp.di.WeatherAppComponent
 import com.sidukov.weatherapp.di.injectViewModel
 import com.sidukov.weatherapp.ui.MainViewModel
 import com.sidukov.weatherapp.ui.OnDayNightStateChanged

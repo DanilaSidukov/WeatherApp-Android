@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="end"
-            android:text="Loading..."
+            android:text="@string/loading"
             android:textColor="?attr/textColorBlack" />
 
         <ImageView
@@ -147,7 +147,7 @@
                         android:layout_marginTop="46dp"
                         android:fontFamily="@font/staatliches_regular"
                         android:paddingBottom="16dp"
-                        android:text="Loading . . .  please wait"
+                        android:text="@string/loading"
                         android:textColor="?attr/textColorBlack"
                         android:textSize="12sp" />
 
@@ -224,7 +224,7 @@
                             android:layout_marginLeft="16dp"
                             android:layout_marginTop="85dp"
                             android:layout_marginRight="298dp"
-                            android:text="11:33"
+                            android:text="..."
                             android:textColor="?attr/textColorBlack"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -250,7 +250,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="85dp"
                             android:layout_marginRight="16dp"
-                            android:text="19:15"
+                            android:text="..."
                             android:textColor="?attr/textColorBlack"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -300,7 +300,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="sunny and cloudy"
+                            android:text="@string/loading"
                             android:textColor="?attr/textColorBlack"
                             app:layout_constraintStart_toStartOf="@id/text_daytime_condition_view"
                             app:layout_constraintTop_toBottomOf="@id/text_daytime_condition_view" />
@@ -324,7 +324,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="sunny and cloudy"
+                            android:text="@string/loading"
                             android:textColor="?attr/textColorBlack"
                             app:layout_constraintStart_toStartOf="@id/text_nighttime_condition_view"
                             app:layout_constraintTop_toBottomOf="@id/text_nighttime_condition_view" />
@@ -351,7 +351,7 @@
                             android:layout_marginLeft="0dp"
                             android:layout_marginTop="0dp"
                             android:paddingBottom="16dp"
-                            android:text="43%"
+                            android:text="..."
                             android:textColor="?attr/textColorBlack"
                             android:textSize="13sp"
                             app:layout_constraintStart_toStartOf="@id/text_humidity_condition_view"
@@ -378,7 +378,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
                             android:paddingBottom="16dp"
-                            android:text="good"
+                            android:text="..."
                             android:textColor="?attr/textColorBlack"
                             android:textSize="13sp"
                             app:layout_constraintStart_toStartOf="@id/text_air_quality_condition_view"
@@ -406,7 +406,7 @@
                             android:layout_marginLeft="0dp"
                             android:layout_marginTop="0dp"
                             android:paddingBottom="16dp"
-                            android:text="13%"
+                            android:text="..."
                             android:textColor="?attr/textColorBlack"
                             android:textSize="13sp"
                             app:layout_constraintStart_toStartOf="@id/text_chance_of_precipitation_condition_view"

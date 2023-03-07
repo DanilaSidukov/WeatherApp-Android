@@ -88,7 +88,7 @@
     <string name="remove_this_location">Remove this location?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-
+    <string name="loading">Loading...</string>
 
 
 </resources>

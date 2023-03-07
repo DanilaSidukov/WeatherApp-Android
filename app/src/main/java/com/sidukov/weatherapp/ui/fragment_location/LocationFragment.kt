@@ -110,7 +110,8 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
             locationDialogView.button_enter.setOnClickListener {
                 val locationDialogString = locationDialogView.edit_enter_location.text.toString()
                 if (locationDialogString.isNotEmpty()) {
-                    locationViewModel.requestLocation(locationDialogString)
+                    if (locationViewModel.isNetworkConnected()) locationViewModel.requestLocation(locationDialogString)
+                    else Toast.makeText(context, "Connection error! Please, check your internet connection", Toast.LENGTH_LONG).show()
                 } else {
                     Toast.makeText(requireContext(), "Type: city, country", Toast.LENGTH_SHORT)
                         .show()
