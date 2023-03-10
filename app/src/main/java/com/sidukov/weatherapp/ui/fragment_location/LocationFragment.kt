@@ -2,7 +2,6 @@ package com.sidukov.weatherapp.ui.fragment_location
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.app.Fragment
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -14,7 +13,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.*
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -28,12 +26,15 @@ import com.sidukov.weatherapp.ui.common.BaseFragment
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecorationLocation
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherFragment
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherViewModel
+import com.simform.refresh.SSPullToRefreshLayout
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.custom_dialog_delete.view.*
 import kotlinx.android.synthetic.main.custom_dialog_add.view.*
-import kotlinx.coroutines.launch
+import kotlinx.android.synthetic.main.custom_dialog_delete.view.*
+import kotlinx.coroutines.*
+import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 import java.util.*
 import javax.inject.Inject
+import kotlin.concurrent.schedule
 
 class LocationFragment () : BaseFragment(R.layout.fragment_location),
     OnWeatherCardClickListener, OnDayNightStateChanged{
@@ -45,7 +46,7 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
     lateinit var weatherViewModel: WeatherViewModel
     lateinit var locationViewModel: LocationViewModel
 
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SSPullToRefreshLayout
 
     private lateinit var recyclerViewLocation: RecyclerView
     private lateinit var textNoLocation: TextView
@@ -55,6 +56,8 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
     private lateinit var locationDialogView: View
     private lateinit var locationDialog: AlertDialog
 
+    private val mainScope = CoroutineScope(Dispatchers.Main + Job())
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -62,7 +65,6 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
     ): View? {
         return inflater.inflate(R.layout.fragment_location, container, false)
     }
-
 
     @SuppressLint("InflateParams")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -74,24 +76,17 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
         locationViewModel = injectViewModel(viewModelFactory)
 
         swipeRefreshLayout = view.findViewById(R.id.location_fragment)
-        swipeRefreshLayout.setOnRefreshListener {
-            val handler = Handler()
-            handler.postDelayed(
-                Runnable {
-                    run {
-                        if (locationViewModel.isNetworkConnected()) {
-                            fragmentReplacer.replace(this.pagePosition, LocationFragment())
-                            swipeRefreshLayout.isRefreshing = false
-                        }
-                        else {
-                            swipeRefreshLayout.isRefreshing = false
-                            Toast.makeText(requireContext(), "Network error, please check your internet connection", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }, 2000L
-            )
-
-        }
+        swipeRefreshLayout.setRefreshView(RefreshCircleView(requireContext()))
+        swipeRefreshLayout.setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener{
+            override fun onRefresh() {
+                mainScope.launch {
+                    delay(2500)
+                    swipeRefreshLayout.setRefreshing(false)
+                }
+                if (locationViewModel.isNetworkConnected()) fragmentReplacer.replace(this@LocationFragment.pagePosition, LocationFragment())
+                else Toast.makeText(context, "Connection error! Please, check your internet connection", Toast.LENGTH_LONG).show()
+            }
+        })
 
         textNoLocation = view.findViewById(R.id.text_no_location)
 
@@ -113,6 +108,10 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
         recyclerViewLocation.layoutManager = GridLayoutManager(requireContext(), 2)
         recyclerViewLocation.adapter = adapterLocation
         recyclerViewLocation.addItemDecoration(GridLayoutItemDecorationLocation(16))
+        OverScrollDecoratorHelper.setUpOverScroll(
+            recyclerViewLocation,
+            OverScrollDecoratorHelper.ORIENTATION_VERTICAL
+        )
 
         buttonOpenDialog = view.findViewById(R.id.button_add_location)
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, windowInsets ->

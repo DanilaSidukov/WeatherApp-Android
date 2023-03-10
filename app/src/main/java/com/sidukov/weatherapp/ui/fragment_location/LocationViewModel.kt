@@ -102,4 +102,17 @@ open class LocationViewModel @Inject constructor(
         return false
     }
 
+    suspend fun checkNetwork(): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val capabilities =
+            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        capabilities?.let {
+            if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) return true
+            else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return true
+            else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) return true
+        }
+        return false
+    }
+
 }
