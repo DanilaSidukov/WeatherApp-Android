@@ -68,12 +68,18 @@
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
     </style>
 
-<!--    <style name="AppTheme" parent="Theme.MaterialComponents.Light">-->
-<!--        <item name="android:navigationBarColor">#00000000</item>-->
-<!--        <item name="android:statusBarColor">#00000000</item>-->
+<!--    <style name="Theme.AppSplashLight" parent="Theme.AppCompat.Light.NoActionBar">-->
+<!--        <item name="android:windowBackground">@drawable/splash_background_light</item>-->
 <!--        <item name="colorPrimary">@color/general_background</item>-->
 <!--        <item name="colorPrimaryDark">@color/general_background_night</item>-->
 <!--    </style>-->
+
+    <!--    <style name="AppTheme" parent="Theme.MaterialComponents.Light">-->
+    <!--        <item name="android:navigationBarColor">#00000000</item>-->
+    <!--        <item name="android:statusBarColor">#00000000</item>-->
+    <!--        <item name="colorPrimary">@color/general_background</item>-->
+    <!--        <item name="colorPrimaryDark">@color/general_background_night</item>-->
+    <!--    </style>-->
 
     <style name="AppTheme.Dark" parent="Theme.MaterialComponents">
         <item name="android:navigationBarColor">#00000000</item>
@@ -82,11 +88,11 @@
         <item name="colorPrimaryDark">@color/general_background_night</item>
     </style>
 
-<!--    <style name="Theme" parent="android:Theme.Material.Wallpaper.NoTitleBar">-->
-<!--        <item name="android:statusBarColor">@android:color/transparent</item>-->
-<!--        <item name="android:navigationBarColor">@android:color/transparent</item>-->
-<!--        <item name="android:windowTranslucentStatus">true</item>-->
-<!--        <item name="android:windowTranslucentNavigation">true</item>-->
-<!--    </style>-->
+    <!--    <style name="Theme" parent="android:Theme.Material.Wallpaper.NoTitleBar">-->
+    <!--        <item name="android:statusBarColor">@android:color/transparent</item>-->
+    <!--        <item name="android:navigationBarColor">@android:color/transparent</item>-->
+    <!--        <item name="android:windowTranslucentStatus">true</item>-->
+    <!--        <item name="android:windowTranslucentNavigation">true</item>-->
+    <!--    </style>-->
 
 </resources>

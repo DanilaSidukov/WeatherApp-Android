@@ -2,13 +2,15 @@ package com.sidukov.weatherapp.ui
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
+import android.window.SplashScreen
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager2.widget.ViewPager2
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.di.injectViewModel
 import com.sidukov.weatherapp.ui.common.ViewPagerAdapter
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity(), OnWeatherCardClicked {
     @SuppressLint("ResourceAsColor", "RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //installSplashScreen()
         setContentView(R.layout.activity_main)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         WindowInsetsCompat.Type.systemBars()
