@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="general_background">#F6F6F6</color>
+    <color name="grey">#8C8C8C</color>
+    <color name="color_weather_condition">#434343</color>
+    <color name="green">#00B37A</color>
+    <color name="grey_2">#DCDFE6</color>
+    <color name="grey_3">#BFDFDF</color>
+    <color name="progress_yellow">#E5CE55</color>
+    <color name="progress_green">#A6E555</color>
+    <color name="white_transparent">#00FFFFFF</color>
+    <color name="button_dialog_color">#0F000000</color>
+
+<!-- night theme -->
+    <color name="general_background_night">#142639</color>
+    <color name="white_night">#E2E2E2</color>
+    <color name="item_background_night">#336C99</color>
+    <color name="button_dialog_color_night">#336C99</color>
+
+</resources>

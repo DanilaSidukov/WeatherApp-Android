@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ArcProgressBar">
+        <attr name="backgroundTrackColor" />
+        <attr name="progressTrackColor" />
+    </declare-styleable>
+
+    <attr name="screenBackground" format="reference" />
+    <attr name="ArcProgressBar_style" format="reference" />
+
+    <attr name="cardViewBackground" format="reference" />
+    <attr name="textColorBlack" format="reference" />
+    <attr name="textColorBlack2" format="reference" />
+    <attr name="textColorGrey" format="reference" />
+    <attr name="textColorGrey2" format="reference" />
+    <attr name="textColorBlackWeak" format="reference" />
+    <attr name="buttonColor" format="reference" />
+
+    <attr name="backgroundTrackColor" format="color" />
+    <attr name="progressTrackColor" format="color" />
+
+    <attr name="descriptionTextColor" format="color" />
+
+    <attr name="descriptionGreyTextColor" format="color" />
+
+    <attr name="progressYellow" format="color" />
+    <attr name="progressGreen" format="color" />
+
+    <attr name="buttonDialogColor" format="color" />
+
+</resources>
