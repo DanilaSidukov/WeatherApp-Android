@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), OnWeatherCardClicked {
     @SuppressLint("ResourceAsColor", "RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //installSplashScreen()
+
         setContentView(R.layout.activity_main)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         WindowInsetsCompat.Type.systemBars()
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity(), OnWeatherCardClicked {
         view_pager_2.setCurrentItem(1, true)
     }
 
-    private fun applyDayNight(state: Int) {
+    fun applyDayNight(state: Int) {
         if (state == OnDayNightStateChanged.DAY) AppCompatDelegate.setDefaultNightMode(
             AppCompatDelegate.MODE_NIGHT_NO)
         else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

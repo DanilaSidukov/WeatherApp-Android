@@ -81,8 +81,7 @@ class WeatherFragment() : BaseFragment(R.layout.fragment_weather),
 
         weatherViewModel = injectViewModel(viewModelFactory)
 
-        if (LocalDateTime.now().hour in 22.. 23 || LocalDateTime.now().hour in 0..6) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
 
         dailyWeatherRecyclerView = view.findViewById(R.id.recycler_view_weather)
         dailyWeatherRecyclerView.adapter = adapterDailyWeather
