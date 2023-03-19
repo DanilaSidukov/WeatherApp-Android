@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.di.injectViewModel
 import com.sidukov.weatherapp.ui.MainViewModel
@@ -42,8 +44,7 @@ class WeatherFragment() : BaseFragment(R.layout.fragment_weather),
     private lateinit var cardViewRecyclerView: RecyclerView
 
     private lateinit var locationName: TextView
-    private lateinit var currentWeatherImageMain: ImageView
-    private lateinit var currentWeatherMovingImage: ImageView
+    private lateinit var currentWeatherImage: LottieAnimationView
     private lateinit var currentDate: TextView
     private lateinit var currentTemperature: TextView
     private lateinit var currentHumidity: TextView
@@ -108,8 +109,7 @@ class WeatherFragment() : BaseFragment(R.layout.fragment_weather),
         )
 
         locationName = view.findViewById(R.id.text_location_weather)
-        currentWeatherImageMain = view.findViewById(R.id.image_main)
-        currentWeatherMovingImage = view.findViewById(R.id.image_secondary)
+        currentWeatherImage = view.findViewById(R.id.raw_animation)
         currentTemperature = view.findViewById(R.id.text_current_temperature_weather)
         currentHumidity = view.findViewById(R.id.text_humidity_percent_condition_view)
         todayDescription = view.findViewById(R.id.weather_conditions_description)
@@ -121,15 +121,39 @@ class WeatherFragment() : BaseFragment(R.layout.fragment_weather),
         currentNightTimeDigest = view.findViewById(R.id.text_nightitme_condition_condition_view)
         currentAQI = view.findViewById(R.id.aqi_data_today_digest)
 
+        //currentWeatherImage.imageAssetsFolder = null
+        currentWeatherImage.setAnimation(R.raw.sun_and_sky_raw)
+
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             weatherViewModel.todayStateFlow.collect { uiTodayState ->
                 locationName.text = uiTodayState.date?: "Unknown"
-                if (uiTodayState.imageMain.first == uiTodayState.imageMain.second) {
-                    currentWeatherImageMain.setImageResource(uiTodayState.imageMain.second)
-                    currentWeatherMovingImage.setImageResource(0)
-                } else {
-                    currentWeatherImageMain.setImageResource(uiTodayState.imageMain.first)
-                    currentWeatherMovingImage.setImageResource(uiTodayState.imageMain.second)
+                when (uiTodayState.imageMain) {
+                    R.drawable.ic_sun -> {
+                        println("im here")
+                        currentWeatherImage.setAnimation(R.raw.sun_and_sky_raw)
+                        currentWeatherImage.playAnimation()
+                    }
+                    R.drawable.ic_sky_with_sun_light -> {
+                        println("no, im here")
+                        currentWeatherImage.setAnimation(R.raw.sun_and_sky_raw)
+                        currentWeatherImage.playAnimation()
+                    }
+                    R.drawable.ic_sky_rainy_light -> {
+                        currentWeatherImage.setAnimation(R.raw.light_sky_drop_raw)
+                        currentWeatherImage.playAnimation()
+                    }
+                    R.drawable.ic_snowflake -> {
+                        currentWeatherImage.setAnimation(R.raw.snowflake_raw)
+                        currentWeatherImage.playAnimation()
+                    }
+                    R.drawable.ic_sky_snow_light -> {
+                        currentWeatherImage.setAnimation(R.raw.light_sky_drop_snow_raw)
+                        currentWeatherImage.playAnimation()
+                    }
+                    R.drawable.ic_sky_rainy_dark -> {
+                        currentWeatherImage.setAnimation(R.raw.dark_sky_drop_raw)
+                        currentWeatherImage.playAnimation()
+                    }
                 }
                 currentTemperature.text = uiTodayState.temperature.toString()
                 currentHumidity.text = "${uiTodayState.humidity} %"
@@ -168,13 +192,13 @@ class WeatherFragment() : BaseFragment(R.layout.fragment_weather),
             }
         }
 
-        val animatedImage = currentWeatherMovingImage
-        animatedImage.viewTreeObserver.addOnGlobalLayoutListener {
-            if (!this::animation.isInitialized) {
-                animation = HeaderImageAnimation(animatedImage)
-            }
-            animation.marginFlow = animatedImage.width
-        }
+//        val animatedImage = currentWeatherMovingImage
+//        animatedImage.viewTreeObserver.addOnGlobalLayoutListener {
+//            if (!this::animation.isInitialized) {
+//                animation = HeaderImageAnimation(animatedImage)
+//            }
+//            animation.marginFlow = animatedImage.width
+//        }
 
         currentDate = view.findViewById(R.id.text_datetime_weather)
         currentDate.text = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM"))

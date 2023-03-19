@@ -2,7 +2,7 @@ package com.sidukov.weatherapp.domain
 
 data class CurrentWeather(
     val date: String,
-    val imageMain: Pair<Int, Int>,
+    val imageMain: Int,
     val temperature: Int,
     val humidity: Int,
     val description: Int,

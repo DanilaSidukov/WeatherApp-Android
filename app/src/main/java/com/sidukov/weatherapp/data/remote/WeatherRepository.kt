@@ -49,7 +49,7 @@ class WeatherRepository @Inject constructor (
         if (geocodingData.results.isEmpty()) {
             return NTuple5(
                 CurrentWeather("Error",
-                    Pair(1, 1),
+                    0,
                     0,
                     0,
                     0,
@@ -128,7 +128,7 @@ class WeatherRepository @Inject constructor (
         val currentWeatherCurrentData =
             CurrentWeather(
                 date = location,
-                imageMain = getImageByData(
+                imageMain = getImageByWeatherCode(
                     weatherTodayData.hourly.hourlyWeatherCode[position]
                 ),
                 temperature = weatherTodayData.hourly.temperature[position].toInt(),
@@ -294,25 +294,6 @@ class WeatherRepository @Inject constructor (
             weatherDescription,
             dailyWeatherList,
             getSweepAngle(weatherDailyData.daily.sunrise[0], weatherDailyData.daily.sunset[0]))
-    }
-
-    private fun getImageByData(code: Int): Pair<Int, Int> {
-
-        if (code == 0) return Pair(R.drawable.ic_sun, R.drawable.ic_sun)
-        else if (code in 1..3 || code in 45..48) return Pair(
-            R.drawable.ic_sun,
-            R.drawable.ic_sky_light
-        )
-        else if (code in 51..67 || code in 80..82) return Pair(
-            R.drawable.ic_sky_rainy_light,
-            R.drawable.ic_sky_rainy_light
-        )
-        else if (code == 71) return Pair(R.drawable.ic_snowflake, R.drawable.ic_snowflake)
-        else if (code in 73..77 || code in 85..86) return Pair(
-            R.drawable.ic_sky_snow_light,
-            R.drawable.ic_sky_snow_light
-        )
-        else return Pair(R.drawable.ic_sky_rainy_dark, R.drawable.ic_sky_rainy_dark)
     }
 
     enum class DescriptionToday(val wc: IntRange, val value: Int) {

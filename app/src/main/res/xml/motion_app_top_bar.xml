@@ -14,22 +14,13 @@
 
     <ConstraintSet android:id="@+id/start">
         <Constraint
-            android:id="@+id/image_main"
+            android:id="@+id/raw_animation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="21dp"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toBottomOf="@id/text_location_weather" />
-        <Constraint
-            android:id="@+id/image_secondary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            motion:layout_constraintBottom_toBottomOf="@+id/image_main"
-            motion:layout_constraintEnd_toEndOf="@+id/image_main"
-            motion:layout_constraintStart_toStartOf="@+id/image_main"
-            motion:layout_constraintTop_toTopOf="@+id/image_main"
-            motion:layout_constraintVertical_bias="1.0" />
         <Constraint
             android:id="@+id/text_current_temperature_weather"
             android:layout_width="wrap_content"
@@ -67,20 +58,11 @@
     <ConstraintSet android:id="@+id/end">
 
         <Constraint
-            android:id="@+id/image_main"
+            android:id="@+id/raw_animation"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_marginStart="28.16dp"
             android:layout_marginTop="27.84dp"
-            motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toTopOf="parent" />
-        <Constraint
-            android:id="@+id/image_secondary"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="40dp"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
         <Constraint
