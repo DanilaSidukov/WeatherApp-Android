@@ -15,8 +15,8 @@
     <ConstraintSet android:id="@+id/start">
         <Constraint
             android:id="@+id/raw_animation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
             android:layout_marginTop="21dp"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
@@ -29,7 +29,7 @@
             android:scaleY="2"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toBottomOf="@+id/image_main" />
+            motion:layout_constraintTop_toBottomOf="@+id/raw_animation" />
         <Constraint
             android:id="@+id/text_location_weather"
             android:layout_width="wrap_content"
@@ -59,10 +59,10 @@
 
         <Constraint
             android:id="@+id/raw_animation"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginStart="28.16dp"
-            android:layout_marginTop="27.84dp"
+            android:layout_width="105dp"
+            android:layout_height="105dp"
+            android:layout_marginStart="22.16dp"
+            android:layout_marginTop="5.84dp"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
         <Constraint
@@ -97,7 +97,7 @@
             android:layout_height="0dp"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toBottomOf="@id/image_main" />
+            motion:layout_constraintTop_toBottomOf="@id/raw_animation" />
     </ConstraintSet>
 
 </MotionScene>
