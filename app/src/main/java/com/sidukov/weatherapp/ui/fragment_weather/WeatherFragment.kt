@@ -126,32 +126,34 @@ class WeatherFragment() : BaseFragment(R.layout.fragment_weather),
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             weatherViewModel.todayStateFlow.collect { uiTodayState ->
                 locationName.text = uiTodayState.date?: "Unknown"
-//                when (uiTodayState.imageMain) {
-//                    R.drawable.ic_sun -> {
-//                        currentWeatherImage.setAnimation("sun_and_sky_raw.json")
-//                        currentWeatherImage.playAnimation()
-//                    }
-//                    R.drawable.ic_sky_with_sun_light -> {
-//                        currentWeatherImage.setAnimation("sun_and_sky_raw.json")
-//                        currentWeatherImage.playAnimation()
-//                    }
-//                    R.drawable.ic_sky_rainy_light -> {
-//                        currentWeatherImage.setAnimation("light_sky_drop_raw.json")
-//                        currentWeatherImage.playAnimation()
-//                    }
-//                    R.drawable.ic_snowflake -> {
-//                        currentWeatherImage.setAnimation("snowflake_raw.json")
-//                        currentWeatherImage.playAnimation()
-//                    }
-//                    R.drawable.ic_sky_snow_light -> {
-//                        currentWeatherImage.setAnimation("light_sky_drop_snow_raw.json")
-//                        currentWeatherImage.playAnimation()
-//                    }
-//                    R.drawable.ic_sky_rainy_dark -> {
-//                        currentWeatherImage.setAnimation("dark_sky_drop_raw.json")
-//                        currentWeatherImage.playAnimation()
-//                    }
-//                }
+                when (uiTodayState.imageMain) {
+                    R.drawable.ic_sun -> {
+                        if (LocalDateTime.now().hour in 22..23 || LocalDateTime.now().hour in 0..6) currentWeatherImage.setAnimation("moon_raw.json")
+                        else currentWeatherImage.setAnimation("sun_raw.json")
+                        currentWeatherImage.playAnimation()
+                    }
+                    R.drawable.ic_sky_with_sun_light -> {
+                        if (LocalDateTime.now().hour in 22..23 || LocalDateTime.now().hour in 0..6) currentWeatherImage.setAnimation("moon_and_sky_raw.json")
+                        else currentWeatherImage.setAnimation("sun_and_sky_raw.json")
+                        currentWeatherImage.playAnimation()
+                    }
+                    R.drawable.ic_sky_rainy_light -> {
+                        currentWeatherImage.setAnimation("light_sky_drop_raw.json")
+                        currentWeatherImage.playAnimation()
+                    }
+                    R.drawable.ic_snowflake -> {
+                        currentWeatherImage.setAnimation("snowflake_raw.json")
+                        currentWeatherImage.playAnimation()
+                    }
+                    R.drawable.ic_sky_snow_light -> {
+                        currentWeatherImage.setAnimation("light_sky_drop_snow_raw.json")
+                        currentWeatherImage.playAnimation()
+                    }
+                    R.drawable.ic_sky_rainy_dark -> {
+                        currentWeatherImage.setAnimation("dark_sky_drop_raw.json")
+                        currentWeatherImage.playAnimation()
+                    }
+                }
                 currentTemperature.text = uiTodayState.temperature.toString()
                 currentHumidity.text = "${uiTodayState.humidity} %"
                 todayDescription.text = getString(uiTodayState.description)

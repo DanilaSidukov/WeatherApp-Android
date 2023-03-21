@@ -37,7 +37,7 @@
             app:lottie_imageAssetsFolder="images"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_fileName="light_sky_drop_raw.json" />
+            app:lottie_fileName="sun_raw.json" />
 
         <TextView
             android:id="@+id/text_current_temperature_weather"
