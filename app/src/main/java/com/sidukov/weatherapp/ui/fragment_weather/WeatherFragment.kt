@@ -15,10 +15,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.di.injectViewModel
+import com.sidukov.weatherapp.ui.OnDayNightStateChanged
 import com.sidukov.weatherapp.ui.WeatherApplication
 import com.sidukov.weatherapp.ui.common.BaseFragment
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecoration
-import com.sidukov.weatherapp.ui.fragment_location.OnDayNightStateChanged
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

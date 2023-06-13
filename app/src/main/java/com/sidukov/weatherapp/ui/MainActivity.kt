@@ -8,12 +8,11 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager2.widget.ViewPager2
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.di.injectViewModel
 import com.sidukov.weatherapp.ui.common.ViewPagerAdapter
-import com.sidukov.weatherapp.ui.fragment_location.OnDayNightStateChanged
 import com.sidukov.weatherapp.ui.fragment_location.OnWeatherCardClicked
-import kotlinx.android.synthetic.main.activity_main.view_pager_2
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -22,6 +21,8 @@ class MainActivity : AppCompatActivity(), OnWeatherCardClicked {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var mainViewModel: MainViewModel
+
+    private lateinit var viewPager2: ViewPager2
 
     @SuppressLint("ResourceAsColor", "RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,20 +34,22 @@ class MainActivity : AppCompatActivity(), OnWeatherCardClicked {
 
         WeatherApplication.appComponent.inject(this)
 
+        viewPager2 = findViewById(R.id.view_pager_2)
+
         mainViewModel = injectViewModel(viewModelFactory)
         var sharedCity = mainViewModel.locationRepository.settings.savedLocation
         if (sharedCity.isNullOrBlank() || sharedCity.isEmpty()) sharedCity = " "
-        view_pager_2.adapter = ViewPagerAdapter(this)
+        viewPager2.adapter = ViewPagerAdapter(this)
 
-        if (sharedCity == " ") view_pager_2.isUserInputEnabled = false
+        if (sharedCity == " ") viewPager2.isUserInputEnabled = false
 
         setNightMode()
 
     }
 
     override fun onWeatherCardClicked() {
-        view_pager_2.isUserInputEnabled = true
-        view_pager_2.setCurrentItem(1, true)
+        viewPager2.isUserInputEnabled = true
+        viewPager2.setCurrentItem(1, true)
     }
 
     fun applyDayNight(state: Int) {
@@ -73,3 +76,12 @@ class MainActivity : AppCompatActivity(), OnWeatherCardClicked {
 
 }
 
+interface OnDayNightStateChanged {
+
+    fun onDayNightApplied(state: Int)
+
+    companion object{
+        const val DAY = 1
+        const val NIGHT = 2
+    }
+}

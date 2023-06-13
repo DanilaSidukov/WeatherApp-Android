@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.*
@@ -25,9 +26,6 @@ import com.sidukov.weatherapp.ui.common.message
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherFragment
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherViewModel
 import com.simform.refresh.SSPullToRefreshLayout
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.custom_dialog_add.view.*
-import kotlinx.android.synthetic.main.custom_dialog_delete.view.*
 import kotlinx.coroutines.*
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 import java.util.*
@@ -56,6 +54,13 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
 
     private lateinit var locationDeleteDialogView: View
     private lateinit var locationDeleteDialog: AlertDialog.Builder
+
+    private lateinit var buttonEnter: Button
+    private lateinit var buttonCancel: Button
+    private lateinit var textEditLocation: EditText
+
+    private lateinit var buttonYes: Button
+    private lateinit var buttonNo: Button
 
     private val mainScope = CoroutineScope(Dispatchers.Main + Job())
 
@@ -124,12 +129,18 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
         }
 
         locationDialogView = LayoutInflater.from(requireContext())
-            .inflate(R.layout.custom_dialog_add, null, false)
-        dialog = AlertDialog.Builder(requireContext())
-            .setView(locationDialogView)
+            .inflate(R.layout.custom_dialog_add, null, false).apply {
+                buttonEnter = this.findViewById(R.id.button_enter)
+                buttonCancel = this.findViewById(R.id.button_cancel)
+                textEditLocation = this.findViewById(R.id.edit_enter_location)
+            }
+        dialog = AlertDialog.Builder(requireContext()).setView(locationDialogView)
 
         locationDeleteDialogView = LayoutInflater.from(requireContext())
-            .inflate(R.layout.custom_dialog_delete, null, false)
+            .inflate(R.layout.custom_dialog_delete, null, false).apply {
+                buttonYes = this.findViewById(R.id.button_yes)
+                buttonNo = this.findViewById(R.id.button_no)
+            }
         locationDeleteDialog = AlertDialog.Builder(requireContext()).setView(locationDeleteDialogView)
 
         buttonOpenDialog.setOnClickListener {
@@ -139,8 +150,8 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
             }
 
             locationDialog = dialog.show()
-            locationDialogView.button_enter.setOnClickListener {
-                val locationDialogString = locationDialogView.edit_enter_location.text.toString()
+            buttonEnter.setOnClickListener {
+                val locationDialogString = textEditLocation.text.toString()
                 if (locationDialogString.isNotEmpty()) {
                     if (locationViewModel.repositoryLocation.getNetworkStatus()) locationViewModel.requestLocation(locationDialogString)
                     else requireContext().message("Connection error! Please, check your internet connection")
@@ -148,7 +159,7 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
                     requireContext().message("Type: city, country")
                 }
             }
-            locationDialogView.button_cancel.setOnClickListener {
+            buttonCancel.setOnClickListener {
                 locationDialog.dismiss()
             }
         }
@@ -175,9 +186,6 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
         (activity as? MainActivity)?.onWeatherCardClicked()
     }
 
-
-
-
     @SuppressLint("CommitPrefEdits")
     override fun onWeatherCardLongClickListener(locationItem: EntityLocation) {
 
@@ -186,13 +194,13 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
         }
 
         val deleteDialogOpen = locationDeleteDialog.show()
-        locationDeleteDialogView.button_yes.setOnClickListener {
+        buttonYes.setOnClickListener {
             locationViewModel.repositoryLocation.settings.deleteValue()
             locationViewModel.deleteItem(locationItem)
             adapterLocation.deleteCurrentItem(locationItem)
             deleteDialogOpen.dismiss()
         }
-        locationDeleteDialogView.button_no.setOnClickListener {
+        buttonNo.setOnClickListener {
             deleteDialogOpen.dismiss()
         }
     }
@@ -211,14 +219,4 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
 
 interface OnWeatherCardClicked{
     fun onWeatherCardClicked()
-}
-
-interface OnDayNightStateChanged {
-
-    fun onDayNightApplied(state: Int)
-
-    companion object{
-        const val DAY = 1
-        const val NIGHT = 2
-    }
 }
