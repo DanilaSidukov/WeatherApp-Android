@@ -5,12 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.widget.*
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -18,14 +15,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.di.injectViewModel
-import com.sidukov.weatherapp.ui.MainViewModel
-import com.sidukov.weatherapp.ui.OnDayNightStateChanged
 import com.sidukov.weatherapp.ui.WeatherApplication
 import com.sidukov.weatherapp.ui.common.BaseFragment
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecoration
-import com.sidukov.weatherapp.ui.fragment_location.LocationViewModel
+import com.sidukov.weatherapp.ui.fragment_location.OnDayNightStateChanged
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
-import java.lang.annotation.Inherited
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -57,12 +51,9 @@ class WeatherFragment() : BaseFragment(R.layout.fragment_weather),
     private lateinit var currentNightTimeDigest: TextView
     private lateinit var currentAQI: TextView
 
-
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var weatherViewModel: WeatherViewModel
-
-    private lateinit var animation: HeaderImageAnimation
+    private lateinit var weatherViewModel: WeatherViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,8 +72,6 @@ class WeatherFragment() : BaseFragment(R.layout.fragment_weather),
         WeatherApplication.appComponent.inject(this)
 
         weatherViewModel = injectViewModel(viewModelFactory)
-
-
 
         dailyWeatherRecyclerView = view.findViewById(R.id.recycler_view_weather)
         dailyWeatherRecyclerView.adapter = adapterDailyWeather
@@ -165,7 +154,6 @@ class WeatherFragment() : BaseFragment(R.layout.fragment_weather),
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             weatherViewModel.hourlyStateFlow.collect { uiHourlyState ->
-//                if (uiHourlyState.isEmpty()) return@collect
                 adapterTodayWeather.updateList(uiHourlyState)
             }
         }
@@ -179,7 +167,6 @@ class WeatherFragment() : BaseFragment(R.layout.fragment_weather),
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             weatherViewModel.angleStateFlow.collect{ uiAngleState ->
-//                if (uiAngleState.isNaN()) return@collect
                 arcProgressBar.sunGetCondition = uiAngleState
             }
         }
@@ -190,14 +177,6 @@ class WeatherFragment() : BaseFragment(R.layout.fragment_weather),
                 adapterMiniCardView.updateList(uiWeatherDescription)
             }
         }
-
-//        val animatedImage = currentWeatherMovingImage
-//        animatedImage.viewTreeObserver.addOnGlobalLayoutListener {
-//            if (!this::animation.isInitialized) {
-//                animation = HeaderImageAnimation(animatedImage)
-//            }
-//            animation.marginFlow = animatedImage.width
-//        }
 
         currentDate = view.findViewById(R.id.text_datetime_weather)
         currentDate.text = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM"))

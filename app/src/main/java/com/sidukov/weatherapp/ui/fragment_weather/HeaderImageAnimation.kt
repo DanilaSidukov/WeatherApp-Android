@@ -26,7 +26,6 @@ class HeaderImageAnimation(view: View) {
         it.duration = animationDuration
         it.interpolator = LinearInterpolator()
     }
-
     init{
         executeAnimation()
     }

@@ -3,27 +3,25 @@ package com.sidukov.weatherapp.ui.fragment_location
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.*
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.local.db.EntityLocation
 import com.sidukov.weatherapp.di.injectViewModel
 import com.sidukov.weatherapp.ui.*
 import com.sidukov.weatherapp.ui.common.BaseFragment
 import com.sidukov.weatherapp.ui.common.GridLayoutItemDecorationLocation
+import com.sidukov.weatherapp.ui.common.message
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherFragment
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherViewModel
 import com.simform.refresh.SSPullToRefreshLayout
@@ -34,7 +32,6 @@ import kotlinx.coroutines.*
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 import java.util.*
 import javax.inject.Inject
-import kotlin.concurrent.schedule
 
 class LocationFragment () : BaseFragment(R.layout.fragment_location),
     OnWeatherCardClickListener, OnDayNightStateChanged{
@@ -55,6 +52,10 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
 
     private lateinit var locationDialogView: View
     private lateinit var locationDialog: AlertDialog
+    private lateinit var dialog: AlertDialog.Builder
+
+    private lateinit var locationDeleteDialogView: View
+    private lateinit var locationDeleteDialog: AlertDialog.Builder
 
     private val mainScope = CoroutineScope(Dispatchers.Main + Job())
 
@@ -83,8 +84,8 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
                     delay(2500)
                     swipeRefreshLayout.setRefreshing(false)
                 }
-                if (locationViewModel.isNetworkConnected()) fragmentReplacer.replace(this@LocationFragment.pagePosition, LocationFragment())
-                else Toast.makeText(context, "Connection error! Please, check your internet connection", Toast.LENGTH_LONG).show()
+                if (locationViewModel.repositoryLocation.getNetworkStatus()) fragmentReplacer.replace(this@LocationFragment.pagePosition, LocationFragment())
+                else requireContext().message("Connection error! Please, check your internet connection")
             }
         })
 
@@ -121,11 +122,17 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
             }
             WindowInsetsCompat.CONSUMED
         }
+
+        locationDialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.custom_dialog_add, null, false)
+        dialog = AlertDialog.Builder(requireContext())
+            .setView(locationDialogView)
+
+        locationDeleteDialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.custom_dialog_delete, null, false)
+        locationDeleteDialog = AlertDialog.Builder(requireContext()).setView(locationDeleteDialogView)
+
         buttonOpenDialog.setOnClickListener {
-            locationDialogView = LayoutInflater.from(requireContext())
-                .inflate(R.layout.custom_dialog_add, null, false)
-            val dialog = AlertDialog.Builder(requireContext())
-                .setView(locationDialogView)
 
             if (locationDialogView.parent != null) {
                 (locationDialogView.parent as ViewGroup).removeView(locationDialogView)
@@ -135,11 +142,10 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
             locationDialogView.button_enter.setOnClickListener {
                 val locationDialogString = locationDialogView.edit_enter_location.text.toString()
                 if (locationDialogString.isNotEmpty()) {
-                    if (locationViewModel.isNetworkConnected()) locationViewModel.requestLocation(locationDialogString)
-                    else Toast.makeText(context, "Connection error! Please, check your internet connection", Toast.LENGTH_LONG).show()
+                    if (locationViewModel.repositoryLocation.getNetworkStatus()) locationViewModel.requestLocation(locationDialogString)
+                    else requireContext().message("Connection error! Please, check your internet connection")
                 } else {
-                    Toast.makeText(requireContext(), "Type: city, country", Toast.LENGTH_SHORT)
-                        .show()
+                    requireContext().message("Type: city, country")
                 }
             }
             locationDialogView.button_cancel.setOnClickListener {
@@ -151,9 +157,7 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
             locationViewModel.cityStatus.collect {
                 val position = this@LocationFragment.pagePosition
                 if (!it) {
-                    Toast.makeText(requireContext(),
-                        "Error! Can't provide forecast for this location!",
-                        Toast.LENGTH_SHORT).show()
+                    requireContext().message("Error! Can't provide forecast for this location!")
                 } else {
                     (activity as? MainActivity)?.onWeatherCardClicked()
                     fragmentReplacer.replace(position, LocationFragment())
@@ -171,14 +175,11 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
         (activity as? MainActivity)?.onWeatherCardClicked()
     }
 
+
+
+
     @SuppressLint("CommitPrefEdits")
     override fun onWeatherCardLongClickListener(locationItem: EntityLocation) {
-        // val edit = locationViewModel.repositoryLocation.settings.savedLocation
-
-        val locationDeleteDialogView = LayoutInflater.from(requireContext())
-            .inflate(R.layout.custom_dialog_delete, null, false)
-        val locationDeleteDialog = AlertDialog.Builder(requireContext())
-            .setView(locationDeleteDialogView)
 
         if (locationDeleteDialogView.parent != null) {
             (locationDeleteDialogView.parent as ViewGroup).removeView(locationDeleteDialogView)
@@ -206,4 +207,18 @@ class LocationFragment () : BaseFragment(R.layout.fragment_location),
         else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
     }
 
+}
+
+interface OnWeatherCardClicked{
+    fun onWeatherCardClicked()
+}
+
+interface OnDayNightStateChanged {
+
+    fun onDayNightApplied(state: Int)
+
+    companion object{
+        const val DAY = 1
+        const val NIGHT = 2
+    }
 }

@@ -3,16 +3,12 @@ package com.sidukov.weatherapp.ui.fragment_weather
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Interpolator
-import android.widget.EdgeEffect
 import androidx.core.widget.NestedScrollView
-import com.sidukov.weatherapp.R
 
 @SuppressLint("ResourceAsColor")
 class CustomScrollView: NestedScrollView {

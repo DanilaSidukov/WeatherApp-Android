@@ -1,6 +1,6 @@
 package com.sidukov.weatherapp.data.remote.api
 
-import com.sidukov.weatherapp.domain.daily_body.temp_pack.DailyForecastBody
+import com.sidukov.weatherapp.domain.daily_body.DailyForecastBody
 import com.sidukov.weatherapp.domain.today_body.TodayForecastBody
 import retrofit2.http.GET
 import retrofit2.http.Query

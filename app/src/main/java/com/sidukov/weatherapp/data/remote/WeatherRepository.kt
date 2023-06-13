@@ -1,13 +1,12 @@
 package com.sidukov.weatherapp.data.remote
 
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.core.text.htmlEncode
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.NTuple5
 import com.sidukov.weatherapp.data.TimezoneMapper
 import com.sidukov.weatherapp.data.local.db.EntityLocation
 import com.sidukov.weatherapp.data.local.db.LocationDao
+import com.sidukov.weatherapp.data.local.settings.Settings
 import com.sidukov.weatherapp.data.remote.api.AqiAPI
 import com.sidukov.weatherapp.data.remote.api.GeoAPI
 import com.sidukov.weatherapp.data.remote.api.WeatherAPI
@@ -20,21 +19,20 @@ import com.sidukov.weatherapp.domain.today_body.TodayForecastRequestBody
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 import javax.inject.Inject
 
 
 class WeatherRepository @Inject constructor (
-    val weatherApi: WeatherAPI,
-    val geoAPI: GeoAPI,
-    val aqiAPI: AqiAPI,
-    val locationDao: LocationDao,
-    context: Context,
+    private val weatherApi: WeatherAPI,
+    private val geoAPI: GeoAPI,
+    private val aqiAPI: AqiAPI,
+    private val locationDao: LocationDao,
+    settings: Settings,
 ) {
 
-    val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences("city", Context.MODE_PRIVATE)
-    val edit = sharedPreferences.edit()
+    private var sharedPreferences = settings.savedLocation
 
     private lateinit var tempListHours: List<WeatherShort>
 
@@ -64,9 +62,11 @@ class WeatherRepository @Inject constructor (
             )
         }
 
-        edit.clear()
-        edit.putString("city", city)
-        edit.apply()
+        sharedPreferences = city
+
+//        edit.clear()
+//        edit.putString("city", city)
+//        edit.apply()
 
         val requestCurrentDayBody = TodayForecastRequestBody(
             geocodingData.results[0].position.latitude,
@@ -123,7 +123,7 @@ class WeatherRepository @Inject constructor (
         val location =
             checkLocationOnNull(geocodingData.results[0].address)
 
-        edit.putString("city", location)
+        sharedPreferences = location
 
         val currentWeatherCurrentData =
             CurrentWeather(

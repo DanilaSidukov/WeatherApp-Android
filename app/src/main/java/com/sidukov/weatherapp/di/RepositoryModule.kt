@@ -1,6 +1,5 @@
 package com.sidukov.weatherapp.di
 
-import android.content.Context
 import com.sidukov.weatherapp.data.local.db.LocationDao
 import com.sidukov.weatherapp.data.local.settings.Settings
 import com.sidukov.weatherapp.data.remote.LocationRepository
@@ -23,8 +22,8 @@ class RepositoryModule {
         geoAPI: GeoAPI,
         aqiAPI: AqiAPI,
         locationDao: LocationDao,
-        context: Context,
-    ): WeatherRepository = WeatherRepository(weatherApi, geoAPI, aqiAPI, locationDao, context)
+        settings: Settings,
+    ): WeatherRepository = WeatherRepository(weatherApi, geoAPI, aqiAPI, locationDao, settings)
 
     @Singleton
     @Provides

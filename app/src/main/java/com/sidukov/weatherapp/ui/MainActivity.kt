@@ -2,19 +2,18 @@ package com.sidukov.weatherapp.ui
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
-import android.window.SplashScreen
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.di.injectViewModel
 import com.sidukov.weatherapp.ui.common.ViewPagerAdapter
-import kotlinx.android.synthetic.main.activity_main.*
+import com.sidukov.weatherapp.ui.fragment_location.OnDayNightStateChanged
+import com.sidukov.weatherapp.ui.fragment_location.OnWeatherCardClicked
+import kotlinx.android.synthetic.main.activity_main.view_pager_2
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -41,15 +40,7 @@ class MainActivity : AppCompatActivity(), OnWeatherCardClicked {
 
         if (sharedCity == " ") view_pager_2.isUserInputEnabled = false
 
-        val nightModeFlags: Int
-        if (LocalDateTime.now().hour in 22..23 || LocalDateTime.now().hour in 0..6) {
-            nightModeFlags = Configuration.UI_MODE_NIGHT_YES
-        } else {
-            nightModeFlags = Configuration.UI_MODE_NIGHT_NO
-        }
-
-        if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO) applyDayNight(OnDayNightStateChanged.DAY)
-        else applyDayNight(OnDayNightStateChanged.NIGHT)
+        setNightMode()
 
     }
 
@@ -67,18 +58,18 @@ class MainActivity : AppCompatActivity(), OnWeatherCardClicked {
             if (it is OnDayNightStateChanged) it.onDayNightApplied(state)
         }
     }
-}
 
-interface OnWeatherCardClicked{
-    fun onWeatherCardClicked()
-}
+    fun setNightMode(){
+        val nightModeFlags: Int
+        if (LocalDateTime.now().hour in 22..23 || LocalDateTime.now().hour in 0..6) {
+            nightModeFlags = Configuration.UI_MODE_NIGHT_YES
+        } else {
+            nightModeFlags = Configuration.UI_MODE_NIGHT_NO
+        }
 
-interface OnDayNightStateChanged {
-
-    fun onDayNightApplied(state: Int)
-
-    companion object{
-        const val DAY = 1
-        const val NIGHT = 2
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO) applyDayNight(OnDayNightStateChanged.DAY)
+        else applyDayNight(OnDayNightStateChanged.NIGHT)
     }
+
 }
+

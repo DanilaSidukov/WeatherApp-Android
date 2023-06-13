@@ -3,13 +3,8 @@ package com.sidukov.weatherapp.ui.common
 import android.util.ArrayMap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
-import com.sidukov.weatherapp.data.local.settings.Settings
 import com.sidukov.weatherapp.di.ViewModelFactory
-import com.sidukov.weatherapp.di.injectViewModel
-import com.sidukov.weatherapp.ui.MainViewModel
 import com.sidukov.weatherapp.ui.fragment_location.LocationFragment
 import com.sidukov.weatherapp.ui.fragment_weather.WeatherFragment
 import javax.inject.Inject

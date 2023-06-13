@@ -1,4 +1,4 @@
-package com.sidukov.weatherapp.domain.daily_body.temp_pack
+package com.sidukov.weatherapp.domain.daily_body
 
 import com.google.gson.annotations.SerializedName
 

@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.sidukov.weatherapp.R
 import com.sidukov.weatherapp.data.local.db.EntityLocation
-import java.util.Collections
 
 class LocationViewAdapter(
     private var listLocation: List<EntityLocation>,

@@ -1,11 +1,10 @@
-package com.sidukov.weatherapp.ui.common
+package com.sidukov.weatherapp.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.sidukov.weatherapp.ui.MainActivity
 
 @SuppressLint("CustomSplashScreen")
 class SplashScreen:AppCompatActivity() {

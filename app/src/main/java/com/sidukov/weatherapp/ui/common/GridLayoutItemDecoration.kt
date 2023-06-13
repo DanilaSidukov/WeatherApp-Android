@@ -36,7 +36,7 @@ class GridLayoutItemDecoration(
     }
 }
 
-class GridLayoutItemDecorationLocation(
+class GridLayoutItemDecorationLocation (
     private val spaceSize: Int,
 ) : RecyclerView.ItemDecoration() {
     override fun getItemOffsets(

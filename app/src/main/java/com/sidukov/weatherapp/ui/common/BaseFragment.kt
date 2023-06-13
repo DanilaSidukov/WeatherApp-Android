@@ -1,6 +1,5 @@
 package com.sidukov.weatherapp.ui.common
 
-import android.icu.text.Transliterator.Position
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View

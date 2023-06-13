@@ -1,9 +1,5 @@
 package com.sidukov.weatherapp.ui.fragment_location
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sidukov.weatherapp.data.local.db.EntityLocation
@@ -20,8 +16,7 @@ import javax.inject.Inject
 
 open class LocationViewModel @Inject constructor(
     val repositoryLocation: LocationRepository,
-    val weatherRepository: WeatherRepository,
-    val context: Context
+    val weatherRepository: WeatherRepository
 ) : ViewModel() {
 
     private var _locationList = MutableStateFlow<List<EntityLocation>>(emptyList())
@@ -33,7 +28,6 @@ open class LocationViewModel @Inject constructor(
     init {
         getLocationDataBase()
     }
-
 
     fun requestLocation(city: String) {
         viewModelScope.launch {
@@ -53,7 +47,7 @@ open class LocationViewModel @Inject constructor(
                 repositoryLocation.getLocationData()
             )
 
-            if (isNetworkConnected()){
+            if (repositoryLocation.getNetworkStatus() ){
                 val currentHour = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH")).toInt()
 
                 val newList = _locationList.value.map {
@@ -72,7 +66,7 @@ open class LocationViewModel @Inject constructor(
                 _locationList.emit(
                     newList
                 )
-            } else Toast.makeText(context, "Connection error! Please, check your internet connection", Toast.LENGTH_LONG).show()
+            } else repositoryLocation.errorConnectionMessage()
         }
     }
 
@@ -82,37 +76,4 @@ open class LocationViewModel @Inject constructor(
             _locationList.value = repositoryLocation.getLocationData()
         }
     }
-
-    fun setDefaultLocation(newLocation: String) {
-        viewModelScope.launch {
-            repositoryLocation.setSavedLocation(newLocation)
-        }
-    }
-
-    fun isNetworkConnected(): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val capabilities =
-            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-        capabilities?.let {
-            if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) return true
-            else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return true
-            else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) return true
-        }
-        return false
-    }
-
-    suspend fun checkNetwork(): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val capabilities =
-            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-        capabilities?.let {
-            if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) return true
-            else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return true
-            else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) return true
-        }
-        return false
-    }
-
 }

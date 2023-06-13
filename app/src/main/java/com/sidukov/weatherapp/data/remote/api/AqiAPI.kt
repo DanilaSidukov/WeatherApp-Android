@@ -1,6 +1,5 @@
 package com.sidukov.weatherapp.data.remote.api
 
-import com.sidukov.weatherapp.di.Aqi
 import com.sidukov.weatherapp.domain.today_body.aqi_body.AQIBody
 import retrofit2.http.GET
 import retrofit2.http.Query

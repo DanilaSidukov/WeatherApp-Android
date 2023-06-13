@@ -2,7 +2,6 @@ package com.sidukov.weatherapp.di
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.sidukov.weatherapp.ui.MainViewModel

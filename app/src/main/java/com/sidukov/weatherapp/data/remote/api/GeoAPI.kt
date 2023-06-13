@@ -1,6 +1,5 @@
 package com.sidukov.weatherapp.data.remote.api
 
-import com.sidukov.weatherapp.di.Geo
 import com.sidukov.weatherapp.domain.geo_api.GeocodingData
 import retrofit2.http.GET
 import retrofit2.http.Path

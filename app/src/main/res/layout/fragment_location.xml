@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.simform.refresh.SSPullToRefreshLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.simform.refresh.SSPullToRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/location_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/screenBackground" >
+    android:background="?attr/screenBackground">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -15,40 +14,40 @@
             android:id="@+id/text_no_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:gravity="center"
             android:text="@string/there_is_no_location"
             android:textColor="?attr/textColorBlack"
-            app:layout_constraintVertical_bias="0.5"
-            android:gravity="center" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_marginTop="62dp"
             android:id="@+id/recycler_view_location"
             android:layout_width="match_parent"
             android:layout_height="650dp"
+            android:layout_marginTop="62dp"
+            android:overScrollMode="never"
+            app:layout_constraintBottom_toTopOf="@id/button_add_location"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/button_add_location"
-            android:overScrollMode="never" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/button_add_location"
+            style="@style/ButtonEdit"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
-            style="@style/ButtonEdit"
-            android:backgroundTint="?attr/buttonColor"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:text="@string/add"
             android:layout_marginBottom="30dp"
-            android:textColor="@color/black"
+            android:background="@drawable/round_button_add"
+            android:backgroundTint="?attr/buttonColor"
             android:letterSpacing="0.1"
-            android:background="@drawable/round_button_add"/>
+            android:text="@string/add"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

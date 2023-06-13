@@ -11,8 +11,7 @@ import com.sidukov.weatherapp.domain.WeatherShort
 
 class DailyWeatherAdapter(
     private var weatherList: List<WeatherShort>
-) :
-    RecyclerView.Adapter<DailyWeatherAdapter.DailyWeatherViewHolder>() {
+) : RecyclerView.Adapter<DailyWeatherAdapter.DailyWeatherViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DailyWeatherViewHolder {
         val view =
